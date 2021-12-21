@@ -3,7 +3,6 @@ package com.emenjivar.pomodoro
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,9 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CountDown(
@@ -49,9 +50,9 @@ fun CountDown(
                 Text(
                     text = time,
                     color = Color(0xFFFF5C58),
-                    style = MaterialTheme.typography.h2,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontWeight = FontWeight.Bold
+                    fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
+                    fontSize = 70.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
         }
@@ -98,10 +99,10 @@ fun PreviewMyCanvas() {
         CountDown(
             modifier = Modifier
                 .padding(top = 50.dp),
-            time = "24:59",
+            time = "25:00",
             progress = 0.98f,
             size = 300,
-            stroke = 8
+            stroke = 7
         )
     }
 }
