@@ -21,7 +21,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
@@ -112,53 +111,4 @@ fun ActionButton(
             contentDescription = null
         )
     }
-}
-
-@Composable
-fun CountDownLayout(
-    modifier: Modifier = Modifier,
-    time: String,
-    progress: Float,
-    pauseAction: () -> Unit,
-    stopAction: () -> Unit,
-    fullScreenAction: () -> Unit
-) {
-    val horizontalSpace = 30.dp
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CountDown(
-            modifier = Modifier
-                .padding(top = 50.dp),
-            time = time,
-            progress = progress,
-            size = 230,
-            stroke = 7
-        )
-
-        Row(
-            modifier = Modifier
-                .padding(vertical = 25.dp)
-        ) {
-            ActionButton(icon = R.drawable.ic_baseline_pause_24, onClick = pauseAction)
-            Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = R.drawable.ic_baseline_stop_24, onClick = stopAction)
-            Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = R.drawable.ic_baseline_fullscreen_24, onClick = fullScreenAction)
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCountDownLayout() {
-    CountDownLayout(
-        modifier = Modifier.fillMaxSize(),
-        time = "25:00",
-        progress = 0.98f,
-        pauseAction = {},
-        stopAction = {},
-        fullScreenAction = {}
-    )
 }
