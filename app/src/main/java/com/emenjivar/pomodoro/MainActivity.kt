@@ -8,7 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
-import com.emenjivar.pomodoro.countdown.CountDownLayout
+import com.emenjivar.pomodoro.countdown.CountDownScreen
 import com.emenjivar.pomodoro.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 
@@ -21,17 +21,14 @@ class MainActivity : ComponentActivity() {
 
         viewModel = ViewModelProvider(this).get(CountDownViewModel::class.java)
 
-        viewModel.startTimer()
-
         setContent {
             PomodoroSchedulerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    CountDownLayout(
+                    CountDownScreen(
+                        viewModel = viewModel,
                         modifier = Modifier.fillMaxSize(),
-                        time = "25:00",
-                        progress = 0.98f,
-                        pauseAction = {},
+                        pauseAction = { viewModel.startTimer() },
                         stopAction = {},
                         fullScreenAction = {}
                     )
