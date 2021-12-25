@@ -12,13 +12,22 @@ import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
 class CountDownViewModel : ViewModel() {
 
     private var countDownTimer: CountDownTimer? = null
-    private val _counter = MutableLiveData(Counter.default())
+    private val _counter = MutableLiveData(Counter())
     val counter: LiveData<Counter> = _counter
 
+    private val _isPlaying = MutableLiveData(false)
+    val isPlaying: LiveData<Boolean> = _isPlaying
+
     fun startTimer() {
-        countDownTimer = object : CountDownTimer(TimerUtility.POMODORO_TIME, 1000) {
+        _isPlaying.value = true
+
+        // Restore time before pause
+        val pomodoroTime = _counter.value?.milliseconds ?: TimerUtility.POMODORO_TIME
+
+        countDownTimer = object : CountDownTimer(pomodoroTime, 1000) {
             override fun onTick(milliseconds: Long) {
                 _counter.value = Counter(
+                    milliseconds = milliseconds,
                     time = milliseconds.formatTime(),
                     progress = TimerUtility.getProgress(milliseconds) / 100f
                 )
@@ -29,5 +38,10 @@ class CountDownViewModel : ViewModel() {
                 Log.d("CountDownViewModel", "stopped")
             }
         }.start()
+    }
+
+    fun pauseTimer() {
+        _isPlaying.value = false
+        countDownTimer?.cancel()
     }
 }

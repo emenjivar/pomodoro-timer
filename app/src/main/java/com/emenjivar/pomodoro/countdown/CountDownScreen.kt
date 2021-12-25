@@ -15,14 +15,19 @@ import com.emenjivar.pomodoro.model.Counter
 fun CountDownScreen(
     modifier: Modifier = Modifier,
     viewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit
 ) {
-    val counter by viewModel.counter.observeAsState(Counter.default())
+    val counter by viewModel.counter.observeAsState(Counter())
+    val isPlaying by viewModel.isPlaying.observeAsState(false)
+
     CountDownScreen(
         modifier = modifier,
+        isPlaying = isPlaying,
         counter = counter,
+        playAction = playAction,
         pauseAction = pauseAction,
         stopAction = stopAction,
         fullScreenAction = fullScreenAction
@@ -32,12 +37,23 @@ fun CountDownScreen(
 @Composable
 fun CountDownScreen(
     modifier: Modifier = Modifier,
+    isPlaying: Boolean,
     counter: Counter,
+    playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit
 ) {
     val horizontalSpace = 30.dp
+
+    val playPauseIcon = if (isPlaying) {
+        R.drawable.ic_baseline_pause_24
+    } else {
+        R.drawable.ic_baseline_play_arrow_24
+    }
+
+    val playPauseAction = if (isPlaying) playAction else pauseAction
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -55,7 +71,7 @@ fun CountDownScreen(
             modifier = Modifier
                 .padding(vertical = 25.dp)
         ) {
-            ActionButton(icon = R.drawable.ic_baseline_pause_24, onClick = pauseAction)
+            ActionButton(icon = playPauseIcon, onClick = playPauseAction)
             Spacer(modifier = Modifier.width(horizontalSpace))
             ActionButton(icon = R.drawable.ic_baseline_stop_24, onClick = stopAction)
             Spacer(modifier = Modifier.width(horizontalSpace))
@@ -69,7 +85,9 @@ fun CountDownScreen(
 fun PreviewCountDownScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
-        counter = Counter("24:59", 0.99f),
+        isPlaying = false,
+        counter = Counter(time = "24:59", progress =  0.99f),
+        playAction = {},
         pauseAction = {},
         stopAction = {},
         fullScreenAction = {}
