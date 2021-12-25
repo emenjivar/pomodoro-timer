@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
                     CountDownScreen(
                         viewModel = viewModel,
                         modifier = Modifier.fillMaxSize(),
+                        playAction = { viewModel.pauseTimer() },
                         pauseAction = { viewModel.startTimer() },
                         stopAction = {},
                         fullScreenAction = {}
