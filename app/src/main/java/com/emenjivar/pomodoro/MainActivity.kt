@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         playAction = { viewModel.pauseTimer() },
                         pauseAction = { viewModel.startTimer() },
-                        stopAction = {},
+                        stopAction = { viewModel.stopTimer() },
                         fullScreenAction = {}
                     )
                 }
