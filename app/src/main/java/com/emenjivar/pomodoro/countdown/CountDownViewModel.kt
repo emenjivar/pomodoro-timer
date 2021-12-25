@@ -35,6 +35,7 @@ class CountDownViewModel : ViewModel() {
                 }
 
                 override fun onFinish() {
+                    stopTimer()
                     Log.d("CountDownViewModel", "stopped")
                 }
             }.start()
