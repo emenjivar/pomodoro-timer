@@ -1,5 +1,7 @@
 package com.emenjivar.pomodoro.screens.countdown
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
 @Composable
 fun CountDownScreen(
@@ -20,11 +23,11 @@ fun CountDownScreen(
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
-    fullScreenAction: () -> Unit,
-    isFullScreen: Boolean = false
+    fullScreenAction: () -> Unit
 ) {
     val counter by viewModel.counter.observeAsState(Counter())
     val isPlaying by viewModel.isPlaying.observeAsState(false)
+    val isFullScreen by viewModel.isFullScreen.observeAsState(false)
 
     CountDownScreen(
         modifier = modifier,
@@ -52,13 +55,16 @@ fun CountDownScreen(
     val horizontalSpace = 30.dp
 
     val playPauseIcon = if (isPlaying) R.drawable.ic_baseline_pause_24 else R.drawable.ic_baseline_play_arrow_24
-    val fullScreenIcon = if (isFullScreen) R.drawable.ic_baseline_fullscreen_exit_24 else R.drawable.ic_baseline_fullscreen_24
-    val backgroundColor = colorResource(if (isFullScreen) R.color.primary else R.color.white)
+    val fullScreenIcon = if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24 else R.drawable.ic_baseline_mode_night_24
+    val backgroundColor = animateColorAsState(
+        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
     val playPauseAction = if (isPlaying) playAction else pauseAction
 
     Column(
         modifier = modifier
-            .background(backgroundColor),
+            .background(backgroundColor.value),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
