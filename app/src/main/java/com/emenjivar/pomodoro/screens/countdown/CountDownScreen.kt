@@ -59,7 +59,8 @@ fun CountDownScreen(
     Column(
         modifier = modifier
             .background(backgroundColor),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         CountDown(
             modifier = Modifier
