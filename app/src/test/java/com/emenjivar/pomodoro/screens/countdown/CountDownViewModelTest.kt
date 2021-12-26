@@ -26,6 +26,7 @@ class CountDownViewModelTest {
     fun `test default values`() {
         assertEquals(Counter(), viewModel.counter.value)
         assertFalse(viewModel.isPlaying.value ?: true)
+        assertFalse(viewModel.isFullScreen.value ?: true)
         assertTrue(viewModel.testMode)
     }
 
@@ -65,5 +66,20 @@ class CountDownViewModelTest {
 
         assertFalse(isPlaying)
         assertEquals(Counter(), counter)
+    }
+
+    @Test
+    fun `toggleNightMode changes liveData value`() {
+        val first = viewModel.isFullScreen.getOrAwaitValue()
+        viewModel.toggleNightMode()
+
+        val second = viewModel.isFullScreen.getOrAwaitValue()
+        viewModel.toggleNightMode()
+
+        val third = viewModel.isFullScreen.getOrAwaitValue()
+
+        assertFalse(first)
+        assertTrue(second)
+        assertFalse(third)
     }
 }
