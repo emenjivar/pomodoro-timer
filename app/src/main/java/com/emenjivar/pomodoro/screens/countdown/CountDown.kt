@@ -1,13 +1,12 @@
 package com.emenjivar.pomodoro.screens.countdown
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
 @Composable
 fun CountDown(
@@ -34,7 +34,14 @@ fun CountDown(
     stroke: Int,
     isFullScreen: Boolean = false
 ) {
-    val itemColor = colorResource(if(isFullScreen) R.color.white else R.color.primary)
+    val itemColor = animateColorAsState(
+        targetValue = colorResource(if(isFullScreen) R.color.white else R.color.primary),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
+    val progressBackgroundColor = animateColorAsState(
+        targetValue = colorResource(if(isFullScreen) R.color.primary else R.color.light),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
 
     Column(modifier = modifier) {
         Box {
@@ -42,7 +49,7 @@ fun CountDown(
                 modifier = Modifier
                     .height(size.dp)
                     .width(size.dp),
-                color = colorResource(R.color.light),
+                color = progressBackgroundColor.value,
                 stroke = stroke
             )
 
@@ -51,14 +58,14 @@ fun CountDown(
                 modifier = Modifier
                     .height(size.dp)
                     .width(size.dp),
-                color = itemColor,
+                color = itemColor.value,
                 strokeWidth = stroke.dp
             )
 
             Column(modifier = Modifier.align(Alignment.Center)) {
                 Text(
                     text = time,
-                    color = itemColor,
+                    color = itemColor.value,
                     fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
                     fontSize = 70.sp,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -104,19 +111,25 @@ fun ActionButton(
     isFullScreen: Boolean = false,
     onClick: () -> Unit
 ) {
-    val itemColor = colorResource(if(isFullScreen) R.color.white else R.color.primary)
-    val iconColor = colorResource(if(isFullScreen) R.color.primary else R.color.white)
+    val itemColor = animateColorAsState(
+        targetValue = colorResource(if(isFullScreen) R.color.white else R.color.primary),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
+    val iconColor = animateColorAsState(
+        targetValue = colorResource(if(isFullScreen) R.color.primary else R.color.white),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
 
     IconButton(
         onClick = onClick,
         modifier = Modifier
             .clip(CircleShape)
-            .background(itemColor)
+            .background(itemColor.value)
     ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
-            tint = iconColor
+            tint = iconColor.value
         )
     }
 }
