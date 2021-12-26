@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Pomodoro scheduler</string>
+    <string name="title_activity_full_screen">FullScreenActivity</string>
 </resources>
