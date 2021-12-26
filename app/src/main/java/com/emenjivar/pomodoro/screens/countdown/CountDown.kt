@@ -1,6 +1,7 @@
 package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +36,10 @@ fun CountDown(
     stroke: Int,
     isFullScreen: Boolean = false
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    )
     val itemColor = animateColorAsState(
         targetValue = colorResource(if(isFullScreen) R.color.white else R.color.primary),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
@@ -54,7 +60,7 @@ fun CountDown(
             )
 
             CircularProgressIndicator(
-                progress = progress,
+                progress = animatedProgress,
                 modifier = Modifier
                     .height(size.dp)
                     .width(size.dp),
