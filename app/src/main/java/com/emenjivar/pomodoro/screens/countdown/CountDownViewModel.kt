@@ -18,6 +18,9 @@ class CountDownViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
 
+    private val _isFullScreen = MutableLiveData(false)
+    val isFullScreen = _isFullScreen
+
     var testMode = false
 
     fun startTimer() {
@@ -61,5 +64,9 @@ class CountDownViewModel : ViewModel() {
         _isPlaying.value = false
         _counter.value = Counter()
         countDownTimer?.cancel()
+    }
+
+    fun toggleNightMode() {
+        _isFullScreen.value = _isFullScreen.value?.not()
     }
 }
