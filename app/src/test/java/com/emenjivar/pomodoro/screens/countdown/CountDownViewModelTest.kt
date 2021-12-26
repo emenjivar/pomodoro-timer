@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.countdown
+package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.pomodoro.getOrAwaitValue
