@@ -1,11 +1,13 @@
-package com.emenjivar.pomodoro.countdown
+package com.emenjivar.pomodoro.screens.countdown
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
@@ -18,7 +20,8 @@ fun CountDownScreen(
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
-    fullScreenAction: () -> Unit
+    fullScreenAction: () -> Unit,
+    isFullScreen: Boolean = false
 ) {
     val counter by viewModel.counter.observeAsState(Counter())
     val isPlaying by viewModel.isPlaying.observeAsState(false)
@@ -30,7 +33,8 @@ fun CountDownScreen(
         playAction = playAction,
         pauseAction = pauseAction,
         stopAction = stopAction,
-        fullScreenAction = fullScreenAction
+        fullScreenAction = fullScreenAction,
+        isFullScreen = isFullScreen
     )
 }
 
@@ -42,20 +46,19 @@ fun CountDownScreen(
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
-    fullScreenAction: () -> Unit
+    fullScreenAction: () -> Unit,
+    isFullScreen: Boolean = false
 ) {
     val horizontalSpace = 30.dp
 
-    val playPauseIcon = if (isPlaying) {
-        R.drawable.ic_baseline_pause_24
-    } else {
-        R.drawable.ic_baseline_play_arrow_24
-    }
-
+    val playPauseIcon = if (isPlaying) R.drawable.ic_baseline_pause_24 else R.drawable.ic_baseline_play_arrow_24
+    val fullScreenIcon = if (isFullScreen) R.drawable.ic_baseline_fullscreen_exit_24 else R.drawable.ic_baseline_fullscreen_24
+    val backgroundColor = colorResource(if (isFullScreen) R.color.primary else R.color.white)
     val playPauseAction = if (isPlaying) playAction else pauseAction
 
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .background(backgroundColor),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CountDown(
@@ -64,23 +67,24 @@ fun CountDownScreen(
             time = counter.time,
             progress = counter.progress,
             size = 230,
-            stroke = 7
+            stroke = 7,
+            isFullScreen = isFullScreen
         )
 
         Row(
             modifier = Modifier
                 .padding(vertical = 25.dp)
         ) {
-            ActionButton(icon = playPauseIcon, onClick = playPauseAction)
+            ActionButton(icon = playPauseIcon, isFullScreen = isFullScreen, onClick = playPauseAction)
             Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = R.drawable.ic_baseline_stop_24, onClick = stopAction)
+            ActionButton(icon = R.drawable.ic_baseline_stop_24, isFullScreen = isFullScreen, onClick = stopAction)
             Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = R.drawable.ic_baseline_fullscreen_24, onClick = fullScreenAction)
+            ActionButton(icon = fullScreenIcon, isFullScreen = isFullScreen, onClick = fullScreenAction)
         }
     }
 }
 
-@Preview
+@Preview(name = "Normal counter")
 @Composable
 fun PreviewCountDownScreen() {
     CountDownScreen(
@@ -90,6 +94,22 @@ fun PreviewCountDownScreen() {
         playAction = {},
         pauseAction = {},
         stopAction = {},
-        fullScreenAction = {}
+        fullScreenAction = {},
+        isFullScreen = false
+    )
+}
+
+@Preview(name = "Full screen counter")
+@Composable
+fun PreviewCountDownFullScreen() {
+    CountDownScreen(
+        modifier = Modifier.fillMaxSize(),
+        isPlaying = false,
+        counter = Counter(time = "24:59", progress =  0.99f),
+        playAction = {},
+        pauseAction = {},
+        stopAction = {},
+        fullScreenAction = {},
+        isFullScreen = true
     )
 }

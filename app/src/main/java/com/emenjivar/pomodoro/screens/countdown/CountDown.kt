@@ -1,11 +1,11 @@
-package com.emenjivar.pomodoro.countdown
+package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,15 +31,18 @@ fun CountDown(
     time: String,
     progress: Float,
     size: Int,
-    stroke: Int
+    stroke: Int,
+    isFullScreen: Boolean = false
 ) {
+    val itemColor = colorResource(if(isFullScreen) R.color.white else R.color.primary)
+
     Column(modifier = modifier) {
         Box {
             CircularProgressIndicatorBackground(
                 modifier = Modifier
                     .height(size.dp)
                     .width(size.dp),
-                color = colorResource(id = R.color.light),
+                color = colorResource(R.color.light),
                 stroke = stroke
             )
 
@@ -48,14 +51,14 @@ fun CountDown(
                 modifier = Modifier
                     .height(size.dp)
                     .width(size.dp),
-                color = colorResource(id = R.color.primary),
+                color = itemColor,
                 strokeWidth = stroke.dp
             )
 
             Column(modifier = Modifier.align(Alignment.Center)) {
                 Text(
                     text = time,
-                    color = Color(0xFFFF5C58),
+                    color = itemColor,
                     fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
                     fontSize = 70.sp,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -98,17 +101,22 @@ fun CircularProgressIndicatorBackground(
 @Composable
 fun ActionButton(
     icon: Int,
+    isFullScreen: Boolean = false,
     onClick: () -> Unit
 ) {
+    val itemColor = colorResource(if(isFullScreen) R.color.white else R.color.primary)
+    val iconColor = colorResource(if(isFullScreen) R.color.primary else R.color.white)
+
     IconButton(
         onClick = onClick,
         modifier = Modifier
             .clip(CircleShape)
-            .background(colorResource(id = R.color.primary))
+            .background(itemColor)
     ) {
-        Image(
+        Icon(
             painter = painterResource(icon),
-            contentDescription = null
+            contentDescription = null,
+            tint = iconColor
         )
     }
 }
