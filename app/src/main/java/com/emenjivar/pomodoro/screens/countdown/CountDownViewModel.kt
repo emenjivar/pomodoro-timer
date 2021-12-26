@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.countdown
+package com.emenjivar.pomodoro.screens.countdown
 
 import android.os.CountDownTimer
 import android.util.Log
