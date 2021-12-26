@@ -1,5 +1,6 @@
 package com.emenjivar.pomodoro
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,8 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
-import com.emenjivar.pomodoro.countdown.CountDownScreen
-import com.emenjivar.pomodoro.countdown.CountDownViewModel
+import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
+import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
+import com.emenjivar.pomodoro.screens.countdown.fullscreen.FullScreenActivity
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,10 +33,15 @@ class MainActivity : ComponentActivity() {
                         playAction = { viewModel.pauseTimer() },
                         pauseAction = { viewModel.startTimer() },
                         stopAction = { viewModel.stopTimer() },
-                        fullScreenAction = {}
+                        fullScreenAction = { openFullScreen() }
                     )
                 }
             }
         }
+    }
+
+    private fun openFullScreen() {
+        val intent = Intent(this, FullScreenActivity::class.java)
+        startActivity(intent)
     }
 }
