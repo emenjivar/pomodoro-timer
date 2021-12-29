@@ -2,7 +2,7 @@ package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.pomodoro.getOrAwaitValue
-import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.utils.TimerUtility
 import org.junit.Assert.*
 import org.junit.Before
@@ -24,7 +24,7 @@ class CountDownViewModelTest {
 
     @Test
     fun `test default values`() {
-        assertEquals(Counter(), viewModel.counter.value)
+        assertEquals(Pomodoro(), viewModel.counter.value)
         assertFalse(viewModel.isPlaying.value ?: true)
         assertFalse(viewModel.isFullScreen.value ?: true)
         assertTrue(viewModel.testMode)
@@ -65,7 +65,7 @@ class CountDownViewModelTest {
         val counter = viewModel.counter.getOrAwaitValue()
 
         assertFalse(isPlaying)
-        assertEquals(Counter(), counter)
+        assertEquals(Pomodoro(), counter)
     }
 
     @Test

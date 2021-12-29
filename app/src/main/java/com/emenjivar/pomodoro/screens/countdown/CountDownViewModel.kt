@@ -5,15 +5,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.utils.TimerUtility
 import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
 
 class CountDownViewModel : ViewModel() {
 
     private var countDownTimer: CountDownTimer? = null
-    private val _counter = MutableLiveData(Counter())
-    val counter: LiveData<Counter> = _counter
+    private val _counter = MutableLiveData(Pomodoro())
+    val counter: LiveData<Pomodoro> = _counter
 
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
@@ -46,7 +46,7 @@ class CountDownViewModel : ViewModel() {
     }
 
     fun setTime(milliseconds: Long) {
-        _counter.value = Counter(
+        _counter.value = Pomodoro(
             milliseconds = milliseconds,
             time = milliseconds.formatTime(),
             // Value between 0 and 1
@@ -62,7 +62,7 @@ class CountDownViewModel : ViewModel() {
     // Reset to default values and pause
     fun stopTimer() {
         _isPlaying.value = false
-        _counter.value = Counter()
+        _counter.value = Pomodoro()
         countDownTimer?.cancel()
     }
 
