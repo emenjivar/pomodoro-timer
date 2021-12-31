@@ -9,9 +9,9 @@ You can swipe between ``day`` and ``night`` pressing the ``moon`` button
 
 ## Features
 - [x] Pomodoro counter
-- [] Schedule pomodoros using the calendar
-- [] Sync app with google calendar
+- [ ] Schedule pomodoros using the calendar
+- [ ] Sync app with google calendar
 - [x] Unit testing
-- [] Integration testing
-- [] CI/CD pipeline
-- [] Playstore uploaded
+- [ ] Integration testing
+- [ ] CI/CD pipeline
+- [ ] Playstore uploaded
