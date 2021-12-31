@@ -8,6 +8,9 @@ object TimerUtility {
     const val POMODORO_TIME: Long = 1000 * 60 * 25
     private const val TIME_FORMAT = "%02d:%02d"
 
+    // Default value of pomodoro rest is 5 minutes
+    const val POMODORO_REST: Long = 1000 * 60 * 5
+
     /**
      * Convert milliseconds to readable time
      * 1500000ms -> 25:00
