@@ -3,7 +3,13 @@ package com.emenjivar.pomodoro.screens.countdown
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -15,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.Pomodoro
-import com.emenjivar.pomodoro.model.RestPomodoro
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
 @Composable
@@ -56,8 +61,10 @@ fun CountDownScreen(
 ) {
     val horizontalSpace = 30.dp
 
-    val playPauseIcon = if (isPlaying) R.drawable.ic_baseline_pause_24 else R.drawable.ic_baseline_play_arrow_24
-    val fullScreenIcon = if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24 else R.drawable.ic_baseline_mode_night_24
+    val playPauseIcon =
+        if (isPlaying) R.drawable.ic_baseline_pause_24 else R.drawable.ic_baseline_play_arrow_24
+    val fullScreenIcon =
+        if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24 else R.drawable.ic_baseline_mode_night_24
     val backgroundColor = animateColorAsState(
         targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
@@ -84,11 +91,23 @@ fun CountDownScreen(
             modifier = Modifier
                 .padding(vertical = 25.dp)
         ) {
-            ActionButton(icon = playPauseIcon, isFullScreen = isFullScreen, onClick = playPauseAction)
+            ActionButton(
+                icon = playPauseIcon,
+                isFullScreen = isFullScreen,
+                onClick = playPauseAction
+            )
             Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = R.drawable.ic_baseline_stop_24, isFullScreen = isFullScreen, onClick = stopAction)
+            ActionButton(
+                icon = R.drawable.ic_baseline_stop_24,
+                isFullScreen = isFullScreen,
+                onClick = stopAction
+            )
             Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(icon = fullScreenIcon, isFullScreen = isFullScreen, onClick = fullScreenAction)
+            ActionButton(
+                icon = fullScreenIcon,
+                isFullScreen = isFullScreen,
+                onClick = fullScreenAction
+            )
         }
     }
 }
@@ -99,7 +118,7 @@ fun PreviewCountDownScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         isPlaying = false,
-        pomodoro = NormalPomodoro(time = "24:59", progress =  0.99f),
+        pomodoro = NormalPomodoro(time = "24:59", progress = 0.99f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -114,7 +133,7 @@ fun PreviewCountDownFullScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         isPlaying = false,
-        pomodoro = NormalPomodoro(time = "24:59", progress =  0.99f),
+        pomodoro = NormalPomodoro(time = "24:59", progress = 0.99f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
