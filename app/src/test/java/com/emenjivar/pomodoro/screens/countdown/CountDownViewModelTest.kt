@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.pomodoro.getOrAwaitValue
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
