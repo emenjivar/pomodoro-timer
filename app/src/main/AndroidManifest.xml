@@ -10,11 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PomodoroScheduler">
         <activity
-            android:name="com.emenjivar.pomodoro.screens.countdown.fullscreen.FullScreenActivity"
-            android:exported="false"
-            android:label="@string/title_activity_full_screen"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
