@@ -15,7 +15,7 @@ data class NormalPomodoro(
     override val totalMilliseconds: Long = milliseconds,
     override var time: String = TimerUtility.POMODORO_TIME.formatTime(),
     override var progress: Float = 100f
-): Pomodoro(
+) : Pomodoro(
     milliseconds = milliseconds,
     totalMilliseconds = totalMilliseconds,
     time = time,

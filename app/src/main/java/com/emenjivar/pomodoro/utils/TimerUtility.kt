@@ -24,5 +24,6 @@ object TimerUtility {
     /**
      * Calculate percent in pomodoro elapsed time
      */
-    fun getProgress(currentTime: Long, totalTime: Long = POMODORO_TIME): Long = currentTime * 100 / totalTime
+    fun getProgress(currentTime: Long, totalTime: Long = POMODORO_TIME): Long =
+        currentTime * 100 / totalTime
 }
