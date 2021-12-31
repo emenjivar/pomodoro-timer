@@ -9,8 +9,8 @@ import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
 import com.emenjivar.pomodoro.utils.TimerUtility
 import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
-import java.util.Queue
 import java.util.LinkedList
+import java.util.Queue
 
 class CountDownViewModel : ViewModel() {
 
