@@ -5,7 +5,10 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -41,11 +44,11 @@ fun CountDown(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
     val itemColor = animateColorAsState(
-        targetValue = colorResource(if(isFullScreen) R.color.white else R.color.primary),
+        targetValue = colorResource(if (isFullScreen) R.color.white else R.color.primary),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val progressBackgroundColor = animateColorAsState(
-        targetValue = colorResource(if(isFullScreen) R.color.primary else R.color.light),
+        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.light),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
@@ -118,11 +121,11 @@ fun ActionButton(
     onClick: () -> Unit
 ) {
     val itemColor = animateColorAsState(
-        targetValue = colorResource(if(isFullScreen) R.color.white else R.color.primary),
+        targetValue = colorResource(if (isFullScreen) R.color.white else R.color.primary),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val iconColor = animateColorAsState(
-        targetValue = colorResource(if(isFullScreen) R.color.primary else R.color.white),
+        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 

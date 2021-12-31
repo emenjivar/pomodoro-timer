@@ -4,7 +4,7 @@ import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class TimerUtilityTest{
+class TimerUtilityTest {
 
     @Test
     fun `formatTime parse complete pomodoro time`() {
@@ -38,7 +38,7 @@ class TimerUtilityTest{
 
     @Test
     fun `formatTime parse half pomodoro time`() {
-        val time  = TimerUtility.POMODORO_TIME / 2
+        val time = TimerUtility.POMODORO_TIME / 2
         val progress = TimerUtility.getProgress(time)
 
         assertEquals(time.formatTime(), "12:30")

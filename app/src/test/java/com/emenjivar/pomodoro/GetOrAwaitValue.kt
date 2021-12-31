@@ -22,7 +22,7 @@ fun <T> LiveData<T>.getOrAwaitValue(
 
     this.observeForever(observer)
 
-    if(!latch.await(time, timeUnit)) {
+    if (!latch.await(time, timeUnit)) {
         throw TimeoutException("LiveData value was never set.")
     }
 
