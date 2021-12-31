@@ -1,5 +1,6 @@
-# Pomodoro scheduler
-## About this project
+# Pomodoro scheduler 
+[![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml)
+
 It is a simple countdown using [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), developed in jetpack compose and kotlin, following my own [figma design](https://www.figma.com/file/Y6oJ51KCgG7vcZNQN8ZDu0/Pomodoro).
 
 ## How it works
