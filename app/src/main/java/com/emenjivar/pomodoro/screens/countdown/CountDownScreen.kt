@@ -13,7 +13,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.model.NormalPomodoro
+import com.emenjivar.pomodoro.model.Pomodoro
+import com.emenjivar.pomodoro.model.RestPomodoro
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
 @Composable
@@ -25,14 +27,14 @@ fun CountDownScreen(
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit
 ) {
-    val counter by viewModel.counter.observeAsState(Counter())
+    val pomodoro by viewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
     val isPlaying by viewModel.isPlaying.observeAsState(false)
     val isFullScreen by viewModel.isFullScreen.observeAsState(false)
 
     CountDownScreen(
         modifier = modifier,
         isPlaying = isPlaying,
-        counter = counter,
+        pomodoro = pomodoro,
         playAction = playAction,
         pauseAction = pauseAction,
         stopAction = stopAction,
@@ -45,7 +47,7 @@ fun CountDownScreen(
 fun CountDownScreen(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
-    counter: Counter,
+    pomodoro: Pomodoro,
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
@@ -71,8 +73,8 @@ fun CountDownScreen(
         CountDown(
             modifier = Modifier
                 .padding(top = 50.dp),
-            time = counter.time,
-            progress = counter.progress,
+            time = pomodoro.time,
+            progress = pomodoro.progress,
             size = 230,
             stroke = 7,
             isFullScreen = isFullScreen
@@ -97,7 +99,7 @@ fun PreviewCountDownScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         isPlaying = false,
-        counter = Counter(time = "24:59", progress =  0.99f),
+        pomodoro = NormalPomodoro(time = "24:59", progress =  0.99f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -112,7 +114,7 @@ fun PreviewCountDownFullScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         isPlaying = false,
-        counter = Counter(time = "24:59", progress =  0.99f),
+        pomodoro = NormalPomodoro(time = "24:59", progress =  0.99f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
