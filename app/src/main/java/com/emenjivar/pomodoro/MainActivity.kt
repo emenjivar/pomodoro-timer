@@ -1,6 +1,5 @@
 package com.emenjivar.pomodoro
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,8 +29,8 @@ class MainActivity : ComponentActivity() {
                         viewModel = viewModel,
                         modifier = Modifier.fillMaxSize(),
                         playAction = { viewModel.pauseTimer() },
-                        pauseAction = { viewModel.startTimer() },
-                        stopAction = { viewModel.stopTimer() },
+                        pauseAction = { viewModel.playTimer() },
+                        stopAction = { viewModel.stopCurrentPomodoro() },
                         fullScreenAction = { viewModel.toggleNightMode() }
                     )
                 }
