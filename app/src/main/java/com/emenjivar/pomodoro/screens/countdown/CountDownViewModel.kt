@@ -9,7 +9,8 @@ import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
 import com.emenjivar.pomodoro.utils.TimerUtility
 import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
-import java.util.*
+import java.util.Queue
+import java.util.LinkedList
 
 class CountDownViewModel : ViewModel() {
 
@@ -117,15 +118,6 @@ class CountDownViewModel : ViewModel() {
             is RestPomodoro -> RestPomodoro()
             else -> NormalPomodoro()
         }
-        countDownTimer?.cancel()
-    }
-
-    /**
-     * Stop the timer and load a 25min standard pomodoro on the counter
-     */
-    fun stopTimer() {
-        startForBeginning = false
-        _isPlaying.value = false
         countDownTimer?.cancel()
     }
 
