@@ -4,16 +4,19 @@
 It is a simple countdown using [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), developed in jetpack compose and kotlin, following my own [figma design](https://www.figma.com/file/Y6oJ51KCgG7vcZNQN8ZDu0/Pomodoro).
 
 ## How it works
-When you press **start**, the pomodoro will start with a duration of 25 minutes, followed by a 5 minute rest. 
-
-You can swipe between **day** and **night** pressing the **moon** button
+Start a standar 25 minutes pomodoro using the play button, when the countdown is finished,  5 minutes break will automatically start.
 
 ## Before pushing
 Before push your commits, you should execute the following ``gradle commands`` to verify that nothing has broken:
-```bash
-./gradlew lint
-./gradlew ktlintCheck
-./gradlew testDebugUnitTest
+```shell
+~$ ./gradlew lint
+~$ ./gradlew ktlintCheck
+~$ ./gradlew testDebugUnitTest
+```
+
+Or simply execute the next bash script which contains all the steps from the pipeline:
+```shell
+~$ ./before_push.sh
 ```
 
 ## Features
