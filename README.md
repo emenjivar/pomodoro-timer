@@ -7,6 +7,8 @@ When you press **start**, the pomodoro will start with a duration of 25 minutes,
 
 You can swipe between **day** and **night** pressing the **moon** button
 
+![imagge](.github/images/pomodoro-countdown.gif)
+
 ## Before pushing
 Before push your commits, you should execute the following ``gradle commands`` to verify that nothing has broken:
 ```bash
