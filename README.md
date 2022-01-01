@@ -11,14 +11,14 @@ Start a standar 25 minutes pomodoro using the play button, when the countdown is
 ## Before pushing
 Before push your commits, you should execute the following ``gradle commands`` to verify that nothing has broken:
 ```shell
-~$ ./gradlew lint
-~$ ./gradlew ktlintCheck
-~$ ./gradlew testDebugUnitTest
+./gradlew lint
+./gradlew ktlintCheck
+./gradlew testDebugUnitTest
 ```
 
 Or simply execute the next bash script which contains all the steps from the pipeline:
 ```shell
-~$ ./before_push.sh
+./before_push.sh
 ```
 
 ## Features
