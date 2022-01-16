@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
@@ -30,7 +33,8 @@ fun CountDownScreen(
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
-    fullScreenAction: () -> Unit
+    fullScreenAction: () -> Unit,
+    openSettings: () -> Unit
 ) {
     val pomodoro by viewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
     val isPlaying by viewModel.isPlaying.observeAsState(false)
@@ -44,7 +48,8 @@ fun CountDownScreen(
         pauseAction = pauseAction,
         stopAction = stopAction,
         fullScreenAction = fullScreenAction,
-        isFullScreen = isFullScreen
+        isFullScreen = isFullScreen,
+        openSettings = openSettings
     )
 }
 
@@ -57,7 +62,8 @@ fun CountDownScreen(
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit,
-    isFullScreen: Boolean = false
+    isFullScreen: Boolean = false,
+    openSettings: () -> Unit,
 ) {
     val horizontalSpace = 30.dp
 
@@ -77,6 +83,15 @@ fun CountDownScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+        IconButton(onClick = { openSettings() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_settings_24),
+                tint = colorResource(id = R.color.primary),
+                contentDescription = null
+            )
+        }
+
         CountDown(
             modifier = Modifier
                 .padding(top = 50.dp),
@@ -123,7 +138,8 @@ fun PreviewCountDownScreen() {
         pauseAction = {},
         stopAction = {},
         fullScreenAction = {},
-        isFullScreen = false
+        isFullScreen = false,
+        openSettings = {}
     )
 }
 
@@ -138,6 +154,7 @@ fun PreviewCountDownFullScreen() {
         pauseAction = {},
         stopAction = {},
         fullScreenAction = {},
-        isFullScreen = true
+        isFullScreen = true,
+        openSettings = {}
     )
 }

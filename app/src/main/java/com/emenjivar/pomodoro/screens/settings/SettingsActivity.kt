@@ -5,21 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 
@@ -30,7 +31,7 @@ class SettingsActivity : ComponentActivity() {
             PomodoroSchedulerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    SettingsList()
                 }
             }
         }
@@ -38,33 +39,120 @@ class SettingsActivity : ComponentActivity() {
 }
 
 @Composable
-fun SettingsItem(title: String) {
+fun SettingsList() {
+    Column {
+        SettingsGroup(title = "Time settings") {
+            SettingsItem(
+                title = "Pomodoro",
+                description = "Defines the duration of the intervals"
+            ) {
+                SettingsRightText("25 min.")
+            }
+            SettingsItem(
+                title = "Rest",
+                description = "Defines the duration of the intervals after Pomodoros"
+            ) {
+                SettingsRightText("5 min.")
+            }
+        }
+
+        SettingsGroup(title = "Sounds") {
+            SettingsItem(
+                title = "Pomodoro",
+                description = "Select the sound to notify the end of the pomodoro"
+            ) {
+                SettingsRightText("Bell")
+            }
+            SettingsItem(
+                title = "Rest",
+                description = "Select the sound to notify the end of the block of time"
+            ) {
+                SettingsRightText("Drop")
+            }
+        }
+
+        SettingsGroup(title = "Others") {
+            SettingsItem(
+                title = "Keep screen on"
+            ) { }
+        }
+    }
+}
+
+@Composable
+fun SettingsGroup(
+    title: String,
+    action: @Composable () -> Unit
+) {
+    Text(
+        text = title,
+        color = colorResource(id = R.color.primary),
+        fontSize = 13.sp,
+        modifier = Modifier.padding(
+            start = 16.dp,
+            top = 16.dp,
+            end = 16.dp,
+            bottom = 8.dp
+        )
+    )
+    action()
+}
+
+@Composable
+fun SettingsItem(
+    title: String,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    action: @Composable () -> Unit
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(15.dp)
-            .clickable {  },
+            .clickable { }
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = title,
-            fontFamily = FontFamily(Font(R.font.ubuntu_regular))
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_arrow_drop_down_24),
-            contentDescription = null
-        )
+        Column(
+            modifier = Modifier.weight(2f)
+        ) {
+            Text(
+                text = title,
+                fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+            )
+            description?.let { safeDescription ->
+                Text(
+                    text = safeDescription,
+                    fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(
+                        top = 8.dp
+                    )
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .weight(0.8f),
+            horizontalAlignment = Alignment.End
+        ) {
+            action()
+        }
     }
+}
+
+@Composable
+fun SettingsRightText(text: String) {
+    Text(
+        text = text,
+        fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewStingsItem() {
-    SettingsItem(title = "Time configuration")
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    MaterialTheme {
+        SettingsList()
+    }
 }
