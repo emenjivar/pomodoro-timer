@@ -3,7 +3,6 @@ package com.emenjivar.pomodoro.screens.countdown
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.Pomodoro
@@ -68,61 +68,86 @@ fun CountDownScreen(
     val horizontalSpace = 30.dp
 
     val playPauseIcon =
-        if (isPlaying) R.drawable.ic_baseline_pause_24 else R.drawable.ic_baseline_play_arrow_24
+        if (isPlaying) R.drawable.ic_baseline_pause_24
+        else R.drawable.ic_baseline_play_arrow_24
+
     val fullScreenIcon =
-        if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24 else R.drawable.ic_baseline_mode_night_24
+        if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24
+        else R.drawable.ic_baseline_mode_night_24
+
     val backgroundColor = animateColorAsState(
         targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
-        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+        animationSpec = tween(TRANSITION_DURATION)
+    )
+    val iconColor = animateColorAsState(
+        targetValue = colorResource(if (isFullScreen) R.color.white else R.color.primary),
+        animationSpec = tween(TRANSITION_DURATION)
     )
     val playPauseAction = if (isPlaying) playAction else pauseAction
 
-    Column(
+    ConstraintLayout(
         modifier = modifier
-            .background(backgroundColor.value),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(backgroundColor.value)
     ) {
+        val (_settingsButton, _container) = createRefs()
 
-        IconButton(onClick = { openSettings() }) {
+        IconButton(
+            modifier = Modifier
+                .constrainAs(_settingsButton) {
+                    top.linkTo(anchor = parent.top, margin = 16.dp)
+                    end.linkTo(anchor = parent.end, margin = 16.dp)
+                },
+            onClick = { openSettings() }
+        ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_settings_24),
-                tint = colorResource(id = R.color.primary),
+                painter = painterResource(R.drawable.ic_baseline_settings_24),
+                tint = iconColor.value,
                 contentDescription = null
             )
         }
 
-        CountDown(
+        Column(
             modifier = Modifier
-                .padding(top = 50.dp),
-            time = pomodoro.time,
-            progress = pomodoro.progress,
-            size = 230,
-            stroke = 7,
-            isFullScreen = isFullScreen
-        )
-
-        Row(
-            modifier = Modifier
-                .padding(vertical = 25.dp)
+                .constrainAs(_container) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ActionButton(
-                icon = playPauseIcon,
-                isFullScreen = isFullScreen,
-                onClick = playPauseAction
+            CountDown(
+                modifier = Modifier
+                    .padding(top = 50.dp),
+                time = pomodoro.time,
+                progress = pomodoro.progress,
+                size = 230,
+                stroke = 7,
+                isFullScreen = isFullScreen
             )
-            Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(
-                icon = R.drawable.ic_baseline_stop_24,
-                isFullScreen = isFullScreen,
-                onClick = stopAction
-            )
-            Spacer(modifier = Modifier.width(horizontalSpace))
-            ActionButton(
-                icon = fullScreenIcon,
-                isFullScreen = isFullScreen,
-                onClick = fullScreenAction
-            )
+
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 25.dp)
+            ) {
+                ActionButton(
+                    icon = playPauseIcon,
+                    isFullScreen = isFullScreen,
+                    onClick = playPauseAction
+                )
+                Spacer(modifier = Modifier.width(horizontalSpace))
+                ActionButton(
+                    icon = R.drawable.ic_baseline_stop_24,
+                    isFullScreen = isFullScreen,
+                    onClick = stopAction
+                )
+                Spacer(modifier = Modifier.width(horizontalSpace))
+                ActionButton(
+                    icon = fullScreenIcon,
+                    isFullScreen = isFullScreen,
+                    onClick = fullScreenAction
+                )
+            }
         }
     }
 }
