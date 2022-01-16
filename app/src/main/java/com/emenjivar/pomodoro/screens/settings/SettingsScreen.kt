@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -41,7 +43,10 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Settings")
+                    Text(
+                        text = "Settings",
+                        fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = backAction) {
@@ -56,7 +61,11 @@ fun SettingsScreen(
             )
         }
     ) {
-        Column {
+        val scrollState = rememberScrollState()
+
+        Column(
+            modifier = Modifier.verticalScroll(scrollState)
+        ) {
             SettingsGroup(title = "Time settings") {
                 SettingsItem(
                     title = "Pomodoro",
@@ -104,6 +113,7 @@ fun SettingsGroup(
     Text(
         text = title,
         color = colorResource(id = R.color.primary),
+        fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
         fontSize = 13.sp,
         modifier = Modifier.padding(
             start = 16.dp,
