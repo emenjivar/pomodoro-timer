@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
@@ -16,33 +17,31 @@ import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var viewModel: CountDownViewModel
+    private lateinit var countDownViewModel: CountDownViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(CountDownViewModel::class.java)
+        countDownViewModel = ViewModelProvider(this).get(CountDownViewModel::class.java)
+        countDownViewModel.openSettings.observe(this, observeOpenSettings)
 
         setContent {
             PomodoroSchedulerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     CountDownScreen(
-                        viewModel = viewModel,
-                        modifier = Modifier.fillMaxSize(),
-                        playAction = { viewModel.pauseTimer() },
-                        pauseAction = { viewModel.playTimer() },
-                        stopAction = { viewModel.stopCurrentPomodoro() },
-                        fullScreenAction = { viewModel.toggleNightMode() },
-                        openSettings = { openSettings() }
+                        countDownViewModel = countDownViewModel,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
         }
     }
 
-    private fun openSettings() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+    private val observeOpenSettings = Observer<Boolean> { status ->
+        if (status) {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

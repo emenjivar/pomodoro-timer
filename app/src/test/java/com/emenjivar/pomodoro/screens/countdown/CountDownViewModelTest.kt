@@ -29,6 +29,7 @@ class CountDownViewModelTest {
         assertEquals(NormalPomodoro(), viewModel.pomodoro.value)
         assertFalse(viewModel.isPlaying.value ?: true)
         assertFalse(viewModel.isFullScreen.value ?: true)
+        assertFalse(viewModel.openSettings.value ?: true)
         assertTrue(viewModel.listPomodoro.isNotEmpty())
         assertTrue(viewModel.startForBeginning)
         assertTrue(viewModel.testMode)
@@ -190,5 +191,13 @@ class CountDownViewModelTest {
         assertFalse(first)
         assertTrue(second)
         assertFalse(third)
+    }
+
+    @Test
+    fun `openSettings changes liveData value`() {
+        viewModel.openSettings()
+
+        val result = viewModel.openSettings.getOrAwaitValue()
+        assertTrue(result)
     }
 }

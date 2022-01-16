@@ -17,7 +17,6 @@ class SettingsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-
         viewModel.closeSettings.observe(this, observeCloseSettings)
 
         setContent {

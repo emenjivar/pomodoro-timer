@@ -25,6 +25,9 @@ class CountDownViewModel : ViewModel() {
     private val _isFullScreen = MutableLiveData(false)
     val isFullScreen = _isFullScreen
 
+    private val _openSettings = MutableLiveData(false)
+    val openSettings = _openSettings
+
     val listPomodoro: Queue<Pomodoro> = LinkedList()
 
     var startForBeginning: Boolean = true
@@ -123,5 +126,9 @@ class CountDownViewModel : ViewModel() {
 
     fun toggleNightMode() {
         _isFullScreen.value = _isFullScreen.value?.not()
+    }
+
+    fun openSettings() {
+        _openSettings.value = true
     }
 }

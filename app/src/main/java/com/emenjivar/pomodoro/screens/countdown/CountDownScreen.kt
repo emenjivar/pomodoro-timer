@@ -29,27 +29,22 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 @Composable
 fun CountDownScreen(
     modifier: Modifier = Modifier,
-    viewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    playAction: () -> Unit,
-    pauseAction: () -> Unit,
-    stopAction: () -> Unit,
-    fullScreenAction: () -> Unit,
-    openSettings: () -> Unit
+    countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val pomodoro by viewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
-    val isPlaying by viewModel.isPlaying.observeAsState(false)
-    val isFullScreen by viewModel.isFullScreen.observeAsState(false)
+    val pomodoro by countDownViewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
+    val isPlaying by countDownViewModel.isPlaying.observeAsState(false)
+    val isFullScreen by countDownViewModel.isFullScreen.observeAsState(false)
 
     CountDownScreen(
         modifier = modifier,
         isPlaying = isPlaying,
         pomodoro = pomodoro,
-        playAction = playAction,
-        pauseAction = pauseAction,
-        stopAction = stopAction,
-        fullScreenAction = fullScreenAction,
+        playAction = { countDownViewModel.pauseTimer() },
+        pauseAction = { countDownViewModel.playTimer() },
+        stopAction = { countDownViewModel.stopCurrentPomodoro() },
+        fullScreenAction = { countDownViewModel.toggleNightMode() },
         isFullScreen = isFullScreen,
-        openSettings = openSettings
+        openSettings = { countDownViewModel.openSettings() }
     )
 }
 
