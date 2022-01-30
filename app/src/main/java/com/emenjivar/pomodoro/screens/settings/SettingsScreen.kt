@@ -15,6 +15,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -25,19 +29,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.screens.common.CustomDialog
 
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
+    val restTime by viewModel.restTime.observeAsState(0L)
+
     SettingsScreen(
-        backAction = { viewModel.closeSettings() }
+        pomodoroTime = pomodoroTime,
+        restTime = restTime,
+        backAction = { viewModel.closeSettings() },
+        setPomodoroTime = { viewModel.setPomodoroTime(it) },
+        setRestTime = { viewModel.setRestTime(it) }
     )
 }
 
 @Composable
 fun SettingsScreen(
-    backAction: () -> Unit
+    pomodoroTime: Long,
+    restTime: Long,
+    backAction: () -> Unit,
+    setPomodoroTime: (time: String) -> Unit,
+    setRestTime: (time: String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -69,18 +85,25 @@ fun SettingsScreen(
             SettingsGroup(title = "Time settings") {
                 SettingsItem(
                     title = "Pomodoro",
-                    description = "Defines the duration of the intervals"
+                    description = "Defines the duration of the intervals",
+                    titleDialog = "Pomodoro time",
+                    descriptionDialog = "Please enter the duration in minutes",
+                    onSaveItem = setPomodoroTime
                 ) {
-                    SettingsRightText("25 min.")
+                    SettingsRightText("$pomodoroTime min.")
                 }
                 SettingsItem(
                     title = "Rest",
-                    description = "Defines the duration of the intervals after Pomodoros"
+                    description = "Defines the duration of the intervals after Pomodoros",
+                    titleDialog = "Rest time",
+                    descriptionDialog = "Please enter the duration in minutes",
+                    onSaveItem = setRestTime
                 ) {
-                    SettingsRightText("5 min.")
+                    SettingsRightText("$restTime min.")
                 }
             }
 
+            /*
             SettingsGroup(title = "Sounds") {
                 SettingsItem(
                     title = "Pomodoro",
@@ -101,6 +124,7 @@ fun SettingsScreen(
                     title = "Keep screen on"
                 ) { }
             }
+             */
         }
     }
 }
@@ -127,15 +151,20 @@ fun SettingsGroup(
 
 @Composable
 fun SettingsItem(
-    title: String,
     modifier: Modifier = Modifier,
+    title: String,
     description: String? = null,
+    titleDialog: String,
+    descriptionDialog: String,
+    onSaveItem: (String) -> Unit,
     action: @Composable () -> Unit
 ) {
+    val showCustomDialog = remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { showCustomDialog.value = !showCustomDialog.value }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -166,6 +195,15 @@ fun SettingsItem(
             action()
         }
     }
+
+    if (showCustomDialog.value) {
+        CustomDialog(
+            title = titleDialog,
+            subtitle = descriptionDialog,
+            onSaveItem = onSaveItem,
+            onDismiss = { showCustomDialog.value = false }
+        )
+    }
 }
 
 @Composable
@@ -181,7 +219,11 @@ fun SettingsRightText(text: String) {
 fun PreviewStingsItem() {
     MaterialTheme {
         SettingsScreen(
-            backAction = {}
+            pomodoroTime = 0L,
+            restTime = 0L,
+            backAction = {},
+            setPomodoroTime = {},
+            setRestTime = {}
         )
     }
 }
