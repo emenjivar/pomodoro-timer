@@ -52,7 +52,7 @@ fun CustomDialog(
 
                 TextField(
                     value = text,
-                    onValueChange = { text = it}
+                    onValueChange = { text = it }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

@@ -11,8 +11,8 @@ import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.GetRestTimeUseCase
 import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
-import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 import com.emenjivar.data.repository.SettingsRepositoryImp
+import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 
 class SettingsActivity : ComponentActivity() {
 

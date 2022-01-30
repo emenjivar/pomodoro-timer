@@ -10,7 +10,7 @@ import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -38,7 +38,7 @@ class SettingsViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Before
-    fun prepareTest() = mainCoroutineRule.runBlockingTest {
+    fun prepareTest() = runTest {
 
         settingsRepository = Mockito.mock(SettingsRepository::class.java)
         getPomodoroTimeUseCase = GetPomodoroTimeUseCase(settingsRepository)
@@ -99,4 +99,3 @@ class SettingsViewModelTest {
         Assert.assertTrue(result)
     }
 }
-
