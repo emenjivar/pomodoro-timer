@@ -1,4 +1,4 @@
-package com.emenjivar.data.repository
+package com.emenjivar.core.repository
 
 interface SettingsRepository {
     suspend fun getPomodoroTime(): Long

@@ -7,10 +7,11 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.emenjivar.core.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class SettingRepositoryImp(private val context: Context) : SettingsRepository {
+class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SETTINGS_NAME)
     private val pomodoroTime = longPreferencesKey(POMODORO_TIME)
