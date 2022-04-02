@@ -6,7 +6,12 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    viewModel { CountDownViewModel() }
+    viewModel {
+        CountDownViewModel(
+            setNighModeUseCase = get(),
+            isNightModeUseCase = get()
+        )
+    }
     viewModel {
         SettingsViewModel(
             getPomodoroTimeUseCase = get(),

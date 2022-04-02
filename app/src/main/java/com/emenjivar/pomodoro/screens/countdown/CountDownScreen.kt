@@ -33,7 +33,7 @@ fun CountDownScreen(
 ) {
     val pomodoro by countDownViewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
     val isPlaying by countDownViewModel.isPlaying.observeAsState(false)
-    val isFullScreen by countDownViewModel.isFullScreen.observeAsState(false)
+    val isNightMode by countDownViewModel.isNightMode.observeAsState(false)
 
     CountDownScreen(
         modifier = modifier,
@@ -43,7 +43,7 @@ fun CountDownScreen(
         pauseAction = { countDownViewModel.playTimer() },
         stopAction = { countDownViewModel.stopCurrentPomodoro() },
         fullScreenAction = { countDownViewModel.toggleNightMode() },
-        isFullScreen = isFullScreen,
+        isNightMode = isNightMode,
         openSettings = { countDownViewModel.openSettings() }
     )
 }
@@ -57,7 +57,7 @@ fun CountDownScreen(
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit,
-    isFullScreen: Boolean = false,
+    isNightMode: Boolean = false,
     openSettings: () -> Unit,
 ) {
     val horizontalSpace = 30.dp
@@ -67,15 +67,15 @@ fun CountDownScreen(
         else R.drawable.ic_baseline_play_arrow_24
 
     val fullScreenIcon =
-        if (isFullScreen) R.drawable.ic_baseline_wb_sunny_24
+        if (isNightMode) R.drawable.ic_baseline_wb_sunny_24
         else R.drawable.ic_baseline_mode_night_24
 
     val backgroundColor = animateColorAsState(
-        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
+        targetValue = colorResource(if (isNightMode) R.color.primary else R.color.white),
         animationSpec = tween(TRANSITION_DURATION)
     )
     val iconColor = animateColorAsState(
-        targetValue = colorResource(if (isFullScreen) R.color.white else R.color.primary),
+        targetValue = colorResource(if (isNightMode) R.color.white else R.color.primary),
         animationSpec = tween(TRANSITION_DURATION)
     )
     val playPauseAction = if (isPlaying) playAction else pauseAction
@@ -118,7 +118,7 @@ fun CountDownScreen(
                 progress = pomodoro.progress,
                 size = 230,
                 stroke = 7,
-                isFullScreen = isFullScreen
+                isFullScreen = isNightMode
             )
 
             Row(
@@ -127,19 +127,19 @@ fun CountDownScreen(
             ) {
                 ActionButton(
                     icon = playPauseIcon,
-                    isFullScreen = isFullScreen,
+                    isFullScreen = isNightMode,
                     onClick = playPauseAction
                 )
                 Spacer(modifier = Modifier.width(horizontalSpace))
                 ActionButton(
                     icon = R.drawable.ic_baseline_stop_24,
-                    isFullScreen = isFullScreen,
+                    isFullScreen = isNightMode,
                     onClick = stopAction
                 )
                 Spacer(modifier = Modifier.width(horizontalSpace))
                 ActionButton(
                     icon = fullScreenIcon,
-                    isFullScreen = isFullScreen,
+                    isFullScreen = isNightMode,
                     onClick = fullScreenAction
                 )
             }
@@ -158,7 +158,7 @@ fun PreviewCountDownScreen() {
         pauseAction = {},
         stopAction = {},
         fullScreenAction = {},
-        isFullScreen = false,
+        isNightMode = false,
         openSettings = {}
     )
 }
@@ -174,7 +174,7 @@ fun PreviewCountDownFullScreen() {
         pauseAction = {},
         stopAction = {},
         fullScreenAction = {},
-        isFullScreen = true,
+        isNightMode = true,
         openSettings = {}
     )
 }

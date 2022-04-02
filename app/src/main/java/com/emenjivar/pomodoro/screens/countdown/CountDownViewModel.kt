@@ -4,6 +4,9 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
@@ -11,8 +14,15 @@ import com.emenjivar.pomodoro.utils.TimerUtility
 import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
 import java.util.LinkedList
 import java.util.Queue
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class CountDownViewModel : ViewModel() {
+class CountDownViewModel(
+    private val setNighModeUseCase: SetNighModeUseCase,
+    private val isNightModeUseCase: IsNightModeUseCase,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
 
     private var countDownTimer: CountDownTimer? = null
 
@@ -22,8 +32,8 @@ class CountDownViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
 
-    private val _isFullScreen = MutableLiveData(false)
-    val isFullScreen = _isFullScreen
+    private val _isNightMode = MutableLiveData(true)
+    val isNightMode: LiveData<Boolean> = _isNightMode
 
     private val _openSettings = MutableLiveData(false)
     val openSettings = _openSettings
@@ -36,6 +46,12 @@ class CountDownViewModel : ViewModel() {
     init {
         listPomodoro.add(NormalPomodoro())
         listPomodoro.add(RestPomodoro())
+
+        if (!testMode) {
+            viewModelScope.launch(ioDispatcher) {
+                _isNightMode.value = isNightModeUseCase.invoke()
+            }
+        }
     }
 
     fun startTimer(pomodoro: Pomodoro? = null) {
@@ -125,7 +141,12 @@ class CountDownViewModel : ViewModel() {
     }
 
     fun toggleNightMode() {
-        _isFullScreen.value = _isFullScreen.value?.not()
+        val nightMode = isNightMode.value?.not() ?: true
+        _isNightMode.value = nightMode
+
+        viewModelScope.launch(ioDispatcher) {
+            setNighModeUseCase.invoke(nightMode)
+        }
     }
 
     fun openSettings() {

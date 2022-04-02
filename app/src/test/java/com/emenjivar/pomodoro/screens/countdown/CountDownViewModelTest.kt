@@ -1,9 +1,14 @@
 package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.emenjivar.core.repository.SettingsRepository
+import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.getOrAwaitValue
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -11,16 +16,33 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import org.mockito.Mockito
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CountDownViewModelTest {
 
-    private val viewModel = CountDownViewModel()
+    private lateinit var setNighModeUseCase: SetNighModeUseCase
+    private lateinit var isNightModeUseCase: IsNightModeUseCase
+    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var viewModel: CountDownViewModel
+
+    private var nightMode = true
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
     @Before
-    fun setup() {
+    fun setup() = runTest {
+        settingsRepository = Mockito.mock(SettingsRepository::class.java)
+        setNighModeUseCase = SetNighModeUseCase(settingsRepository)
+        isNightModeUseCase = IsNightModeUseCase(settingsRepository)
+
+        Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
+
+        viewModel = CountDownViewModel(
+            setNighModeUseCase,
+            isNightModeUseCase
+        )
         viewModel.testMode = true
     }
 
@@ -28,7 +50,7 @@ class CountDownViewModelTest {
     fun `test default values`() {
         assertEquals(NormalPomodoro(), viewModel.pomodoro.value)
         assertFalse(viewModel.isPlaying.value ?: true)
-        assertFalse(viewModel.isFullScreen.value ?: true)
+        assertTrue(viewModel.isNightMode.value ?: true)
         assertFalse(viewModel.openSettings.value ?: true)
         assertTrue(viewModel.listPomodoro.isNotEmpty())
         assertTrue(viewModel.startForBeginning)
@@ -179,18 +201,18 @@ class CountDownViewModelTest {
     }
 
     @Test
-    fun `toggleNightMode changes liveData value`() {
-        val first = viewModel.isFullScreen.getOrAwaitValue()
+    fun `toggleNightMode changes liveData value`() = runTest {
+        val first = viewModel.isNightMode.getOrAwaitValue()
         viewModel.toggleNightMode()
 
-        val second = viewModel.isFullScreen.getOrAwaitValue()
+        val second = viewModel.isNightMode.getOrAwaitValue()
         viewModel.toggleNightMode()
 
-        val third = viewModel.isFullScreen.getOrAwaitValue()
+        val third = viewModel.isNightMode.getOrAwaitValue()
 
-        assertFalse(first)
-        assertTrue(second)
-        assertFalse(third)
+        assertTrue(first)
+        assertFalse(second)
+        assertTrue(third)
     }
 
     @Test
