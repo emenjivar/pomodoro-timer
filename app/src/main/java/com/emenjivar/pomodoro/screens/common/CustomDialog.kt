@@ -26,12 +26,13 @@ import com.emenjivar.pomodoro.ui.theme.DefaultFont
 
 @Composable
 fun CustomDialog(
+    defaultValue: String,
     title: String,
     subtitle: String,
     onSaveItem: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(defaultValue) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card {

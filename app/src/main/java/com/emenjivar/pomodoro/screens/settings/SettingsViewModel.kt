@@ -34,8 +34,8 @@ class SettingsViewModel(
 
     private fun loadSettings() {
         viewModelScope.launch(ioDispatcher) {
-            _pomodoroTime.value = getPomodoroTimeUseCase.invoke()
-            _restTime.value = getRestTimeUseCase.invoke()
+            _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke())
+            _restTime.postValue(getRestTimeUseCase.invoke())
         }
     }
 
@@ -46,7 +46,7 @@ class SettingsViewModel(
     private fun setPomodoroTime(time: Long) {
         viewModelScope.launch(ioDispatcher) {
             setPomodoroTimeUseCase.invoke(time)
-            _pomodoroTime.value = time
+            _pomodoroTime.postValue(time)
         }
     }
 
@@ -57,7 +57,7 @@ class SettingsViewModel(
     private fun setRestTime(time: Long) {
         viewModelScope.launch(ioDispatcher) {
             setRestTimeUseCase.invoke(time)
-            _restTime.value = time
+            _restTime.postValue(time)
         }
     }
 

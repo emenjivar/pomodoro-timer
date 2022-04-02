@@ -1,5 +1,6 @@
 package com.emenjivar.pomodoro.screens.settings
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,10 @@ fun SettingsScreen(
         restTime = restTime,
         backAction = { viewModel.closeSettings() },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
-        setRestTime = { viewModel.setRestTime(it) }
+        setRestTime = {
+            viewModel.setRestTime(it)
+            Log.d("SettingsScreen", "onSaveItem...")
+        }
     )
 }
 
@@ -84,6 +88,7 @@ fun SettingsScreen(
         ) {
             SettingsGroup(title = "Time settings") {
                 SettingsItem(
+                    defaultValue = pomodoroTime.toString(),
                     title = "Pomodoro",
                     description = "Defines the duration of the intervals",
                     titleDialog = "Pomodoro time",
@@ -93,6 +98,7 @@ fun SettingsScreen(
                     SettingsRightText("$pomodoroTime min.")
                 }
                 SettingsItem(
+                    defaultValue = restTime.toString(),
                     title = "Rest",
                     description = "Defines the duration of the intervals after Pomodoros",
                     titleDialog = "Rest time",
@@ -152,6 +158,7 @@ fun SettingsGroup(
 @Composable
 fun SettingsItem(
     modifier: Modifier = Modifier,
+    defaultValue: String,
     title: String,
     description: String? = null,
     titleDialog: String,
@@ -198,10 +205,14 @@ fun SettingsItem(
 
     if (showCustomDialog.value) {
         CustomDialog(
+            defaultValue = defaultValue,
             title = titleDialog,
             subtitle = descriptionDialog,
             onSaveItem = onSaveItem,
-            onDismiss = { showCustomDialog.value = false }
+            onDismiss = {
+                showCustomDialog.value = false
+                Log.d("SettingsScreen", "onDismiss...")
+            }
         )
     }
 }
