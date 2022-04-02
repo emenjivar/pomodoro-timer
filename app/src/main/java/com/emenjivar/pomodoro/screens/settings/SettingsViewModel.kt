@@ -7,6 +7,8 @@ import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.GetRestTimeUseCase
 import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.pomodoro.utils.TimerUtility.millisToMinutes
+import com.emenjivar.pomodoro.utils.TimerUtility.minutesToMillis
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,30 +36,44 @@ class SettingsViewModel(
 
     private fun loadSettings() {
         viewModelScope.launch(ioDispatcher) {
-            _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke())
-            _restTime.postValue(getRestTimeUseCase.invoke())
+            /**
+             * Values are expressed in milliseconds
+             * transform to minutes to show a readable value on UI
+             */
+            _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisToMinutes())
+            _restTime.postValue(getRestTimeUseCase.invoke().millisToMinutes())
         }
     }
 
+    /**
+     * @param time: expressed in minutes.
+     */
     fun setPomodoroTime(time: String) {
+        // Save time on milliseconds
         setPomodoroTime(time.toLongOrNull() ?: 0)
     }
 
     private fun setPomodoroTime(time: Long) {
         viewModelScope.launch(ioDispatcher) {
-            setPomodoroTimeUseCase.invoke(time)
             _pomodoroTime.postValue(time)
+            // Parse to milliseconds
+            setPomodoroTimeUseCase.invoke(time.minutesToMillis())
         }
     }
 
+    /**
+     * @param time: expressed in minutes
+     */
     fun setRestTime(time: String) {
+        // Save time on milliseconds
         setRestTime(time.toLongOrNull() ?: 0)
     }
 
     private fun setRestTime(time: Long) {
         viewModelScope.launch(ioDispatcher) {
-            setRestTimeUseCase.invoke(time)
             _restTime.postValue(time)
+            // Parse to milliSeconds
+            setRestTimeUseCase.invoke(time.minutesToMillis())
         }
     }
 
