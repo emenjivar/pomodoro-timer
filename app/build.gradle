@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.emenjivar.pomodoro"
         minSdk 23
-        targetSdk 30
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -47,6 +47,8 @@ android {
     }
 }
 
+def koin_version= "3.2.0-beta-1"
+
 dependencies {
     implementation project(':core')
     implementation project(':data')
@@ -76,6 +78,11 @@ dependencies {
 
     // Coroutine
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+
+    // Dependency injection - global library
+    api "io.insert-koin:koin-core:$koin_version"
+    api "io.insert-koin:koin-android:$koin_version"
+    api "io.insert-koin:koin-androidx-compose:$koin_version"
 
     // Testing
     testImplementation 'junit:junit:4.+'

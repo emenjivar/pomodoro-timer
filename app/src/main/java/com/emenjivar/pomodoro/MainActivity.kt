@@ -9,20 +9,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var countDownViewModel: CountDownViewModel
+    private val countDownViewModel: CountDownViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        countDownViewModel = ViewModelProvider(this).get(CountDownViewModel::class.java)
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
 
         setContent {
