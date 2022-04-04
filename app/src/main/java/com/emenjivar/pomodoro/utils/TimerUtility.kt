@@ -22,6 +22,18 @@ object TimerUtility {
     )
 
     /**
+     * Convert minutes input to millisecond time
+     * useful to read values from UI
+     */
+    fun Long.minutesToMillis() = this * 1000 * 60
+
+    /**
+     * Convert milliseconds to time,
+     * useful to show values of UI
+     */
+    fun Long.millisToMinutes() = this / 1000 / 60
+
+    /**
      * Calculate percent in pomodoro elapsed time
      */
     fun getProgress(currentTime: Long, totalTime: Long = POMODORO_TIME): Long =

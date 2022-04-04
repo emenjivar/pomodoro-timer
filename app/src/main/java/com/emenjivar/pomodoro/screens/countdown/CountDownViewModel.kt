@@ -4,6 +4,11 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
+import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.model.NormalPomodoro
 import com.emenjivar.pomodoro.model.Pomodoro
 import com.emenjivar.pomodoro.model.RestPomodoro
@@ -11,8 +16,18 @@ import com.emenjivar.pomodoro.utils.TimerUtility
 import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
 import java.util.LinkedList
 import java.util.Queue
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class CountDownViewModel : ViewModel() {
+class CountDownViewModel(
+    private val getPomodoroTimeUseCase: GetPomodoroTimeUseCase,
+    private val getRestTimeUseCase: GetRestTimeUseCase,
+    private val setNighModeUseCase: SetNighModeUseCase,
+    private val isNightModeUseCase: IsNightModeUseCase,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val testMode: Boolean = false
+) : ViewModel() {
 
     private var countDownTimer: CountDownTimer? = null
 
@@ -22,17 +37,60 @@ class CountDownViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
 
-    private val _isFullScreen = MutableLiveData(false)
-    val isFullScreen = _isFullScreen
+    private val _isNightMode = MutableLiveData(true)
+    val isNightMode: LiveData<Boolean> = _isNightMode
+
+    private val _openSettings = MutableLiveData(false)
+    val openSettings = _openSettings
 
     val listPomodoro: Queue<Pomodoro> = LinkedList()
 
     var startForBeginning: Boolean = true
-    var testMode = false
 
     init {
-        listPomodoro.add(NormalPomodoro())
-        listPomodoro.add(RestPomodoro())
+        if (!testMode) {
+            viewModelScope.launch(ioDispatcher) {
+                loadDefaultValues()
+            }
+        }
+    }
+
+    suspend fun loadDefaultValues() {
+        _isNightMode.postValue(isNightModeUseCase.invoke())
+
+        // Set default pomodoro and load on livedata
+        val defaultPomodoro = getDefaultPomodoro()
+        _pomodoro.postValue(defaultPomodoro)
+
+        // Load time from useCases
+        listPomodoro.add(defaultPomodoro)
+        listPomodoro.add(getDefaultRestPomodoro())
+    }
+
+    /**
+     * Get time values from dataStorage
+     */
+    private suspend fun getDefaultPomodoro(): Pomodoro {
+        val time = getPomodoroTimeUseCase.invoke()
+        return NormalPomodoro(
+            milliseconds = time,
+            time = time.formatTime(),
+            totalMilliseconds = time,
+            progress = 100f
+        )
+    }
+
+    /**
+     * Get time values from dataStorage
+     */
+    private suspend fun getDefaultRestPomodoro(): Pomodoro {
+        val time = getRestTimeUseCase.invoke()
+        return RestPomodoro(
+            milliseconds = time,
+            time = time.formatTime(),
+            totalMilliseconds = time,
+            progress = 100f
+        )
     }
 
     fun startTimer(pomodoro: Pomodoro? = null) {
@@ -56,11 +114,7 @@ class CountDownViewModel : ViewModel() {
                 }.start()
             }
         } else {
-            val firstPomodoro = NormalPomodoro()
-            setTime(
-                pomodoro = firstPomodoro,
-                milliseconds = firstPomodoro.totalMilliseconds
-            )
+            stopCurrentPomodoro()
         }
     }
 
@@ -106,22 +160,31 @@ class CountDownViewModel : ViewModel() {
     }
 
     /**
-     * This method stop the counter and load the value of current pomodoro
-     * There are two times of pomodoro,
-     *  the first is an 25min standard
-     *  the seconds is a 5min rest pomodoro
+     * Stop the counter and load default pomodoro
+     * from dataStorage time values.
      */
     fun stopCurrentPomodoro() {
-        _isPlaying.value = false
-        _pomodoro.value = when (_pomodoro.value) {
-            is NormalPomodoro -> NormalPomodoro()
-            is RestPomodoro -> RestPomodoro()
-            else -> NormalPomodoro()
+        viewModelScope.launch(ioDispatcher) {
+            _isPlaying.postValue(false)
+            /**
+             * Always load normal pomodoro,
+             * even if rest pomodoro is playing
+             */
+            _pomodoro.postValue(getDefaultPomodoro())
+            countDownTimer?.cancel()
         }
-        countDownTimer?.cancel()
     }
 
     fun toggleNightMode() {
-        _isFullScreen.value = _isFullScreen.value?.not()
+        val nightMode = isNightMode.value?.not() ?: true
+        _isNightMode.value = nightMode
+
+        viewModelScope.launch(ioDispatcher) {
+            setNighModeUseCase.invoke(nightMode)
+        }
+    }
+
+    fun openSettings() {
+        _openSettings.value = true
     }
 }
