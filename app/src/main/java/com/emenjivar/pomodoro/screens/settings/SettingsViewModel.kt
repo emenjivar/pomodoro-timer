@@ -18,7 +18,8 @@ class SettingsViewModel(
     private val setPomodoroTimeUseCase: SetPomodoroTimeUseCase,
     private val getRestTimeUseCase: GetRestTimeUseCase,
     private val setRestTimeUseCase: SetRestTimeUseCase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    testMode: Boolean = false
 ) : ViewModel() {
 
     private val _pomodoroTime = MutableLiveData(0L)
@@ -31,18 +32,20 @@ class SettingsViewModel(
     val closeSettings = _closeSettings
 
     init {
-        loadSettings()
+        if (!testMode) {
+            viewModelScope.launch(ioDispatcher) {
+                loadSettings()
+            }
+        }
     }
 
-    private fun loadSettings() {
-        viewModelScope.launch(ioDispatcher) {
-            /**
-             * Values are expressed in milliseconds
-             * transform to minutes to show a readable value on UI
-             */
-            _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisToMinutes())
-            _restTime.postValue(getRestTimeUseCase.invoke().millisToMinutes())
-        }
+    suspend fun loadSettings() {
+        /**
+         * Values are expressed in milliseconds
+         * transform to minutes to show a readable value on UI
+         */
+        _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisToMinutes())
+        _restTime.postValue(getRestTimeUseCase.invoke().millisToMinutes())
     }
 
     /**

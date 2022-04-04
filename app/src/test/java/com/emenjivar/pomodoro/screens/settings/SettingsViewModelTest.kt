@@ -13,13 +13,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.mockito.Mockito
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
     private lateinit var getPomodoroTimeUseCase: GetPomodoroTimeUseCase
@@ -36,35 +36,36 @@ class SettingsViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    @ExperimentalCoroutinesApi
     @Before
     fun prepareTest() = runTest {
-
         settingsRepository = Mockito.mock(SettingsRepository::class.java)
-        getPomodoroTimeUseCase = GetPomodoroTimeUseCase(settingsRepository)
+        getPomodoroTimeUseCase = Mockito.mock(GetPomodoroTimeUseCase::class.java)
         setPomodoroTimeUseCase = SetPomodoroTimeUseCase(settingsRepository)
-        getRestTimeUseCase = GetRestTimeUseCase(settingsRepository)
+        getRestTimeUseCase = Mockito.mock(GetRestTimeUseCase::class.java)
         setRestTimeUseCase = SetRestTimeUseCase(settingsRepository)
 
-        Mockito.`when`(getPomodoroTimeUseCase.invoke()).thenReturn(25000)
-        Mockito.`when`(getRestTimeUseCase.invoke()).thenReturn(5000)
-
         settingsViewModel = SettingsViewModel(
-            getPomodoroTimeUseCase,
-            setPomodoroTimeUseCase,
-            getRestTimeUseCase,
-            setRestTimeUseCase,
-            Dispatchers.Main
+            getPomodoroTimeUseCase = getPomodoroTimeUseCase,
+            setPomodoroTimeUseCase = setPomodoroTimeUseCase,
+            getRestTimeUseCase = getRestTimeUseCase,
+            setRestTimeUseCase = setRestTimeUseCase,
+            ioDispatcher = Dispatchers.Main,
+            testMode = true
         )
     }
 
     @Test
-    fun `test default values`() {
-        assertFalse(settingsViewModel.closeSettings.value ?: true)
+    fun `loadSettings test`() = runTest {
+        // Given 25 and 5 minutes
+        Mockito.`when`(getPomodoroTimeUseCase.invoke()).thenReturn(1500000L)
+        Mockito.`when`(getRestTimeUseCase.invoke()).thenReturn(300000L)
 
-        // Values loaded on init
-        assertEquals(25000L, settingsViewModel.pomodoroTime.getOrAwaitValue())
-        assertEquals(5000L, settingsViewModel.restTime.getOrAwaitValue())
+        // When
+        settingsViewModel.loadSettings()
+
+        // Then verify the values are loaded in readable minutes
+        assertEquals(25, settingsViewModel.pomodoroTime.getOrAwaitValue())
+        assertEquals(5, settingsViewModel.restTime.getOrAwaitValue())
     }
 
     @Test
