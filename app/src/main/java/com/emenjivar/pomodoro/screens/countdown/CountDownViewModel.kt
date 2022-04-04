@@ -25,7 +25,8 @@ class CountDownViewModel(
     private val getRestTimeUseCase: GetRestTimeUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val testMode: Boolean = false
 ) : ViewModel() {
 
     private var countDownTimer: CountDownTimer? = null
@@ -45,22 +46,25 @@ class CountDownViewModel(
     val listPomodoro: Queue<Pomodoro> = LinkedList()
 
     var startForBeginning: Boolean = true
-    var testMode = false
 
     init {
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
-                _isNightMode.postValue(isNightModeUseCase.invoke())
-
-                // Set default pomodoro and load on livedata
-                val defaultPomodoro = getDefaultPomodoro()
-                _pomodoro.postValue(defaultPomodoro)
-
-                // Load time from useCases
-                listPomodoro.add(defaultPomodoro)
-                listPomodoro.add(getDefaultRestPomodoro())
+                loadDefaultValues()
             }
         }
+    }
+
+    suspend fun loadDefaultValues() {
+        _isNightMode.postValue(isNightModeUseCase.invoke())
+
+        // Set default pomodoro and load on livedata
+        val defaultPomodoro = getDefaultPomodoro()
+        _pomodoro.postValue(defaultPomodoro)
+
+        // Load time from useCases
+        listPomodoro.add(defaultPomodoro)
+        listPomodoro.add(getDefaultRestPomodoro())
     }
 
     /**
@@ -160,13 +164,13 @@ class CountDownViewModel(
      * from dataStorage time values.
      */
     fun stopCurrentPomodoro() {
-        viewModelScope.launch {
-            _isPlaying.value = false
+        viewModelScope.launch(ioDispatcher) {
+            _isPlaying.postValue(false)
             /**
              * Always load normal pomodoro,
              * even if rest pomodoro is playing
              */
-            _pomodoro.value = getDefaultPomodoro()
+            _pomodoro.postValue(getDefaultPomodoro())
             countDownTimer?.cancel()
         }
     }
