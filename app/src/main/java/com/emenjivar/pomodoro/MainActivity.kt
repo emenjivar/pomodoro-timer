@@ -1,7 +1,11 @@
 package com.emenjivar.pomodoro
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +17,23 @@ import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import com.emenjivar.pomodoro.utils.Action
+import com.emenjivar.pomodoro.utils.MyNotificationManager
+import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_PAUSE
+import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_PLAY
+import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_STOP
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val countDownViewModel: CountDownViewModel by viewModel()
+    private val notificationManager: MyNotificationManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        registerReceiver(broadcastReceiver, IntentFilter(MyBroadcastReceiver.INTENT_NAME))
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
 
         setContent {
@@ -37,10 +49,45 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        val isPlaying = countDownViewModel.isPlaying.value
+        Log.d(TAG, "onRestart activity. isPlaying: $isPlaying")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Verify if the timer is running and display
+        // the appropriate controls on the notification
+        val isPlaying = countDownViewModel.isPlaying.value
+        val action = if (isPlaying == true) Action.Play else Action.Pause
+        notificationManager.display(action)
+        Log.d(TAG, "onStop activity. isPlaying: $isPlaying")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(broadcastReceiver)
+    }
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.extras?.getString(MyBroadcastReceiver.ACTION_NAME)) {
+                INTENT_PLAY -> countDownViewModel.playTimer()
+                INTENT_PAUSE -> countDownViewModel.pauseTimer()
+                INTENT_STOP -> countDownViewModel.stopCurrentPomodoro()
+            }
+        }
+    }
+
     private val observeOpenSettings = Observer<Boolean> { status ->
         if (status) {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }
