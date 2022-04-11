@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.utils
+package com.emenjivar.pomodoro.system
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,10 +8,10 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.emenjivar.pomodoro.MyBroadcastReceiver
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.utils.Action
 
-class MyNotificationManager(private val context: Context) {
+class CustomNotificationManager(private val context: Context) {
 
     lateinit var builder: NotificationCompat.Builder
 
@@ -54,7 +54,7 @@ class MyNotificationManager(private val context: Context) {
     }
 
     private fun playIntent(): PendingIntent {
-        val intent = Intent(context, MyBroadcastReceiver::class.java)
+        val intent = Intent(context, CustomBroadcastReceiver::class.java)
             .setAction(INTENT_PLAY)
         return PendingIntent.getBroadcast(
             context,
@@ -65,7 +65,7 @@ class MyNotificationManager(private val context: Context) {
     }
 
     private fun pauseIntent(): PendingIntent {
-        val intent = Intent(context, MyBroadcastReceiver::class.java)
+        val intent = Intent(context, CustomBroadcastReceiver::class.java)
             .setAction(INTENT_PAUSE)
         return PendingIntent.getBroadcast(
             context,
@@ -76,7 +76,7 @@ class MyNotificationManager(private val context: Context) {
     }
 
     private fun stopIntent(): PendingIntent {
-        val intent = Intent(context, MyBroadcastReceiver::class.java)
+        val intent = Intent(context, CustomBroadcastReceiver::class.java)
             .setAction(INTENT_STOP)
         return PendingIntent.getBroadcast(
             context,

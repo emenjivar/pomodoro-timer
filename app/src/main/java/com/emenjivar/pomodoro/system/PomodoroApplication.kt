@@ -1,10 +1,9 @@
-package com.emenjivar.pomodoro
+package com.emenjivar.pomodoro.system
 
 import android.app.Application
 import com.emenjivar.pomodoro.di.appModule
 import com.emenjivar.pomodoro.di.coreModule
 import com.emenjivar.pomodoro.di.dataModule
-import com.emenjivar.pomodoro.utils.MyNotificationManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

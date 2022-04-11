@@ -2,7 +2,7 @@ package com.emenjivar.pomodoro.di
 
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsViewModel
-import com.emenjivar.pomodoro.utils.MyNotificationManager
+import com.emenjivar.pomodoro.system.CustomNotificationManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -26,6 +26,6 @@ val appModule = module {
     }
 
     single {
-        MyNotificationManager(androidContext())
+        CustomNotificationManager(androidContext())
     }
 }

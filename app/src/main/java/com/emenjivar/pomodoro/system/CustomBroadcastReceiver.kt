@@ -1,10 +1,10 @@
-package com.emenjivar.pomodoro
+package com.emenjivar.pomodoro.system
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class MyBroadcastReceiver : BroadcastReceiver() {
+class CustomBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         context.sendBroadcast(

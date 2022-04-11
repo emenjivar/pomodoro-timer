@@ -16,24 +16,25 @@ import androidx.lifecycle.Observer
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
+import com.emenjivar.pomodoro.system.CustomBroadcastReceiver
+import com.emenjivar.pomodoro.system.CustomNotificationManager
+import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PAUSE
+import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PLAY
+import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 import com.emenjivar.pomodoro.utils.Action
-import com.emenjivar.pomodoro.utils.MyNotificationManager
-import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_PAUSE
-import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_PLAY
-import com.emenjivar.pomodoro.utils.MyNotificationManager.Companion.INTENT_STOP
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val countDownViewModel: CountDownViewModel by viewModel()
-    private val notificationManager: MyNotificationManager by inject()
+    private val notificationManager: CustomNotificationManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        registerReceiver(broadcastReceiver, IntentFilter(MyBroadcastReceiver.INTENT_NAME))
+        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
 
         setContent {
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            when (intent.extras?.getString(MyBroadcastReceiver.ACTION_NAME)) {
+            when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
                 INTENT_PLAY -> countDownViewModel.playTimer()
                 INTENT_PAUSE -> countDownViewModel.pauseTimer()
                 INTENT_STOP -> countDownViewModel.stopCurrentPomodoro()
