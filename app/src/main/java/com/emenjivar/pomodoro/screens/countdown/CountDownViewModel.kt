@@ -70,10 +70,11 @@ class CountDownViewModel(
     fun finishCounter() {
         when (counter.value?.phase) {
             Phase.WORK -> {
-                counter.value?.phase = Phase.REST
+                counter.value?.setRest()
             }
             Phase.REST -> {
-                counter.value?.setRest()
+                // This line force fetch pomodoro configurations and start from work
+                _counter.value = null
             }
         }
     }
