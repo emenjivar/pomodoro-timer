@@ -41,7 +41,7 @@ class SettingsViewModelTest {
 
         settingsViewModel = SettingsViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
-            setPomodoroTimeUseCase = setWorkTimeUseCase,
+            setWorkTimeUseCase = setWorkTimeUseCase,
             setRestTimeUseCase = setRestTimeUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true

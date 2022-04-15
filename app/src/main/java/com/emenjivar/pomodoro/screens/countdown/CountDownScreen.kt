@@ -41,8 +41,9 @@ fun CountDownScreen(
         modifier = modifier,
         action = action,
         counter = counter,
-        playAction = { countDownViewModel.pauseCounter() },
-        pauseAction = { countDownViewModel.startCounter() },
+        playAction = { countDownViewModel.startCounter() },
+        pauseAction = { countDownViewModel.pauseCounter() },
+        resumeAction = { countDownViewModel.resumeCounter() },
         stopAction = { countDownViewModel.stopCounter() },
         fullScreenAction = { countDownViewModel.toggleNightMode() },
         isNightMode = isNightMode,
@@ -57,6 +58,7 @@ fun CountDownScreen(
     counter: Counter?,
     playAction: () -> Unit,
     pauseAction: () -> Unit,
+    resumeAction: () -> Unit,
     stopAction: () -> Unit,
     fullScreenAction: () -> Unit,
     isNightMode: Boolean = false,
@@ -65,7 +67,7 @@ fun CountDownScreen(
     val horizontalSpace = 30.dp
 
     val playPauseIcon = when (action) {
-        Action.Play -> R.drawable.ic_baseline_pause_24
+        Action.Play, Action.Resume -> R.drawable.ic_baseline_pause_24
         else -> R.drawable.ic_baseline_play_arrow_24
     }
 
@@ -81,9 +83,12 @@ fun CountDownScreen(
         targetValue = colorResource(if (isNightMode) R.color.white else R.color.primary),
         animationSpec = tween(TRANSITION_DURATION)
     )
-    val playPauseAction = when (action) {
-        Action.Play -> playAction
-        else -> pauseAction
+    val nextAction = when (action) {
+        Action.Play -> pauseAction
+        Action.Pause -> resumeAction
+        Action.Resume -> pauseAction
+        Action.Stop -> playAction
+        else -> playAction
     }
 
     ConstraintLayout(
@@ -134,7 +139,7 @@ fun CountDownScreen(
                 ActionButton(
                     icon = playPauseIcon,
                     isFullScreen = isNightMode,
-                    onClick = playPauseAction
+                    onClick = nextAction
                 )
                 Spacer(modifier = Modifier.width(horizontalSpace))
                 ActionButton(
@@ -162,6 +167,7 @@ fun PreviewCountDownScreen() {
         counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
+        resumeAction = {},
         stopAction = {},
         fullScreenAction = {},
         isNightMode = false,
@@ -178,6 +184,7 @@ fun PreviewPausedCountDown() {
         counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
+        resumeAction = {},
         stopAction = {},
         fullScreenAction = {},
         isNightMode = false,
@@ -195,6 +202,7 @@ fun PreviewCountDownFullScreen() {
         counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
+        resumeAction = {},
         stopAction = {},
         fullScreenAction = {},
         isNightMode = true,

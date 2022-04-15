@@ -100,26 +100,34 @@ class CountDownViewModel(
 
                 if (!testMode) {
                     // Don't include this block on testing
-                    countDownTimer = object : CountDownTimer(milliseconds, 500) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            setTime(millisUntilFinished)
-                        }
-
-                        override fun onFinish() {
-                            finishCounter()
-                            viewModelScope.launch {
-                                startCounter()
-                            }
-                        }
-                    }.start()
+                    countDownTimer = countDownTimer(milliseconds).start()
                 }
             }
         }
     }
 
+    private fun countDownTimer(milliseconds: Long) =
+        object : CountDownTimer(milliseconds, 500) {
+            override fun onTick(millisUntilFinished: Long) {
+                setTime(millisUntilFinished)
+            }
+
+            override fun onFinish() {
+                finishCounter()
+                startCounter()
+            }
+        }
+
     fun pauseCounter() {
         _action.value = Action.Pause
         countDownTimer?.cancel()
+    }
+
+    fun resumeCounter() {
+        _action.value = Action.Resume
+        _counter.value?.let { safeCounter ->
+            countDownTimer = countDownTimer(safeCounter.countDown).start()
+        }
     }
 
     fun stopCounter() {
