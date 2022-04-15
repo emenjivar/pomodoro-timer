@@ -75,7 +75,7 @@ class SettingsViewModel(
         viewModelScope.launch(ioDispatcher) {
             _restTime.postValue(time)
             // Parse to milliSeconds
-            setRestTimeUseCase.invoke(time.millisecondsToMinutes())
+            setRestTimeUseCase.invoke(time.minutesToMilliseconds())
         }
     }
 
