@@ -1,19 +1,20 @@
 package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.repository.SettingsRepository
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
+import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
-import com.emenjivar.pomodoro.model.NormalPomodoro
-import com.emenjivar.pomodoro.model.RestPomodoro
+import com.emenjivar.pomodoro.utils.Action
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -24,8 +25,7 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 class CountDownViewModelTest {
 
-    private lateinit var getPomodoroTimeUseCase: GetPomodoroTimeUseCase
-    private lateinit var getRestTimeUseCase: GetRestTimeUseCase
+    private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setNighModeUseCase: SetNighModeUseCase
     private lateinit var isNightModeUseCase: IsNightModeUseCase
     private lateinit var settingsRepository: SettingsRepository
@@ -33,183 +33,104 @@ class CountDownViewModelTest {
 
     private var nightMode = true
 
-    // Given a defined time of 25 minutes
-    private val time = 1500000L
-
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setup() = runTest {
         settingsRepository = Mockito.mock(SettingsRepository::class.java)
-        getPomodoroTimeUseCase = GetPomodoroTimeUseCase(settingsRepository)
-        getRestTimeUseCase = GetRestTimeUseCase(settingsRepository)
+        getPomodoroUseCase = GetPomodoroUseCase(settingsRepository)
         setNighModeUseCase = SetNighModeUseCase(settingsRepository)
         isNightModeUseCase = IsNightModeUseCase(settingsRepository)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
-        Mockito.`when`(getPomodoroTimeUseCase.invoke())
-            .thenReturn(time)
-        Mockito.`when`(getRestTimeUseCase.invoke())
-            .thenReturn(time)
+        Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
+            Pomodoro(
+                workTime = 25000,
+                restTime = 5000
+            )
+        )
 
         viewModel = CountDownViewModel(
-            getPomodoroTimeUseCase = getPomodoroTimeUseCase,
-            getRestTimeUseCase = getRestTimeUseCase,
+            getPomodoroUseCase = getPomodoroUseCase,
             setNighModeUseCase = setNighModeUseCase,
             isNightModeUseCase = isNightModeUseCase,
+            ioDispatcher = Dispatchers.Main,
             testMode = true
         )
     }
 
     @Test
     fun `test default values`() {
-        assertEquals(NormalPomodoro(), viewModel.pomodoro.value)
-        assertFalse(viewModel.isPlaying.value ?: true)
-        assertTrue(viewModel.isNightMode.value ?: true)
-        assertFalse(viewModel.openSettings.value ?: true)
-        assertTrue(viewModel.startForBeginning)
+        with(viewModel) {
+            assertNull(counter.value)
+            assertEquals(Action.Stop, action.value)
+            assertTrue(isNightMode.value)
+            assertFalse(openSettings.value ?: true)
+        }
     }
 
     @Test
     fun `loadDefaultValues test`() = runTest {
         with(viewModel) {
             loadDefaultValues()
-            val nightMode = isNightMode.getOrAwaitValue()
-
-            assertTrue(nightMode)
-            assertEquals(2, listPomodoro.size)
-            assertTrue(listPomodoro.poll() is NormalPomodoro)
-            assertTrue(listPomodoro.poll() is RestPomodoro)
+            assertTrue(isNightMode.value)
+            assertEquals(25000L, counter.value?.workTime)
+            assertEquals(5000L, counter.value?.restTime)
         }
     }
 
     @Test
-    fun `startTimer when pomodoro is null`() = runTest {
-        // Given a 25 minutes configuration
-        Mockito.`when`(getPomodoroTimeUseCase.invoke())
-            .thenReturn(time)
+    fun `startCounter when counter is null`() = runTest {
 
         // When the function receives an empty parameter
-        viewModel.startTimer()
+        viewModel.startCounter()
 
-        // Then check the playing flag is stop
-        assertFalse(viewModel.isPlaying.getOrAwaitValue())
+        // Then check the current action
+        assertEquals(viewModel.action.getOrAwaitValue(), Action.Play)
+    }
 
-        with(viewModel.pomodoro.value) {
-            // And check the default object is loaded
-            assertEquals(time, this?.milliseconds)
-            assertEquals(time, this?.totalMilliseconds)
-            assertEquals("25:00", this?.time)
-            assertEquals(100f, this?.progress)
+    @Test
+    fun `pauseCounter test`() {
+        with(viewModel) {
+            pauseCounter()
+            assertEquals(action.value, Action.Pause)
         }
     }
 
     @Test
-    fun `startTimer when pomodoro is not null`() {
-        // Given a not-null value for startTimer parameter
-        viewModel.startTimer(NormalPomodoro())
-
-        // Then verify the flag is true
-        assertTrue(viewModel.isPlaying.getOrAwaitValue())
-        assertTrue(viewModel.pomodoro.getOrAwaitValue() is NormalPomodoro)
-    }
-
-    @Test
-    fun `playTimer when startForBeginning flag is true`() {
+    fun `stopCounter test`() {
         with(viewModel) {
-            // Given a new type of loaded pomodoro
-            listPomodoro.clear()
-            listPomodoro.add(RestPomodoro())
-            startForBeginning = true
-
-            // When
-            playTimer()
-
-            // Check
-            assertFalse(startForBeginning)
-            assertTrue(isPlaying.getOrAwaitValue())
-            assertNotNull(pomodoro.getOrAwaitValue())
+            stopCounter()
+            assertEquals(action.value, Action.Stop)
+            assertEquals(counter.value?.workTime, 25000L)
+            assertEquals(counter.value?.restTime, 5000L)
         }
     }
 
     @Test
-    fun `playTimer when startForBeginning flag is false`() {
-
+    fun `setTime test`() = runTest {
         with(viewModel) {
-            // Given a flag set on false
-            startForBeginning = false
+            // Load counter value
+            loadDefaultValues()
 
-            // When
-            playTimer()
-
-            // Then check the livedata
-            assertFalse(startForBeginning)
-            assertTrue(isPlaying.getOrAwaitValue())
-            assertTrue(pomodoro.getOrAwaitValue() is NormalPomodoro)
-        }
-    }
-
-    @Test
-    fun `pauseTimer normal behavior`() {
-        with(viewModel) {
-            pauseTimer()
-            assertFalse(isPlaying.getOrAwaitValue())
-        }
-    }
-
-    @Test
-    fun `nextPomodoro invoked until queue is empty`() {
-        with(viewModel) {
-            // Given a list of n pomodoro
-            listPomodoro.clear()
-            listPomodoro.add(NormalPomodoro())
-            listPomodoro.add(RestPomodoro())
-
-            // When method is called many times
-            nextPomodoro()
-            nextPomodoro()
-
-            // Then check the list
-            assertTrue(listPomodoro.isEmpty())
-        }
-    }
-
-    @Test
-    fun `setTime changes liveData using default pomodoro values`() {
-        // Given a normal pomodoro
-        val pomodoro = NormalPomodoro()
-
-        // When livedata is loaded
-        viewModel.setTime(pomodoro, pomodoro.milliseconds)
-
-        // Then check if match
-        val counter = viewModel.pomodoro.getOrAwaitValue()
-        assertEquals(pomodoro.milliseconds, counter.milliseconds)
-        assertEquals("25:00", counter.time)
-        assertEquals(1f, counter.progress)
-    }
-
-    @Test
-    fun `stopCurrentPomodoro test`() {
-        with(viewModel) {
-            stopCurrentPomodoro()
-
-            // Then
-            assertFalse(isPlaying.getOrAwaitValue())
-            assertTrue(this.pomodoro.getOrAwaitValue() is NormalPomodoro)
+            setTime(10000)
+            assertEquals(counter.value?.countDown, 10000L)
         }
     }
 
     @Test
     fun `toggleNightMode changes liveData value`() = runTest {
-        val first = viewModel.isNightMode.getOrAwaitValue()
+        val first = viewModel.isNightMode.value
         viewModel.toggleNightMode()
 
-        val second = viewModel.isNightMode.getOrAwaitValue()
+        val second = viewModel.isNightMode.value
         viewModel.toggleNightMode()
 
-        val third = viewModel.isNightMode.getOrAwaitValue()
+        val third = viewModel.isNightMode.value
 
         assertTrue(first)
         assertFalse(second)

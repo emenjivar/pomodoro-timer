@@ -41,13 +41,11 @@ class CountDownViewModel(
     private val _action: MutableLiveData<Action> = MutableLiveData(Action.Stop)
     val action: LiveData<Action> = _action
 
-    private val _isNightMode = MutableLiveData(true)
-    val isNightMode: LiveData<Boolean> = _isNightMode
+    private val _isNightMode = mutableStateOf(true)
+    val isNightMode: State<Boolean> = _isNightMode
 
     private val _openSettings = MutableLiveData(false)
     val openSettings = _openSettings
-
-    var startForBeginning: Boolean = true
 
     init {
         if (!testMode) {
@@ -58,7 +56,7 @@ class CountDownViewModel(
     }
 
     suspend fun loadDefaultValues() {
-        _isNightMode.postValue(isNightModeUseCase.invoke())
+        _isNightMode.value = isNightModeUseCase.invoke()
 
         // Set default pomodoro and load on livedata
         _counter.value = fetchCounter()
@@ -88,7 +86,7 @@ class CountDownViewModel(
     fun startCounter() {
         viewModelScope.launch(Dispatchers.Main) {
             // In case of null, fetch local storage configurations
-            if (counter.value == null) {
+            if (_counter.value == null) {
                 _counter.value = fetchCounter()
             }
 
@@ -125,8 +123,8 @@ class CountDownViewModel(
     }
 
     fun stopCounter() {
-        viewModelScope.launch {
-            _action.value = Action.Stop
+        viewModelScope.launch(ioDispatcher) {
+            _action.postValue(Action.Stop)
             _counter.value = fetchCounter()
             countDownTimer?.cancel()
         }
@@ -143,7 +141,7 @@ class CountDownViewModel(
     }
 
     fun toggleNightMode() {
-        val nightMode = isNightMode.value?.not() ?: true
+        val nightMode = isNightMode.value.not()
         _isNightMode.value = nightMode
 
         viewModelScope.launch(ioDispatcher) {

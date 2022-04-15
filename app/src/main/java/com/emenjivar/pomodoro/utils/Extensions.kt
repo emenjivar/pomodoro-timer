@@ -9,17 +9,14 @@ fun Pomodoro.toCounter() = Counter(
     workTime = this.workTime,
     restTime = this.restTime,
     phase = Phase.WORK,
-    countDown = this.workTime,
-    progress = 100f
+    countDown = this.workTime
 )
-
-fun Float?.default(value: Float) = value
 
 /**
  * Convert minutes input to millisecond time
  * useful to read values from UI
  */
-fun Long.minutesToMilliseconds() = this * 100 * 60
+fun Long.minutesToMilliseconds() = this * 1000 * 60
 
 /**
  * Convert milliseconds to time,

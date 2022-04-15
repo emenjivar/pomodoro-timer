@@ -26,7 +26,6 @@ import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
-import com.emenjivar.pomodoro.utils.default
 import com.emenjivar.pomodoro.utils.formatTime
 
 @Composable
@@ -36,7 +35,7 @@ fun CountDownScreen(
 ) {
     val counter by countDownViewModel.counter
     val action by countDownViewModel.action.observeAsState()
-    val isNightMode by countDownViewModel.isNightMode.observeAsState(false)
+    val isNightMode by countDownViewModel.isNightMode
 
     CountDownScreen(
         modifier = modifier,
@@ -122,7 +121,7 @@ fun CountDownScreen(
                 modifier = Modifier
                     .padding(top = 50.dp),
                 time = counter?.countDown.formatTime(),
-                progress = counter?.getProgress().default(100f),
+                progress = counter?.getScaleProgress() ?: 1f,
                 size = 230,
                 stroke = 7,
                 isFullScreen = isNightMode
@@ -160,7 +159,7 @@ fun PreviewCountDownScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         action = Action.Play,
-        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -176,7 +175,7 @@ fun PreviewPausedCountDown() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         action = Action.Pause,
-        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -193,7 +192,7 @@ fun PreviewCountDownFullScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
         action = Action.Play,
-        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
         playAction = {},
         pauseAction = {},
         stopAction = {},
