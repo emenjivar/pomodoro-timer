@@ -20,27 +20,15 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     private val keepScreen = booleanPreferencesKey(KEEP_SCREEN)
     private val nightMode = booleanPreferencesKey(NIGHT_MODE)
 
-    override suspend fun getPomodoroTime(): Long = context.dataStore.data
-        .map { preferences ->
-            preferences[pomodoroTime] ?: 0L
+    override suspend fun getPomodoro(): Pomodoro =
+        context.dataStore.data.map { pref ->
+            Pomodoro(
+                workTime = pref[pomodoroTime] ?: 0,
+                restTime = pref[restTime] ?: 0
+            )
         }.first()
 
-    override suspend fun getRestTime(): Long = context.dataStore.data
-        .map { preferences ->
-            preferences[restTime] ?: 0
-        }.first()
-
-    override suspend fun isKeepScreen(): Boolean = context.dataStore.data
-        .map { preferences ->
-            preferences[keepScreen] ?: false
-        }.first()
-
-    override suspend fun isNightMode(): Boolean = context.dataStore.data
-        .map { pref ->
-            pref[nightMode] ?: false
-        }.first()
-
-    override suspend fun setPomodoroTime(value: Long) {
+    override suspend fun setWorkTime(value: Long) {
         context.dataStore.edit { settings ->
             settings[pomodoroTime] = value
         }
@@ -51,6 +39,16 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             settings[restTime] = value
         }
     }
+
+    override suspend fun isKeepScreen(): Boolean = context.dataStore.data
+        .map { preferences ->
+            preferences[keepScreen] ?: false
+        }.first()
+
+    override suspend fun isNightMode(): Boolean = context.dataStore.data
+        .map { pref ->
+            pref[nightMode] ?: false
+        }.first()
 
     override suspend fun setKeepScreen(value: Boolean) {
         context.dataStore.edit { settings ->
@@ -63,14 +61,6 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             settings[nightMode] = value
         }
     }
-
-    override suspend fun getPomodoro(): Pomodoro =
-        context.dataStore.data.map { pref ->
-            Pomodoro(
-                workTime = pref[pomodoroTime] ?: 0,
-                restTime = pref[restTime] ?: 0
-            )
-        }.first()
 
     companion object {
         const val SETTINGS_NAME = "settings"

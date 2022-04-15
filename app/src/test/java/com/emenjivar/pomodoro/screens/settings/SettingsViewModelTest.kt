@@ -3,7 +3,7 @@ package com.emenjivar.pomodoro.screens.settings
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.GetPomodoroUseCase
-import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
+import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
@@ -22,7 +22,7 @@ import org.mockito.Mockito
 class SettingsViewModelTest {
 
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
-    private lateinit var setPomodoroTimeUseCase: SetPomodoroTimeUseCase
+    private lateinit var setWorkTimeUseCase: SetWorkTimeUseCase
     private lateinit var setRestTimeUseCase: SetRestTimeUseCase
 
     private lateinit var settingsViewModel: SettingsViewModel
@@ -36,12 +36,12 @@ class SettingsViewModelTest {
     @Before
     fun prepareTest() {
         getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
-        setPomodoroTimeUseCase = Mockito.mock(SetPomodoroTimeUseCase::class.java)
+        setWorkTimeUseCase = Mockito.mock(SetWorkTimeUseCase::class.java)
         setRestTimeUseCase = Mockito.mock(SetRestTimeUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
-            setPomodoroTimeUseCase = setPomodoroTimeUseCase,
+            setPomodoroTimeUseCase = setWorkTimeUseCase,
             setRestTimeUseCase = setRestTimeUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true

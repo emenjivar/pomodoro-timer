@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.GetPomodoroUseCase
-import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
+import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
 import com.emenjivar.pomodoro.utils.minutesToMilliseconds
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val getPomodoroUseCase: GetPomodoroUseCase,
-    private val setPomodoroTimeUseCase: SetPomodoroTimeUseCase,
+    private val setWorkTimeUseCase: SetWorkTimeUseCase,
     private val setRestTimeUseCase: SetRestTimeUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
@@ -59,7 +59,7 @@ class SettingsViewModel(
         viewModelScope.launch(ioDispatcher) {
             _pomodoroTime.postValue(time)
             // Parse to milliseconds
-            setPomodoroTimeUseCase.invoke(time.minutesToMilliseconds())
+            setWorkTimeUseCase.invoke(time.minutesToMilliseconds())
         }
     }
 
