@@ -1,5 +1,7 @@
 package com.emenjivar.pomodoro.screens.countdown
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,6 +34,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
 /**
@@ -39,11 +43,14 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
  * @param progress from 100.0 to 0.0
  * @param isFullScreen define the background and button colors
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CountDown(
     modifier: Modifier = Modifier,
     time: String,
     progress: Float,
+    phase: Phase? = Phase.WORK,
+    action: Action? = Action.Play,
     size: Int,
     stroke: Int,
     isFullScreen: Boolean = false
@@ -60,6 +67,16 @@ fun CountDown(
         targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.light),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
+
+    val phaseText = if (phase == Phase.WORK) "work time" else "rest time"
+
+    val showPhaseText = when (action) {
+        Action.Play -> true
+        Action.Pause -> true
+        Action.Resume -> true
+        Action.Stop -> false
+        else -> false
+    }
 
     Column(modifier = modifier) {
         Box {
@@ -88,6 +105,17 @@ fun CountDown(
                     fontSize = 70.sp,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
+                AnimatedVisibility(
+                    visible = showPhaseText,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = phaseText,
+                        color = itemColor.value,
+                        fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }

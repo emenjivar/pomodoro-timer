@@ -127,6 +127,8 @@ fun CountDownScreen(
                     .padding(top = 50.dp),
                 time = counter?.countDown.formatTime(),
                 progress = counter?.getScaleProgress() ?: 1f,
+                phase = counter?.phase,
+                action = action,
                 size = 230,
                 stroke = 7,
                 isFullScreen = isNightMode
