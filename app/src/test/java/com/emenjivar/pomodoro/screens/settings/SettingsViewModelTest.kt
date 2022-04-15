@@ -1,9 +1,8 @@
 package com.emenjivar.pomodoro.screens.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.emenjivar.core.repository.SettingsRepository
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
@@ -22,11 +21,9 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
-    private lateinit var getPomodoroTimeUseCase: GetPomodoroTimeUseCase
+    private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setPomodoroTimeUseCase: SetPomodoroTimeUseCase
-    private lateinit var getRestTimeUseCase: GetRestTimeUseCase
     private lateinit var setRestTimeUseCase: SetRestTimeUseCase
-    private lateinit var settingsRepository: SettingsRepository
 
     private lateinit var settingsViewModel: SettingsViewModel
 
@@ -37,17 +34,14 @@ class SettingsViewModelTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     @Before
-    fun prepareTest() = runTest {
-        settingsRepository = Mockito.mock(SettingsRepository::class.java)
-        getPomodoroTimeUseCase = Mockito.mock(GetPomodoroTimeUseCase::class.java)
-        setPomodoroTimeUseCase = SetPomodoroTimeUseCase(settingsRepository)
-        getRestTimeUseCase = Mockito.mock(GetRestTimeUseCase::class.java)
-        setRestTimeUseCase = SetRestTimeUseCase(settingsRepository)
+    fun prepareTest() {
+        getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
+        setPomodoroTimeUseCase = Mockito.mock(SetPomodoroTimeUseCase::class.java)
+        setRestTimeUseCase = Mockito.mock(SetRestTimeUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
-            getPomodoroTimeUseCase = getPomodoroTimeUseCase,
+            getPomodoroUseCase = getPomodoroUseCase,
             setPomodoroTimeUseCase = setPomodoroTimeUseCase,
-            getRestTimeUseCase = getRestTimeUseCase,
             setRestTimeUseCase = setRestTimeUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
@@ -57,8 +51,9 @@ class SettingsViewModelTest {
     @Test
     fun `loadSettings test`() = runTest {
         // Given 25 and 5 minutes
-        Mockito.`when`(getPomodoroTimeUseCase.invoke()).thenReturn(1500000L)
-        Mockito.`when`(getRestTimeUseCase.invoke()).thenReturn(300000L)
+        Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
+            Pomodoro(workTime = 1500000L, restTime = 300000L)
+        )
 
         // When
         settingsViewModel.loadSettings()

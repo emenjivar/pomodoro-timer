@@ -17,9 +17,8 @@ val appModule = module {
     }
     viewModel {
         SettingsViewModel(
-            getPomodoroTimeUseCase = get(),
+            getPomodoroUseCase = get(),
             setPomodoroTimeUseCase = get(),
-            getRestTimeUseCase = get(),
             setRestTimeUseCase = get()
         )
     }

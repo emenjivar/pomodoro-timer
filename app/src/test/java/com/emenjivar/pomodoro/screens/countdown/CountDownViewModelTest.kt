@@ -2,7 +2,6 @@ package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
-import com.emenjivar.core.repository.SettingsRepository
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
@@ -28,7 +27,6 @@ class CountDownViewModelTest {
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setNighModeUseCase: SetNighModeUseCase
     private lateinit var isNightModeUseCase: IsNightModeUseCase
-    private lateinit var settingsRepository: SettingsRepository
     private lateinit var viewModel: CountDownViewModel
 
     private var nightMode = true
@@ -41,10 +39,9 @@ class CountDownViewModelTest {
 
     @Before
     fun setup() = runTest {
-        settingsRepository = Mockito.mock(SettingsRepository::class.java)
-        getPomodoroUseCase = GetPomodoroUseCase(settingsRepository)
-        setNighModeUseCase = SetNighModeUseCase(settingsRepository)
-        isNightModeUseCase = IsNightModeUseCase(settingsRepository)
+        getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
+        setNighModeUseCase = Mockito.mock(SetNighModeUseCase::class.java)
+        isNightModeUseCase = Mockito.mock(IsNightModeUseCase::class.java)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(

@@ -3,8 +3,7 @@ package com.emenjivar.pomodoro.screens.settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
@@ -14,9 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val getPomodoroTimeUseCase: GetPomodoroTimeUseCase,
+    private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setPomodoroTimeUseCase: SetPomodoroTimeUseCase,
-    private val getRestTimeUseCase: GetRestTimeUseCase,
     private val setRestTimeUseCase: SetRestTimeUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
@@ -44,8 +42,9 @@ class SettingsViewModel(
          * Values are expressed in milliseconds
          * transform to minutes to show a readable value on UI
          */
-        _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisecondsToMinutes())
-        _restTime.postValue(getRestTimeUseCase.invoke().millisecondsToMinutes())
+        val pomodoro = getPomodoroUseCase.invoke()
+        _pomodoroTime.postValue(pomodoro.workTime.millisecondsToMinutes())
+        _restTime.postValue(pomodoro.restTime.millisecondsToMinutes())
     }
 
     /**
