@@ -1,28 +1,27 @@
 package com.emenjivar.pomodoro.screens.countdown
 
 import android.os.CountDownTimer
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
-import com.emenjivar.pomodoro.model.NormalPomodoro
-import com.emenjivar.pomodoro.model.Pomodoro
-import com.emenjivar.pomodoro.model.RestPomodoro
-import com.emenjivar.pomodoro.utils.TimerUtility
-import com.emenjivar.pomodoro.utils.TimerUtility.formatTime
-import java.util.LinkedList
-import java.util.Queue
+import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.Action
+import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CountDownViewModel(
-    private val getPomodoroTimeUseCase: GetPomodoroTimeUseCase,
-    private val getRestTimeUseCase: GetRestTimeUseCase,
+    private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -31,19 +30,22 @@ class CountDownViewModel(
 
     private var countDownTimer: CountDownTimer? = null
 
-    private val _pomodoro = MutableLiveData(NormalPomodoro() as Pomodoro)
-    val pomodoro: LiveData<Pomodoro> = _pomodoro
+    /**
+     * Complex object, observed only in compose UI
+     * define neverEqualPolicy to observe nested property changes
+     */
+    private val _counter: MutableState<Counter?> =
+        mutableStateOf(value = null, policy = neverEqualPolicy())
+    val counter: State<Counter?> = _counter
 
-    private val _isPlaying = MutableLiveData(false)
-    val isPlaying: LiveData<Boolean> = _isPlaying
+    private val _action: MutableLiveData<Action> = MutableLiveData(Action.Stop)
+    val action: LiveData<Action> = _action
 
     private val _isNightMode = MutableLiveData(true)
     val isNightMode: LiveData<Boolean> = _isNightMode
 
     private val _openSettings = MutableLiveData(false)
     val openSettings = _openSettings
-
-    val listPomodoro: Queue<Pomodoro> = LinkedList()
 
     var startForBeginning: Boolean = true
 
@@ -59,120 +61,85 @@ class CountDownViewModel(
         _isNightMode.postValue(isNightModeUseCase.invoke())
 
         // Set default pomodoro and load on livedata
-        val defaultPomodoro = getDefaultPomodoro()
-        _pomodoro.postValue(defaultPomodoro)
-
-        // Load time from useCases
-        listPomodoro.add(defaultPomodoro)
-        listPomodoro.add(getDefaultRestPomodoro())
+        _counter.value = fetchCounter()
     }
 
     /**
-     * Get time values from dataStorage
+     * Get pomodoro from dataStorage and convert to counter
      */
-    private suspend fun getDefaultPomodoro(): Pomodoro {
-        val time = getPomodoroTimeUseCase.invoke()
-        return NormalPomodoro(
-            milliseconds = time,
-            time = time.formatTime(),
-            totalMilliseconds = time,
-            progress = 100f
-        )
-    }
+    private suspend fun fetchCounter() = getPomodoroUseCase.invoke().toCounter()
 
-    /**
-     * Get time values from dataStorage
-     */
-    private suspend fun getDefaultRestPomodoro(): Pomodoro {
-        val time = getRestTimeUseCase.invoke()
-        return RestPomodoro(
-            milliseconds = time,
-            time = time.formatTime(),
-            totalMilliseconds = time,
-            progress = 100f
-        )
-    }
-
-    fun startTimer(pomodoro: Pomodoro? = null) {
-        if (pomodoro != null) {
-            _isPlaying.value = true
-            _pomodoro.value = pomodoro
-
-            if (!testMode) {
-                // Do not include this block on unitTesting
-                countDownTimer = object : CountDownTimer(pomodoro.milliseconds, 500) {
-                    override fun onTick(milliseconds: Long) {
-                        setTime(
-                            pomodoro = pomodoro,
-                            milliseconds = milliseconds
-                        )
-                    }
-
-                    override fun onFinish() {
-                        nextPomodoro()
-                    }
-                }.start()
+    fun finishCounter() {
+        when (counter.value?.phase) {
+            Phase.WORK -> {
+                counter.value?.phase = Phase.REST
             }
-        } else {
-            stopCurrentPomodoro()
+            Phase.REST -> {
+                counter.value?.setRest()
+            }
         }
     }
 
     /**
-     * Start pomodoro timer or resume a started one
-     * when timer is resumed, the pomodoro is obtained from liveData.
-     * this value has the updated time, progress and formatted time
+     * recursive function
+     * if _counter is null, fetch saved configuration and start the counter using workTime
+     * if _counter is not null, stat the counter using restTime
      */
-    fun playTimer() {
-        if (startForBeginning) {
-            startForBeginning = false
-            startTimer(listPomodoro.poll())
-        } else {
-            startTimer(pomodoro.value)
+    fun startCounter() {
+        viewModelScope.launch(Dispatchers.Main) {
+            // In case of null, fetch local storage configurations
+            if (counter.value == null) {
+                _counter.value = fetchCounter()
+            }
+
+            counter.value?.let { safeCounter ->
+                val milliseconds = if (safeCounter.phase == Phase.WORK)
+                    safeCounter.workTime
+                else
+                    safeCounter.restTime
+
+                _action.value = Action.Play
+
+                if (!testMode) {
+                    // Don't include this block on testing
+                    countDownTimer = object : CountDownTimer(milliseconds, 500) {
+                        override fun onTick(millisUntilFinished: Long) {
+                            setTime(millisUntilFinished)
+                        }
+
+                        override fun onFinish() {
+                            finishCounter()
+                            viewModelScope.launch {
+                                startCounter()
+                            }
+                        }
+                    }.start()
+                }
+            }
         }
     }
 
-    fun pauseTimer() {
-        _isPlaying.value = false
+    fun pauseCounter() {
+        _action.value = Action.Pause
         countDownTimer?.cancel()
     }
 
-    fun nextPomodoro() {
-        startTimer(listPomodoro.poll())
+    fun stopCounter() {
+        viewModelScope.launch {
+            _action.value = Action.Stop
+            _counter.value = fetchCounter()
+            countDownTimer?.cancel()
+        }
     }
 
     /**
      * Set current state of pomodoro on livedata value
      */
-    fun setTime(pomodoro: Pomodoro, milliseconds: Long) {
-        // Calculate progress on scale from 0.0 to 1.0
-        val progress = TimerUtility.getProgress(
-            currentTime = milliseconds,
-            totalTime = pomodoro.totalMilliseconds
-        ) / 100f
-
-        _pomodoro.value = Pomodoro(
-            milliseconds = milliseconds,
-            totalMilliseconds = pomodoro.totalMilliseconds,
-            time = milliseconds.formatTime(),
-            progress = progress
-        )
-    }
-
-    /**
-     * Stop the counter and load default pomodoro
-     * from dataStorage time values.
-     */
-    fun stopCurrentPomodoro() {
-        viewModelScope.launch(ioDispatcher) {
-            _isPlaying.postValue(false)
-            /**
-             * Always load normal pomodoro,
-             * even if rest pomodoro is playing
-             */
-            _pomodoro.postValue(getDefaultPomodoro())
-            countDownTimer?.cancel()
+    fun setTime(milliseconds: Long) {
+        val localCounter = counter.value?.apply {
+            countDown = milliseconds
         }
+        _counter.value = localCounter
     }
 
     fun toggleNightMode() {

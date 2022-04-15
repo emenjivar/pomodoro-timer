@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -62,6 +63,14 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             settings[nightMode] = value
         }
     }
+
+    override suspend fun getPomodoro(): Pomodoro =
+        context.dataStore.data.map { pref ->
+            Pomodoro(
+                workTime = pref[pomodoroTime] ?: 0,
+                restTime = pref[restTime] ?: 0
+            )
+        }.first()
 
     companion object {
         const val SETTINGS_NAME = "settings"

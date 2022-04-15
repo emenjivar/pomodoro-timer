@@ -10,8 +10,7 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel {
         CountDownViewModel(
-            getPomodoroTimeUseCase = get(),
-            getRestTimeUseCase = get(),
+            getPomodoroUseCase = get(),
             setNighModeUseCase = get(),
             isNightModeUseCase = get()
         )

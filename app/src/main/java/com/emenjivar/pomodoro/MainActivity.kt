@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
+import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
@@ -22,7 +23,6 @@ import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_
 import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PLAY
 import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
-import com.emenjivar.pomodoro.utils.Action
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -52,18 +52,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        val isPlaying = countDownViewModel.isPlaying.value
-        Log.d(TAG, "onRestart activity. isPlaying: $isPlaying")
+        val action = countDownViewModel.action.value
+        Log.d(TAG, "onRestart activity. isPlaying: $action")
     }
 
     override fun onStop() {
         super.onStop()
         // Verify if the timer is running and display
         // the appropriate controls on the notification
-        val isPlaying = countDownViewModel.isPlaying.value
-        val action = if (isPlaying == true) Action.Play else Action.Pause
+        val action = countDownViewModel.action.value
         notificationManager.display(action)
-        Log.d(TAG, "onStop activity. isPlaying: $isPlaying")
+        Log.d(TAG, "onStop activity. isPlaying: $action")
     }
 
     override fun onDestroy() {
@@ -74,9 +73,9 @@ class MainActivity : ComponentActivity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
-                INTENT_PLAY -> countDownViewModel.playTimer()
-                INTENT_PAUSE -> countDownViewModel.pauseTimer()
-                INTENT_STOP -> countDownViewModel.stopCurrentPomodoro()
+                INTENT_PLAY -> countDownViewModel.startCounter()
+                INTENT_PAUSE -> countDownViewModel.pauseCounter()
+                INTENT_STOP -> countDownViewModel.stopCounter()
             }
         }
     }
@@ -86,6 +85,11 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private val observeCounter = Observer<Counter?> { counter ->
+        Log.d("MainActivity", "counter: $counter")
+        Log.d("MainActivity", "counter.countdown: ${counter.countDown}")
     }
 
     companion object {

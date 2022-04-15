@@ -22,26 +22,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.model.NormalPomodoro
-import com.emenjivar.pomodoro.model.Pomodoro
+import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
+import com.emenjivar.pomodoro.utils.default
+import com.emenjivar.pomodoro.utils.formatTime
 
 @Composable
 fun CountDownScreen(
     modifier: Modifier = Modifier,
     countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val pomodoro by countDownViewModel.pomodoro.observeAsState(NormalPomodoro() as Pomodoro)
-    val isPlaying by countDownViewModel.isPlaying.observeAsState(false)
+    val counter by countDownViewModel.counter
+    val action by countDownViewModel.action.observeAsState()
     val isNightMode by countDownViewModel.isNightMode.observeAsState(false)
 
     CountDownScreen(
         modifier = modifier,
-        isPlaying = isPlaying,
-        pomodoro = pomodoro,
-        playAction = { countDownViewModel.pauseTimer() },
-        pauseAction = { countDownViewModel.playTimer() },
-        stopAction = { countDownViewModel.stopCurrentPomodoro() },
+        action = action,
+        counter = counter,
+        playAction = { countDownViewModel.pauseCounter() },
+        pauseAction = { countDownViewModel.startCounter() },
+        stopAction = { countDownViewModel.stopCounter() },
         fullScreenAction = { countDownViewModel.toggleNightMode() },
         isNightMode = isNightMode,
         openSettings = { countDownViewModel.openSettings() }
@@ -51,8 +54,8 @@ fun CountDownScreen(
 @Composable
 fun CountDownScreen(
     modifier: Modifier = Modifier,
-    isPlaying: Boolean,
-    pomodoro: Pomodoro,
+    action: Action?,
+    counter: Counter?,
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     stopAction: () -> Unit,
@@ -62,9 +65,10 @@ fun CountDownScreen(
 ) {
     val horizontalSpace = 30.dp
 
-    val playPauseIcon =
-        if (isPlaying) R.drawable.ic_baseline_pause_24
-        else R.drawable.ic_baseline_play_arrow_24
+    val playPauseIcon = when (action) {
+        Action.Play -> R.drawable.ic_baseline_pause_24
+        else -> R.drawable.ic_baseline_play_arrow_24
+    }
 
     val fullScreenIcon =
         if (isNightMode) R.drawable.ic_baseline_wb_sunny_24
@@ -78,7 +82,10 @@ fun CountDownScreen(
         targetValue = colorResource(if (isNightMode) R.color.white else R.color.primary),
         animationSpec = tween(TRANSITION_DURATION)
     )
-    val playPauseAction = if (isPlaying) playAction else pauseAction
+    val playPauseAction = when (action) {
+        Action.Play -> playAction
+        else -> pauseAction
+    }
 
     ConstraintLayout(
         modifier = modifier
@@ -114,8 +121,8 @@ fun CountDownScreen(
             CountDown(
                 modifier = Modifier
                     .padding(top = 50.dp),
-                time = pomodoro.time,
-                progress = pomodoro.progress,
+                time = counter?.countDown.formatTime(),
+                progress = counter?.getProgress().default(100f),
                 size = 230,
                 stroke = 7,
                 isFullScreen = isNightMode
@@ -152,8 +159,24 @@ fun CountDownScreen(
 fun PreviewCountDownScreen() {
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
-        isPlaying = false,
-        pomodoro = NormalPomodoro(time = "24:59", progress = 0.99f),
+        action = Action.Play,
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
+        playAction = {},
+        pauseAction = {},
+        stopAction = {},
+        fullScreenAction = {},
+        isNightMode = false,
+        openSettings = {}
+    )
+}
+
+@Preview(name = "Paused counter")
+@Composable
+fun PreviewPausedCountDown() {
+    CountDownScreen(
+        modifier = Modifier.fillMaxSize(),
+        action = Action.Pause,
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -166,10 +189,11 @@ fun PreviewCountDownScreen() {
 @Preview(name = "Full screen counter")
 @Composable
 fun PreviewCountDownFullScreen() {
+
     CountDownScreen(
         modifier = Modifier.fillMaxSize(),
-        isPlaying = false,
-        pomodoro = NormalPomodoro(time = "24:59", progress = 0.99f),
+        action = Action.Play,
+        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME, 100f),
         playAction = {},
         pauseAction = {},
         stopAction = {},
@@ -178,3 +202,6 @@ fun PreviewCountDownFullScreen() {
         openSettings = {}
     )
 }
+
+private const val WORK_TIME: Long = 1000 * 60 * 25
+private const val REST_TIME: Long = 1000 * 60 * 5

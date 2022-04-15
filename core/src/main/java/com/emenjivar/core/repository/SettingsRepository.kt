@@ -1,5 +1,7 @@
 package com.emenjivar.core.repository
 
+import com.emenjivar.core.model.Pomodoro
+
 interface SettingsRepository {
     suspend fun getPomodoroTime(): Long
     suspend fun getRestTime(): Long
@@ -9,4 +11,6 @@ interface SettingsRepository {
     suspend fun setRestTime(value: Long)
     suspend fun setKeepScreen(value: Boolean)
     suspend fun setNightMode(value: Boolean)
+
+    suspend fun getPomodoro(): Pomodoro
 }

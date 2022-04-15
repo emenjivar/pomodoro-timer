@@ -7,8 +7,8 @@ import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.GetRestTimeUseCase
 import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
-import com.emenjivar.pomodoro.utils.TimerUtility.millisToMinutes
-import com.emenjivar.pomodoro.utils.TimerUtility.minutesToMillis
+import com.emenjivar.pomodoro.utils.millisecondsToMinutes
+import com.emenjivar.pomodoro.utils.minutesToMilliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,8 +44,8 @@ class SettingsViewModel(
          * Values are expressed in milliseconds
          * transform to minutes to show a readable value on UI
          */
-        _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisToMinutes())
-        _restTime.postValue(getRestTimeUseCase.invoke().millisToMinutes())
+        _pomodoroTime.postValue(getPomodoroTimeUseCase.invoke().millisecondsToMinutes())
+        _restTime.postValue(getRestTimeUseCase.invoke().millisecondsToMinutes())
     }
 
     /**
@@ -60,7 +60,7 @@ class SettingsViewModel(
         viewModelScope.launch(ioDispatcher) {
             _pomodoroTime.postValue(time)
             // Parse to milliseconds
-            setPomodoroTimeUseCase.invoke(time.minutesToMillis())
+            setPomodoroTimeUseCase.invoke(time.minutesToMilliseconds())
         }
     }
 
@@ -76,7 +76,7 @@ class SettingsViewModel(
         viewModelScope.launch(ioDispatcher) {
             _restTime.postValue(time)
             // Parse to milliSeconds
-            setRestTimeUseCase.invoke(time.minutesToMillis())
+            setRestTimeUseCase.invoke(time.millisecondsToMinutes())
         }
     }
 

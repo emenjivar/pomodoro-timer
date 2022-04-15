@@ -34,6 +34,11 @@ import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
+/**
+ * @param time expected a formatted milliseconds string, 60000 -> "1:00"
+ * @param progress from 100.0 to 0.0
+ * @param isFullScreen define the background and button colors
+ */
 @Composable
 fun CountDown(
     modifier: Modifier = Modifier,
