@@ -12,6 +12,7 @@ val appModule = module {
         CountDownViewModel(
             getPomodoroUseCase = get(),
             setNighModeUseCase = get(),
+            getAutoPlayUseCase = get(),
             isNightModeUseCase = get()
         )
     }
@@ -19,7 +20,9 @@ val appModule = module {
         SettingsViewModel(
             getPomodoroUseCase = get(),
             setWorkTimeUseCase = get(),
-            setRestTimeUseCase = get()
+            setRestTimeUseCase = get(),
+            getAutoPlayUseCase = get(),
+            setAutoPlayUseCase = get()
         )
     }
 

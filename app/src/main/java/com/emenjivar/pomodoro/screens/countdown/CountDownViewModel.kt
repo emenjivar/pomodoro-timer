@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 class CountDownViewModel(
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
+    private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
@@ -47,6 +49,8 @@ class CountDownViewModel(
     private val _openSettings = MutableLiveData(false)
     val openSettings = _openSettings
 
+    var autoPlay: Boolean = false
+
     init {
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
@@ -57,6 +61,7 @@ class CountDownViewModel(
 
     suspend fun loadDefaultValues() {
         _isNightMode.value = isNightModeUseCase.invoke()
+        autoPlay = getAutoPlayUseCase.invoke()
 
         // Set default pomodoro and load on livedata
         _counter.value = fetchCounter()
@@ -67,15 +72,12 @@ class CountDownViewModel(
      */
     private suspend fun fetchCounter() = getPomodoroUseCase.invoke().toCounter()
 
-    fun finishCounter() {
-        when (counter.value?.phase) {
-            Phase.WORK -> {
-                _counter.value?.setRest()
-            }
-            Phase.REST -> {
-                // This line force fetch pomodoro configurations and start from work
-                _counter.value = null
-            }
+    /**
+     * In case of null, fetch local storage configurations
+     */
+    suspend fun initCounter() {
+        if (_counter.value == null) {
+            _counter.value = fetchCounter()
         }
     }
 
@@ -86,11 +88,7 @@ class CountDownViewModel(
      */
     fun startCounter() {
         viewModelScope.launch(Dispatchers.Main) {
-            // In case of null, fetch local storage configurations
-            if (_counter.value == null) {
-                _counter.value = fetchCounter()
-            }
-
+            initCounter()
             counter.value?.let { safeCounter ->
                 val milliseconds = if (safeCounter.phase == Phase.WORK)
                     safeCounter.workTime
@@ -114,8 +112,7 @@ class CountDownViewModel(
             }
 
             override fun onFinish() {
-                finishCounter()
-                startCounter()
+                restartCounter()
             }
         }
 
@@ -136,6 +133,35 @@ class CountDownViewModel(
             _action.postValue(Action.Stop)
             _counter.value = fetchCounter()
             countDownTimer?.cancel()
+        }
+    }
+
+    fun finishCounter() {
+        when (counter.value?.phase) {
+            Phase.WORK -> {
+                _counter.value?.setRest()
+            }
+            Phase.REST -> {
+                // This line force fetch pomodoro configurations and start from work
+                _counter.value = null
+                _action.value = Action.Stop
+            }
+        }
+    }
+
+    /**
+     * Restart countdown and start the counter when autoPlay flag is true
+     * else, just init the counter on Stop using default values
+     */
+    fun restartCounter() {
+        finishCounter()
+
+        if (counter.value != null || autoPlay) {
+            startCounter()
+        } else {
+            viewModelScope.launch(Dispatchers.Main) {
+                initCounter()
+            }
         }
     }
 

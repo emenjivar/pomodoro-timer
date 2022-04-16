@@ -17,6 +17,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SETTINGS_NAME)
     private val pomodoroTime = longPreferencesKey(POMODORO_TIME)
     private val restTime = longPreferencesKey(REST_TIME)
+    private val autoPlay = booleanPreferencesKey(AUTOPLAY)
     private val keepScreen = booleanPreferencesKey(KEEP_SCREEN)
     private val nightMode = booleanPreferencesKey(NIGHT_MODE)
 
@@ -50,6 +51,17 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             pref[nightMode] ?: false
         }.first()
 
+    override suspend fun setAutoPlay(value: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[autoPlay] = value
+        }
+    }
+
+    override suspend fun getAutoPlay(): Boolean = context.dataStore.data
+        .map { pref ->
+            pref[autoPlay] ?: false
+        }.first()
+
     override suspend fun setKeepScreen(value: Boolean) {
         context.dataStore.edit { settings ->
             settings[keepScreen] = value
@@ -66,6 +78,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         const val SETTINGS_NAME = "settings"
         const val POMODORO_TIME = "pomodoro_time"
         const val REST_TIME = "rest_time"
+        const val AUTOPLAY = "autoplay"
         const val KEEP_SCREEN = "keep_screen"
         const val NIGHT_MODE = "night_mode"
     }

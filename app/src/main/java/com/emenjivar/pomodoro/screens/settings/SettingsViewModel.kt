@@ -1,9 +1,13 @@
 package com.emenjivar.pomodoro.screens.settings
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
@@ -16,6 +20,8 @@ class SettingsViewModel(
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setWorkTimeUseCase: SetWorkTimeUseCase,
     private val setRestTimeUseCase: SetRestTimeUseCase,
+    private val getAutoPlayUseCase: GetAutoPlayUseCase,
+    private val setAutoPlayUseCase: SetAutoPlayUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
@@ -28,6 +34,9 @@ class SettingsViewModel(
 
     private val _closeSettings = MutableLiveData(false)
     val closeSettings = _closeSettings
+
+    private val _autoPlay = mutableStateOf(false)
+    val autoPlay: State<Boolean> = _autoPlay
 
     init {
         if (!testMode) {
@@ -45,6 +54,7 @@ class SettingsViewModel(
         val pomodoro = getPomodoroUseCase.invoke()
         _pomodoroTime.postValue(pomodoro.workTime.millisecondsToMinutes())
         _restTime.postValue(pomodoro.restTime.millisecondsToMinutes())
+        _autoPlay.value = getAutoPlayUseCase.invoke()
     }
 
     /**
@@ -76,6 +86,13 @@ class SettingsViewModel(
             _restTime.postValue(time)
             // Parse to milliSeconds
             setRestTimeUseCase.invoke(time.minutesToMilliseconds())
+        }
+    }
+
+    fun setAutoPlay(autoPlay: Boolean) {
+        viewModelScope.launch {
+            _autoPlay.value = autoPlay
+            setAutoPlayUseCase.invoke(autoPlay)
         }
     }
 
