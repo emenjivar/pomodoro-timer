@@ -123,8 +123,12 @@ class CountDownViewModel(
 
     fun resumeCounter() {
         _action.value = Action.Resume
-        _counter.value?.let { safeCounter ->
-            countDownTimer = countDownTimer(safeCounter.countDown).start()
+
+        // Don't include this block on tests
+        if (!testMode) {
+            _counter.value?.let { safeCounter ->
+                countDownTimer = countDownTimer(safeCounter.countDown).start()
+            }
         }
     }
 
