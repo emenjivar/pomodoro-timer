@@ -13,7 +13,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
-import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
@@ -23,6 +22,7 @@ import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_
 import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PLAY
 import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import com.emenjivar.pomodoro.utils.Action
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -73,8 +73,14 @@ class MainActivity : ComponentActivity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
-                INTENT_PLAY -> countDownViewModel.startCounter()
-                INTENT_PAUSE -> countDownViewModel.pauseCounter()
+                INTENT_PLAY -> {
+                    countDownViewModel.resumeCounter()
+                    notificationManager.display(Action.Play)
+                }
+                INTENT_PAUSE -> {
+                    countDownViewModel.pauseCounter()
+                    notificationManager.display(Action.Pause)
+                }
                 INTENT_STOP -> countDownViewModel.stopCounter()
             }
         }
@@ -85,11 +91,6 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    private val observeCounter = Observer<Counter?> { counter ->
-        Log.d("MainActivity", "counter: $counter")
-        Log.d("MainActivity", "counter.countdown: ${counter.countDown}")
     }
 
     companion object {

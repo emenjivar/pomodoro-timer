@@ -19,38 +19,48 @@ class CustomNotificationManager(private val context: Context) {
         buildNotification()
     }
 
-    private fun buildNotification(action: Action = Action.Play) {
+    private fun buildNotification() {
         builder = NotificationCompat.Builder(
             context,
             CHANNEL_ID
         )
-            .setSmallIcon(ICON)
+            .setSmallIcon(PLAY_ICON)
             .setContentTitle("Pomodoro")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+    }
 
+    private fun setActions(action: Action = Action.Play) {
         when (action) {
             is Action.Play -> {
+                builder.setSmallIcon(PLAY_ICON)
                 builder.setContentText("Time - running")
+                builder.clearActions()
                 builder.addAction(R.drawable.ic_baseline_pause_24, "PAUSE", pauseIntent())
                 builder.addAction(R.drawable.ic_baseline_stop_24, "STOP", stopIntent())
             }
             is Action.Pause, Action.Stop -> {
+                builder.setSmallIcon(PAUSE_ICON)
                 builder.setContentText("Time - paused")
+                builder.clearActions()
                 builder.addAction(R.drawable.ic_baseline_play_arrow_24, "PLAY", playIntent())
                 builder.addAction(R.drawable.ic_baseline_stop_24, "STOP", stopIntent())
             }
+            else -> {}
         }
     }
 
     fun display(action: Action? = null) {
-        action?.let {
-            buildNotification(action)
-        }
+        action?.let { safeAction ->
+            if (safeAction != Action.Stop) {
+                setActions(action)
 
-        NotificationManagerCompat.from(context).notify(
-            NOTIFICATION_ID,
-            builder.build()
-        )
+                // Update notification
+                NotificationManagerCompat.from(context).notify(
+                    NOTIFICATION_ID,
+                    builder.build()
+                )
+            }
+        }
     }
 
     private fun playIntent(): PendingIntent {
@@ -69,7 +79,7 @@ class CustomNotificationManager(private val context: Context) {
             .setAction(INTENT_PAUSE)
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE_PLAY,
+            REQUEST_CODE_PAUSE,
             intent,
             INTENT_FLAGS
         )
@@ -91,7 +101,8 @@ class CustomNotificationManager(private val context: Context) {
         private const val CHANNEL_NAME = "pomodoro counter"
         private const val CHANNEL_DESCRIPTION = "Counter"
 
-        private const val ICON = R.drawable.ic_baseline_play_arrow_24
+        private const val PLAY_ICON = R.drawable.ic_baseline_play_arrow_24
+        private const val PAUSE_ICON = R.drawable.ic_baseline_pause_24
         private const val INTENT_FLAGS =
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         private const val NOTIFICATION_ID = 129909
@@ -101,7 +112,8 @@ class CustomNotificationManager(private val context: Context) {
         const val INTENT_STOP = "stopAction"
 
         const val REQUEST_CODE_PLAY = 10
-        const val REQUEST_CODE_STOP = 11
+        const val REQUEST_CODE_PAUSE = 11
+        const val REQUEST_CODE_STOP = 12
 
         fun createChannel(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
