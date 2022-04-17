@@ -16,6 +16,6 @@ class PomodoroApplication : Application() {
             modules(appModule, coreModule, dataModule)
         }
 
-        CustomNotificationManager.createChannel(this)
+        CustomNotificationManagerImp.createChannel(this)
     }
 }

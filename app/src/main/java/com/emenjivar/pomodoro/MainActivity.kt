@@ -17,19 +17,15 @@ import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsActivity
 import com.emenjivar.pomodoro.system.CustomBroadcastReceiver
-import com.emenjivar.pomodoro.system.CustomNotificationManager
-import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PAUSE
-import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_PLAY
-import com.emenjivar.pomodoro.system.CustomNotificationManager.Companion.INTENT_STOP
+import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PAUSE
+import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PLAY
+import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
-import com.emenjivar.pomodoro.utils.Action
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val countDownViewModel: CountDownViewModel by viewModel()
-    private val notificationManager: CustomNotificationManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,21 +53,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        notificationManager.close()
+        countDownViewModel.closeNotification()
     }
 
     override fun onStop() {
         super.onStop()
-        // Verify if the timer is running and display
-        // the appropriate controls on the notification
-        val action = countDownViewModel.action.value
-        notificationManager.display(action)
-        Log.d(TAG, "onStop activity. isPlaying: $action")
+        /**
+         * just set displayNotification flag on true
+         * this viewModel will display the notification
+         * when the countdown is updated
+         */
+        countDownViewModel.displayNotification = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        notificationManager.close()
+        countDownViewModel.closeNotification()
         unregisterReceiver(broadcastReceiver)
     }
 
@@ -80,15 +77,12 @@ class MainActivity : ComponentActivity() {
             when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
                 INTENT_PLAY -> {
                     countDownViewModel.resumeCounter()
-                    notificationManager.display(Action.Play)
                 }
                 INTENT_PAUSE -> {
                     countDownViewModel.pauseCounter()
-                    notificationManager.display(Action.Pause)
                 }
                 INTENT_STOP -> {
                     countDownViewModel.stopCounter()
-                    notificationManager.close()
                 }
             }
         }
@@ -99,9 +93,5 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    companion object {
-        private const val TAG = "MainActivity"
     }
 }

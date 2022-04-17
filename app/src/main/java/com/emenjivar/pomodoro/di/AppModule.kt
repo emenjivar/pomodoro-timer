@@ -3,6 +3,7 @@ package com.emenjivar.pomodoro.di
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsViewModel
 import com.emenjivar.pomodoro.system.CustomNotificationManager
+import com.emenjivar.pomodoro.system.CustomNotificationManagerImp
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -13,7 +14,8 @@ val appModule = module {
             getPomodoroUseCase = get(),
             setNighModeUseCase = get(),
             getAutoPlayUseCase = get(),
-            isNightModeUseCase = get()
+            isNightModeUseCase = get(),
+            notificationManager = get()
         )
     }
     viewModel {
@@ -26,7 +28,7 @@ val appModule = module {
         )
     }
 
-    single {
-        CustomNotificationManager(androidContext())
+    single<CustomNotificationManager> {
+        CustomNotificationManagerImp(androidContext())
     }
 }

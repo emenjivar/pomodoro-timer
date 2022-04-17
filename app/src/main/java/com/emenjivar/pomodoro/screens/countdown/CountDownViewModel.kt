@@ -15,6 +15,7 @@ import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,6 +27,7 @@ class CountDownViewModel(
     private val setNighModeUseCase: SetNighModeUseCase,
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
+    private val notificationManager: CustomNotificationManager,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
 ) : ViewModel() {
@@ -50,6 +52,7 @@ class CountDownViewModel(
     val openSettings = _openSettings
 
     var autoPlay: Boolean = false
+    var displayNotification: Boolean = false
 
     init {
         if (!testMode) {
@@ -119,6 +122,10 @@ class CountDownViewModel(
     fun pauseCounter() {
         _action.value = Action.Pause
         countDownTimer?.cancel()
+
+        if (displayNotification) {
+            updateNotification(Action.Pause)
+        }
     }
 
     fun resumeCounter() {
@@ -130,6 +137,10 @@ class CountDownViewModel(
                 countDownTimer = countDownTimer(safeCounter.countDown).start()
             }
         }
+
+        if (displayNotification) {
+            updateNotification(Action.Play)
+        }
     }
 
     fun stopCounter() {
@@ -137,6 +148,7 @@ class CountDownViewModel(
             _action.postValue(Action.Stop)
             _counter.value = fetchCounter()
             countDownTimer?.cancel()
+            notificationManager.close()
         }
     }
 
@@ -177,6 +189,31 @@ class CountDownViewModel(
             countDown = milliseconds
         }
         _counter.value = localCounter
+
+        /**
+         * displayNotification is set during activity lifecycle
+         * display during onStop action
+         */
+        if (displayNotification && localCounter != null) {
+            notificationManager.updateProgress(
+                counter = localCounter,
+                action = Action.Play
+            )
+        }
+    }
+
+    private fun updateNotification(action: Action) {
+        _counter.value?.let { safeCounter ->
+            notificationManager.updateProgress(
+                counter = safeCounter,
+                action = action
+            )
+        }
+    }
+
+    fun closeNotification() {
+        displayNotification = false
+        notificationManager.close()
     }
 
     fun toggleNightMode() {
