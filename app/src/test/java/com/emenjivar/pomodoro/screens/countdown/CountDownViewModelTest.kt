@@ -170,7 +170,6 @@ class CountDownViewModelTest {
                     localAction = Action.Play
                     null
                 }
-
             }
 
             resumeCounter()
