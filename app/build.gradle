@@ -47,6 +47,7 @@ android {
     }
 }
 
+def core_version = "1.7.0"
 def koin_version= "3.2.0-beta-1"
 
 dependencies {
@@ -63,6 +64,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    implementation "androidx.core:core-ktx:$core_version"
+
 
     // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'

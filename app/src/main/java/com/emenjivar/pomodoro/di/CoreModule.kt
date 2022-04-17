@@ -1,18 +1,20 @@
 package com.emenjivar.pomodoro.di
 
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
+import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
-import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import org.koin.dsl.module
 
 val coreModule = module {
-    single { GetPomodoroTimeUseCase(get()) }
-    single { SetPomodoroTimeUseCase(get()) }
-    single { GetRestTimeUseCase(get()) }
+    single { GetPomodoroUseCase(get()) }
+    single { SetWorkTimeUseCase(get()) }
     single { SetRestTimeUseCase(get()) }
+    single { GetAutoPlayUseCase(get()) }
+    single { SetAutoPlayUseCase(get()) }
     single { SetNighModeUseCase(get()) }
     single { IsNightModeUseCase(get()) }
 }

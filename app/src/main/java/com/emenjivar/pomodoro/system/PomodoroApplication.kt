@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro
+package com.emenjivar.pomodoro.system
 
 import android.app.Application
 import com.emenjivar.pomodoro.di.appModule
@@ -15,5 +15,7 @@ class PomodoroApplication : Application() {
             androidContext(this@PomodoroApplication)
             modules(appModule, coreModule, dataModule)
         }
+
+        CustomNotificationManagerImp.createChannel(this)
     }
 }

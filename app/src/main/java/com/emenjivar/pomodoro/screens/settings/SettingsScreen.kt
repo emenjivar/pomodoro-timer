@@ -13,6 +13,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -38,15 +40,20 @@ fun SettingsScreen(
 ) {
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
+    val autoPlay by viewModel.autoPlay
 
     SettingsScreen(
         pomodoroTime = pomodoroTime,
         restTime = restTime,
+        autoPlay = autoPlay,
         backAction = { viewModel.closeSettings() },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
             viewModel.setRestTime(it)
             Log.d("SettingsScreen", "onSaveItem...")
+        },
+        onCheckedChange = {
+            viewModel.setAutoPlay(it)
         }
     )
 }
@@ -55,17 +62,18 @@ fun SettingsScreen(
 fun SettingsScreen(
     pomodoroTime: Long,
     restTime: Long,
+    autoPlay: Boolean,
     backAction: () -> Unit,
     setPomodoroTime: (time: String) -> Unit,
-    setRestTime: (time: String) -> Unit
+    setRestTime: (time: String) -> Unit,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
-                        fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+                        text = "Settings"
                     )
                 },
                 navigationIcon = {
@@ -109,28 +117,14 @@ fun SettingsScreen(
                 }
             }
 
-            /*
-            SettingsGroup(title = "Sounds") {
-                SettingsItem(
-                    title = "Pomodoro",
-                    description = "Select the sound to notify the end of the pomodoro"
-                ) {
-                    SettingsRightText("Bell")
-                }
-                SettingsItem(
-                    title = "Rest",
-                    description = "Select the sound to notify the end of the block of time"
-                ) {
-                    SettingsRightText("Drop")
-                }
-            }
-
             SettingsGroup(title = "Others") {
-                SettingsItem(
-                    title = "Keep screen on"
-                ) { }
+                SwitchItem(
+                    title = "Keep screen on",
+                    subtitle = "At the end of a pomodoro, the next one start automatically",
+                    autoPlay = autoPlay,
+                    onCheckedChange = onCheckedChange
+                )
             }
-             */
         }
     }
 }
@@ -143,7 +137,6 @@ fun SettingsGroup(
     Text(
         text = title,
         color = colorResource(id = R.color.primary),
-        fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
         fontSize = 13.sp,
         modifier = Modifier.padding(
             start = 16.dp,
@@ -153,6 +146,54 @@ fun SettingsGroup(
         )
     )
     action()
+}
+
+@Composable
+fun SwitchItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String?,
+    autoPlay: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!autoPlay) }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.weight(2f)
+        ) {
+            Text(title)
+
+            subtitle?.let { safeSubtitle ->
+                Text(
+                    text = safeSubtitle,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(
+                        top = 8.dp
+                    )
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.weight(0.8f),
+            horizontalAlignment = Alignment.End
+        ) {
+            Switch(
+                checked = autoPlay,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = colorResource(R.color.primary),
+                    uncheckedThumbColor = colorResource(R.color.light_gray)
+                )
+            )
+        }
+    }
 }
 
 @Composable
@@ -180,14 +221,12 @@ fun SettingsItem(
             modifier = Modifier.weight(2f)
         ) {
             Text(
-                text = title,
-                fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+                text = title
             )
             description?.let { safeDescription ->
                 Text(
                     text = safeDescription,
-                    fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
-                    fontSize = 13.sp,
+                    fontSize = 15.sp,
                     modifier = Modifier.padding(
                         top = 8.dp
                     )
@@ -232,9 +271,11 @@ fun PreviewStingsItem() {
         SettingsScreen(
             pomodoroTime = 0L,
             restTime = 0L,
+            autoPlay = false,
             backAction = {},
             setPomodoroTime = {},
-            setRestTime = {}
+            setRestTime = {},
+            onCheckedChange = {}
         )
     }
 }

@@ -1,18 +1,20 @@
 package com.emenjivar.pomodoro.screens.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.emenjivar.core.repository.SettingsRepository
-import com.emenjivar.core.usecase.GetPomodoroTimeUseCase
-import com.emenjivar.core.usecase.GetRestTimeUseCase
-import com.emenjivar.core.usecase.SetPomodoroTimeUseCase
+import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,11 +24,11 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
-    private lateinit var getPomodoroTimeUseCase: GetPomodoroTimeUseCase
-    private lateinit var setPomodoroTimeUseCase: SetPomodoroTimeUseCase
-    private lateinit var getRestTimeUseCase: GetRestTimeUseCase
+    private lateinit var getPomodoroUseCase: GetPomodoroUseCase
+    private lateinit var setWorkTimeUseCase: SetWorkTimeUseCase
     private lateinit var setRestTimeUseCase: SetRestTimeUseCase
-    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
+    private lateinit var setAutoPlayUseCase: SetAutoPlayUseCase
 
     private lateinit var settingsViewModel: SettingsViewModel
 
@@ -37,35 +39,51 @@ class SettingsViewModelTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     @Before
-    fun prepareTest() = runTest {
-        settingsRepository = Mockito.mock(SettingsRepository::class.java)
-        getPomodoroTimeUseCase = Mockito.mock(GetPomodoroTimeUseCase::class.java)
-        setPomodoroTimeUseCase = SetPomodoroTimeUseCase(settingsRepository)
-        getRestTimeUseCase = Mockito.mock(GetRestTimeUseCase::class.java)
-        setRestTimeUseCase = SetRestTimeUseCase(settingsRepository)
+    fun prepareTest() {
+        getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
+        setWorkTimeUseCase = Mockito.mock(SetWorkTimeUseCase::class.java)
+        setRestTimeUseCase = Mockito.mock(SetRestTimeUseCase::class.java)
+        getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
+        setAutoPlayUseCase = Mockito.mock(SetAutoPlayUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
-            getPomodoroTimeUseCase = getPomodoroTimeUseCase,
-            setPomodoroTimeUseCase = setPomodoroTimeUseCase,
-            getRestTimeUseCase = getRestTimeUseCase,
+            getPomodoroUseCase = getPomodoroUseCase,
+            setWorkTimeUseCase = setWorkTimeUseCase,
             setRestTimeUseCase = setRestTimeUseCase,
+            getAutoPlayUseCase = getAutoPlayUseCase,
+            setAutoPlayUseCase = setAutoPlayUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
     }
 
     @Test
+    fun defaultValues() {
+        with(settingsViewModel) {
+            assertEquals(0L, pomodoroTime.value)
+            assertEquals(0L, restTime.value)
+            assertFalse(closeSettings.value ?: true)
+            assertFalse(autoPlay.value)
+        }
+    }
+
+    @Test
     fun `loadSettings test`() = runTest {
         // Given 25 and 5 minutes
-        Mockito.`when`(getPomodoroTimeUseCase.invoke()).thenReturn(1500000L)
-        Mockito.`when`(getRestTimeUseCase.invoke()).thenReturn(300000L)
+        Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
+            Pomodoro(workTime = 1500000L, restTime = 300000L)
+        )
+        Mockito.`when`(getAutoPlayUseCase.invoke()).thenReturn(true)
 
-        // When
-        settingsViewModel.loadSettings()
+        with(settingsViewModel) {
+            // When
+            settingsViewModel.loadSettings()
 
-        // Then verify the values are loaded in readable minutes
-        assertEquals(25, settingsViewModel.pomodoroTime.getOrAwaitValue())
-        assertEquals(5, settingsViewModel.restTime.getOrAwaitValue())
+            // Then verify the values are loaded in readable minutes
+            assertEquals(25, pomodoroTime.getOrAwaitValue())
+            assertEquals(5, restTime.getOrAwaitValue())
+            assertTrue(autoPlay.value)
+        }
     }
 
     @Test
@@ -93,10 +111,21 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `setAutoPlay test`() {
+        with(settingsViewModel) {
+            setAutoPlay(true)
+            assertTrue(autoPlay.value)
+
+            setAutoPlay(false)
+            assertFalse(autoPlay.value)
+        }
+    }
+
+    @Test
     fun `closeSettings test`() {
         settingsViewModel.closeSettings()
 
         val result = settingsViewModel.closeSettings.getOrAwaitValue()
-        Assert.assertTrue(result)
+        assertTrue(result)
     }
 }
