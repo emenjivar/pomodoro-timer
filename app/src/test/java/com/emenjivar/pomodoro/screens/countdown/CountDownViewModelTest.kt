@@ -9,6 +9,7 @@ import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
 import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.utils.Action
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +31,7 @@ class CountDownViewModelTest {
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setNighModeUseCase: SetNighModeUseCase
     private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
+    private lateinit var notificationManager: CustomNotificationManager
     private lateinit var isNightModeUseCase: IsNightModeUseCase
     private lateinit var viewModel: CountDownViewModel
 
@@ -46,6 +48,7 @@ class CountDownViewModelTest {
         getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
         setNighModeUseCase = Mockito.mock(SetNighModeUseCase::class.java)
         getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
+        notificationManager = Mockito.mock(CustomNotificationManager::class.java)
         isNightModeUseCase = Mockito.mock(IsNightModeUseCase::class.java)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
@@ -60,6 +63,7 @@ class CountDownViewModelTest {
             getPomodoroUseCase = getPomodoroUseCase,
             setNighModeUseCase = setNighModeUseCase,
             getAutoPlayUseCase = getAutoPlayUseCase,
+            notificationManager = notificationManager,
             isNightModeUseCase = isNightModeUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
@@ -74,6 +78,7 @@ class CountDownViewModelTest {
             assertTrue(isNightMode.value)
             assertFalse(openSettings.value ?: true)
             assertFalse(autoPlay)
+            assertFalse(displayNotification)
         }
     }
 
@@ -122,7 +127,7 @@ class CountDownViewModelTest {
     }
 
     @Test
-    fun `pauseCounter test`() {
+    fun `pauseCounter when displayNotification is false`() {
         with(viewModel) {
             pauseCounter()
             assertEquals(Action.Pause, action.value)
@@ -130,20 +135,66 @@ class CountDownViewModelTest {
     }
 
     @Test
-    fun `resumeCounter test`() {
+    fun `pauseCounter when displayNotification is true`() {
         with(viewModel) {
+            pauseCounter()
+            assertEquals(Action.Pause, action.value)
+        }
+    }
+
+    @Test
+    fun `resumeCounter when displayNotification is false`() {
+        with(viewModel) {
+            displayNotification = false
+
             resumeCounter()
             assertEquals(Action.Resume, action.value)
         }
     }
 
     @Test
+    fun `resumeCounter when displayNotification is true`() = runTest {
+        with(viewModel) {
+            initCounter()
+            var localAction: Action = Action.Resume
+
+            displayNotification = true
+
+            counter.value?.let { safeCounter ->
+                Mockito.`when`(
+                    notificationManager.updateProgress(
+                        safeCounter,
+                        Action.Play
+                    )
+                ).then {
+                    localAction = Action.Play
+                    null
+                }
+
+            }
+
+            resumeCounter()
+            assertEquals(Action.Resume, action.value)
+            assertEquals(Action.Play, localAction)
+        }
+    }
+
+    @Test
     fun `stopCounter test`() {
         with(viewModel) {
+            var isNotificationClosed = false
+
+            Mockito.`when`(notificationManager.close())
+                .then {
+                    isNotificationClosed = true
+                    null
+                }
+
             stopCounter()
             assertEquals(action.value, Action.Stop)
             assertEquals(25000L, counter.value?.workTime)
             assertEquals(5000L, counter.value?.restTime)
+            assertTrue(isNotificationClosed)
         }
     }
 
@@ -202,7 +253,7 @@ class CountDownViewModelTest {
     }
 
     @Test
-    fun `setTime test`() = runTest {
+    fun `setTime when displayNotification is false`() = runTest {
         with(viewModel) {
             Mockito.`when`(getAutoPlayUseCase.invoke())
                 .thenReturn(true)
@@ -213,6 +264,24 @@ class CountDownViewModelTest {
             setTime(10000)
             assertTrue(autoPlay)
             assertEquals(10000L, counter.value?.countDown)
+            assertFalse(displayNotification)
+        }
+    }
+
+    @Test
+    fun `closeNotification test`() {
+        with(viewModel) {
+            // Make sure notificationManager.close is called
+            var isDisplayNotification = true
+            Mockito.`when`(notificationManager.close())
+                .then {
+                    isDisplayNotification = false
+                    null
+                }
+
+            closeNotification()
+            assertFalse(displayNotification)
+            assertFalse(isDisplayNotification)
         }
     }
 
