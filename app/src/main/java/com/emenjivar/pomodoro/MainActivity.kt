@@ -50,10 +50,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d("MainActivity", "onPause")
+    }
+
     override fun onRestart() {
         super.onRestart()
-        val action = countDownViewModel.action.value
-        Log.d(TAG, "onRestart activity. isPlaying: $action")
+        notificationManager.close()
     }
 
     override fun onStop() {
@@ -67,6 +71,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        notificationManager.close()
         unregisterReceiver(broadcastReceiver)
     }
 
@@ -81,7 +86,10 @@ class MainActivity : ComponentActivity() {
                     countDownViewModel.pauseCounter()
                     notificationManager.display(Action.Pause)
                 }
-                INTENT_STOP -> countDownViewModel.stopCounter()
+                INTENT_STOP -> {
+                    countDownViewModel.stopCounter()
+                    notificationManager.close()
+                }
             }
         }
     }

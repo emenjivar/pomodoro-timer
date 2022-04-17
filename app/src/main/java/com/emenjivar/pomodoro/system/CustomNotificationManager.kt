@@ -63,6 +63,10 @@ class CustomNotificationManager(private val context: Context) {
         }
     }
 
+    fun close() {
+        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+    }
+
     private fun playIntent(): PendingIntent {
         val intent = Intent(context, CustomBroadcastReceiver::class.java)
             .setAction(INTENT_PLAY)
