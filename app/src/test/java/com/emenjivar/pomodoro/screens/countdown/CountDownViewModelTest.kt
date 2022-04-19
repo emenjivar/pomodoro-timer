@@ -83,7 +83,7 @@ class CountDownViewModelTest {
             assertTrue(isNightMode.value)
             assertFalse(openSettings.value ?: true)
             assertFalse(autoPlay)
-            assertFalse(keepScreenOn.value ?: true)
+            assertNull(keepScreenOn.value)
             assertFalse(displayNotification)
         }
     }
@@ -93,11 +93,14 @@ class CountDownViewModelTest {
         with(viewModel) {
             Mockito.`when`(getAutoPlayUseCase.invoke())
                 .thenReturn(false)
+            Mockito.`when`(isKeepScreenOnUseCase.invoke())
+                .thenReturn(false)
 
             loadDefaultValues()
 
             assertTrue(isNightMode.value)
             assertFalse(autoPlay)
+            assertFalse(keepScreenOn.getOrAwaitValue() ?: true)
             assertEquals(25000L, counter.value?.workTime)
             assertEquals(5000L, counter.value?.restTime)
         }
