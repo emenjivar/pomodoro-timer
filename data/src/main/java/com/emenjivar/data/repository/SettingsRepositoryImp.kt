@@ -24,8 +24,8 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     override suspend fun getPomodoro(): Pomodoro =
         context.dataStore.data.map { pref ->
             Pomodoro(
-                workTime = pref[pomodoroTime] ?: 0,
-                restTime = pref[restTime] ?: 0
+                workTime = pref[pomodoroTime] ?: DEFAULT_WORK_TIME,
+                restTime = pref[restTime] ?: DEFAULT_REST_TIME
             )
         }.first()
 
@@ -81,5 +81,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         const val AUTOPLAY = "autoplay"
         const val KEEP_SCREEN = "keep_screen"
         const val NIGHT_MODE = "night_mode"
+        const val DEFAULT_WORK_TIME: Long = 1000 * 60 * 25 // 25 min
+        const val DEFAULT_REST_TIME: Long = 1000 * 60 * 5 // 5 min
     }
 }
