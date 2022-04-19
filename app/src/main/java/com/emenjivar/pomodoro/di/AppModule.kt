@@ -15,6 +15,7 @@ val appModule = module {
             setNighModeUseCase = get(),
             getAutoPlayUseCase = get(),
             isNightModeUseCase = get(),
+            isKeepScreenOnUseCase = get(),
             notificationManager = get()
         )
     }
