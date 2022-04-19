@@ -41,11 +41,6 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         }
     }
 
-    override suspend fun isKeepScreen(): Boolean = context.dataStore.data
-        .map { preferences ->
-            preferences[keepScreen] ?: false
-        }.first()
-
     override suspend fun isNightMode(): Boolean = context.dataStore.data
         .map { pref ->
             pref[nightMode] ?: false
@@ -62,15 +57,20 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             pref[autoPlay] ?: false
         }.first()
 
-    override suspend fun setKeepScreen(value: Boolean) {
-        context.dataStore.edit { settings ->
-            settings[keepScreen] = value
-        }
-    }
-
     override suspend fun setNightMode(value: Boolean) {
         context.dataStore.edit { settings ->
             settings[nightMode] = value
+        }
+    }
+
+    override suspend fun isKeepScreenOn(): Boolean = context.dataStore.data
+        .map { preferences ->
+            preferences[keepScreen] ?: false
+        }.first()
+
+    override suspend fun setKeepScreenOn(value: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[keepScreen] = value
         }
     }
 

@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
-import com.emenjivar.core.usecase.SetWorkTimeUseCase
+import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
 import com.emenjivar.pomodoro.utils.minutesToMilliseconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,6 +24,8 @@ class SettingsViewModel(
     private val setRestTimeUseCase: SetRestTimeUseCase,
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val setAutoPlayUseCase: SetAutoPlayUseCase,
+    private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
+    private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
@@ -37,6 +41,9 @@ class SettingsViewModel(
 
     private val _autoPlay = mutableStateOf(false)
     val autoPlay: State<Boolean> = _autoPlay
+
+    private val _keepScreenOn = mutableStateOf(false)
+    val keepScreenOn: State<Boolean> = _keepScreenOn
 
     init {
         if (!testMode) {
@@ -55,6 +62,7 @@ class SettingsViewModel(
         _pomodoroTime.postValue(pomodoro.workTime.millisecondsToMinutes())
         _restTime.postValue(pomodoro.restTime.millisecondsToMinutes())
         _autoPlay.value = getAutoPlayUseCase.invoke()
+        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
     }
 
     /**
@@ -93,6 +101,13 @@ class SettingsViewModel(
         viewModelScope.launch {
             _autoPlay.value = autoPlay
             setAutoPlayUseCase.invoke(autoPlay)
+        }
+    }
+
+    fun setKeepScreenOn(value: Boolean) {
+        viewModelScope.launch {
+            _keepScreenOn.value = value
+            setKeepScreenOnUseCase.invoke(value)
         }
     }
 

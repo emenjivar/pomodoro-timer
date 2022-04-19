@@ -24,7 +24,9 @@ val appModule = module {
             setWorkTimeUseCase = get(),
             setRestTimeUseCase = get(),
             getAutoPlayUseCase = get(),
-            setAutoPlayUseCase = get()
+            setAutoPlayUseCase = get(),
+            isKeepScreenOnUseCase = get(),
+            setKeepScreenOnUseCase = get()
         )
     }
 

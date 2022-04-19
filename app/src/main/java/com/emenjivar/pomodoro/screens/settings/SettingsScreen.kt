@@ -41,19 +41,24 @@ fun SettingsScreen(
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
+    val keepScreenOn by viewModel.keepScreenOn
 
     SettingsScreen(
         pomodoroTime = pomodoroTime,
         restTime = restTime,
         autoPlay = autoPlay,
+        keepScreenOn = keepScreenOn,
         backAction = { viewModel.closeSettings() },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
             viewModel.setRestTime(it)
             Log.d("SettingsScreen", "onSaveItem...")
         },
-        onCheckedChange = {
+        onAutoPlayChange = {
             viewModel.setAutoPlay(it)
+        },
+        onKeepScreenChange = {
+            viewModel.setKeepScreenOn(it)
         }
     )
 }
@@ -63,10 +68,12 @@ fun SettingsScreen(
     pomodoroTime: Long,
     restTime: Long,
     autoPlay: Boolean,
+    keepScreenOn: Boolean,
     backAction: () -> Unit,
     setPomodoroTime: (time: String) -> Unit,
     setRestTime: (time: String) -> Unit,
-    onCheckedChange: (Boolean) -> Unit
+    onAutoPlayChange: (Boolean) -> Unit,
+    onKeepScreenChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -119,10 +126,15 @@ fun SettingsScreen(
 
             SettingsGroup(title = "Others") {
                 SwitchItem(
-                    title = "Keep screen on",
+                    title = "Autoplay",
                     subtitle = "At the end of a pomodoro, the next one start automatically",
-                    autoPlay = autoPlay,
-                    onCheckedChange = onCheckedChange
+                    value = autoPlay,
+                    onCheckedChange = onAutoPlayChange
+                )
+                SwitchItem(
+                    title = "Keep screen on",
+                    value = keepScreenOn,
+                    onCheckedChange = onKeepScreenChange
                 )
             }
         }
@@ -152,14 +164,14 @@ fun SettingsGroup(
 fun SwitchItem(
     modifier: Modifier = Modifier,
     title: String,
-    subtitle: String?,
-    autoPlay: Boolean,
+    subtitle: String? = null,
+    value: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCheckedChange(!autoPlay) }
+            .clickable { onCheckedChange(!value) }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -185,7 +197,7 @@ fun SwitchItem(
             horizontalAlignment = Alignment.End
         ) {
             Switch(
-                checked = autoPlay,
+                checked = value,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = colorResource(R.color.primary),
@@ -272,10 +284,12 @@ fun PreviewStingsItem() {
             pomodoroTime = 0L,
             restTime = 0L,
             autoPlay = false,
+            keepScreenOn = false,
             backAction = {},
             setPomodoroTime = {},
             setRestTime = {},
-            onCheckedChange = {}
+            onAutoPlayChange = {},
+            onKeepScreenChange = {}
         )
     }
 }
