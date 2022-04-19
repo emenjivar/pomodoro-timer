@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.model.Counter
@@ -27,6 +28,7 @@ class CountDownViewModel(
     private val setNighModeUseCase: SetNighModeUseCase,
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
+    private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
     private val notificationManager: CustomNotificationManager,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
@@ -51,6 +53,9 @@ class CountDownViewModel(
     private val _openSettings = MutableLiveData(false)
     val openSettings = _openSettings
 
+    private val _keepScreenOn: MutableLiveData<Boolean?> = MutableLiveData()
+    val keepScreenOn: LiveData<Boolean?> = _keepScreenOn
+
     var autoPlay: Boolean = false
     var displayNotification: Boolean = false
 
@@ -68,6 +73,7 @@ class CountDownViewModel(
 
         // Set default pomodoro and load on livedata
         _counter.value = fetchCounter()
+        _keepScreenOn.postValue(isKeepScreenOnUseCase.invoke())
     }
 
     /**
@@ -223,6 +229,13 @@ class CountDownViewModel(
         viewModelScope.launch(ioDispatcher) {
             setNighModeUseCase.invoke(nightMode)
         }
+    }
+
+    /**
+     * Fetch local storage configurations
+     */
+    fun forceFetchKeepScreenConfig() = viewModelScope.launch {
+        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
     }
 
     fun openSettings() {

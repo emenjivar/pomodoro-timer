@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
@@ -33,6 +34,7 @@ class CountDownViewModelTest {
     private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
     private lateinit var notificationManager: CustomNotificationManager
     private lateinit var isNightModeUseCase: IsNightModeUseCase
+    private lateinit var isKeepScreenOnUseCase: IsKeepScreenOnUseCase
     private lateinit var viewModel: CountDownViewModel
 
     private var nightMode = true
@@ -48,8 +50,9 @@ class CountDownViewModelTest {
         getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
         setNighModeUseCase = Mockito.mock(SetNighModeUseCase::class.java)
         getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
-        notificationManager = Mockito.mock(CustomNotificationManager::class.java)
         isNightModeUseCase = Mockito.mock(IsNightModeUseCase::class.java)
+        isKeepScreenOnUseCase = Mockito.mock(IsKeepScreenOnUseCase::class.java)
+        notificationManager = Mockito.mock(CustomNotificationManager::class.java)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
@@ -58,13 +61,15 @@ class CountDownViewModelTest {
                 restTime = 5000
             )
         )
+        Mockito.`when`(isKeepScreenOnUseCase.invoke()).thenReturn(false)
 
         viewModel = CountDownViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
             setNighModeUseCase = setNighModeUseCase,
             getAutoPlayUseCase = getAutoPlayUseCase,
-            notificationManager = notificationManager,
             isNightModeUseCase = isNightModeUseCase,
+            isKeepScreenOnUseCase = isKeepScreenOnUseCase,
+            notificationManager = notificationManager,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -78,6 +83,7 @@ class CountDownViewModelTest {
             assertTrue(isNightMode.value)
             assertFalse(openSettings.value ?: true)
             assertFalse(autoPlay)
+            assertNull(keepScreenOn.value)
             assertFalse(displayNotification)
         }
     }
@@ -87,11 +93,14 @@ class CountDownViewModelTest {
         with(viewModel) {
             Mockito.`when`(getAutoPlayUseCase.invoke())
                 .thenReturn(false)
+            Mockito.`when`(isKeepScreenOnUseCase.invoke())
+                .thenReturn(false)
 
             loadDefaultValues()
 
             assertTrue(isNightMode.value)
             assertFalse(autoPlay)
+            assertFalse(keepScreenOn.getOrAwaitValue() ?: true)
             assertEquals(25000L, counter.value?.workTime)
             assertEquals(5000L, counter.value?.restTime)
         }
@@ -297,6 +306,17 @@ class CountDownViewModelTest {
         assertTrue(first)
         assertFalse(second)
         assertTrue(third)
+    }
+
+    @Test
+    fun `forceFetchKeepScreenConfig test`() = runTest {
+        Mockito.`when`(isKeepScreenOnUseCase.invoke())
+            .thenReturn(true)
+
+        with(viewModel) {
+            forceFetchKeepScreenConfig()
+            assertTrue(keepScreenOn.getOrAwaitValue() ?: false)
+        }
     }
 
     @Test

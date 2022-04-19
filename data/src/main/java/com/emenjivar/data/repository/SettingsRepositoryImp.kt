@@ -24,8 +24,8 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     override suspend fun getPomodoro(): Pomodoro =
         context.dataStore.data.map { pref ->
             Pomodoro(
-                workTime = pref[pomodoroTime] ?: 0,
-                restTime = pref[restTime] ?: 0
+                workTime = pref[pomodoroTime] ?: DEFAULT_WORK_TIME,
+                restTime = pref[restTime] ?: DEFAULT_REST_TIME
             )
         }.first()
 
@@ -40,11 +40,6 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             settings[restTime] = value
         }
     }
-
-    override suspend fun isKeepScreen(): Boolean = context.dataStore.data
-        .map { preferences ->
-            preferences[keepScreen] ?: false
-        }.first()
 
     override suspend fun isNightMode(): Boolean = context.dataStore.data
         .map { pref ->
@@ -62,15 +57,20 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
             pref[autoPlay] ?: false
         }.first()
 
-    override suspend fun setKeepScreen(value: Boolean) {
-        context.dataStore.edit { settings ->
-            settings[keepScreen] = value
-        }
-    }
-
     override suspend fun setNightMode(value: Boolean) {
         context.dataStore.edit { settings ->
             settings[nightMode] = value
+        }
+    }
+
+    override suspend fun isKeepScreenOn(): Boolean = context.dataStore.data
+        .map { preferences ->
+            preferences[keepScreen] ?: false
+        }.first()
+
+    override suspend fun setKeepScreenOn(value: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[keepScreen] = value
         }
     }
 
@@ -81,5 +81,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         const val AUTOPLAY = "autoplay"
         const val KEEP_SCREEN = "keep_screen"
         const val NIGHT_MODE = "night_mode"
+        const val DEFAULT_WORK_TIME: Long = 1000 * 60 * 25 // 25 min
+        const val DEFAULT_REST_TIME: Long = 1000 * 60 * 5 // 5 min
     }
 }

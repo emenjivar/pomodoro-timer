@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
+import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
+import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
@@ -29,7 +31,8 @@ class SettingsViewModelTest {
     private lateinit var setRestTimeUseCase: SetRestTimeUseCase
     private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
     private lateinit var setAutoPlayUseCase: SetAutoPlayUseCase
-
+    private lateinit var isKeepScreenOnUseCase: IsKeepScreenOnUseCase
+    private lateinit var setKeepScreenOnUseCase: SetKeepScreenOnUseCase
     private lateinit var settingsViewModel: SettingsViewModel
 
     @get:Rule
@@ -45,6 +48,8 @@ class SettingsViewModelTest {
         setRestTimeUseCase = Mockito.mock(SetRestTimeUseCase::class.java)
         getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
         setAutoPlayUseCase = Mockito.mock(SetAutoPlayUseCase::class.java)
+        isKeepScreenOnUseCase = Mockito.mock(IsKeepScreenOnUseCase::class.java)
+        setKeepScreenOnUseCase = Mockito.mock(SetKeepScreenOnUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
@@ -52,6 +57,8 @@ class SettingsViewModelTest {
             setRestTimeUseCase = setRestTimeUseCase,
             getAutoPlayUseCase = getAutoPlayUseCase,
             setAutoPlayUseCase = setAutoPlayUseCase,
+            isKeepScreenOnUseCase = isKeepScreenOnUseCase,
+            setKeepScreenOnUseCase = setKeepScreenOnUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -64,6 +71,7 @@ class SettingsViewModelTest {
             assertEquals(0L, restTime.value)
             assertFalse(closeSettings.value ?: true)
             assertFalse(autoPlay.value)
+            assertFalse(keepScreenOn.value)
         }
     }
 
@@ -73,7 +81,10 @@ class SettingsViewModelTest {
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
             Pomodoro(workTime = 1500000L, restTime = 300000L)
         )
-        Mockito.`when`(getAutoPlayUseCase.invoke()).thenReturn(true)
+        Mockito.`when`(getAutoPlayUseCase.invoke())
+            .thenReturn(true)
+        Mockito.`when`(isKeepScreenOnUseCase.invoke())
+            .thenReturn(true)
 
         with(settingsViewModel) {
             // When
@@ -83,6 +94,7 @@ class SettingsViewModelTest {
             assertEquals(25, pomodoroTime.getOrAwaitValue())
             assertEquals(5, restTime.getOrAwaitValue())
             assertTrue(autoPlay.value)
+            assertTrue(keepScreenOn.value)
         }
     }
 
@@ -111,13 +123,54 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `setAutoPlay test`() {
+    fun `setAutoPlay test`() = runTest {
         with(settingsViewModel) {
+            var localAutoPlay = false
+
+            Mockito.`when`(setAutoPlayUseCase.invoke(true))
+                .then {
+                    localAutoPlay = true
+                    it
+                }
+            Mockito.`when`(setAutoPlayUseCase.invoke(false))
+                .then {
+                    localAutoPlay = false
+                    it
+                }
+
             setAutoPlay(true)
             assertTrue(autoPlay.value)
+            assertTrue(localAutoPlay)
 
             setAutoPlay(false)
             assertFalse(autoPlay.value)
+            assertFalse(localAutoPlay)
+        }
+    }
+
+    @Test
+    fun `setKeepScreenOn test`() = runTest {
+        with(settingsViewModel) {
+            var localKeepScreenOn = false
+
+            Mockito.`when`(setKeepScreenOnUseCase.invoke(true))
+                .then {
+                    localKeepScreenOn = true
+                    it
+                }
+            Mockito.`when`(setKeepScreenOnUseCase.invoke(false))
+                .then {
+                    localKeepScreenOn = false
+                    it
+                }
+
+            setKeepScreenOn(true)
+            assertTrue(keepScreenOn.value)
+            assertTrue(localKeepScreenOn)
+
+            setKeepScreenOn(false)
+            assertFalse(keepScreenOn.value)
+            assertFalse(localKeepScreenOn)
         }
     }
 

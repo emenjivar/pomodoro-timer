@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
 
         registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
+        countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
 
         setContent {
             PomodoroSchedulerTheme {
@@ -53,7 +55,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        countDownViewModel.closeNotification()
+        with(countDownViewModel) {
+            closeNotification()
+
+            // Make sure to call this property on every onRestart
+            forceFetchKeepScreenConfig()
+        }
     }
 
     override fun onStop() {
@@ -92,6 +99,17 @@ class MainActivity : ComponentActivity() {
         if (status) {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private val observeKeepScreenOn = Observer<Boolean?> { flag ->
+        // Verify null to avoid performing an action before value is set on viewModel
+        flag?.let { safeFlag ->
+            if (safeFlag) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
     }
 }
