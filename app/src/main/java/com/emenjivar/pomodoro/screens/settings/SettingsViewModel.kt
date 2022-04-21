@@ -8,9 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
+import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
 import com.emenjivar.pomodoro.utils.minutesToMilliseconds
@@ -26,6 +28,8 @@ class SettingsViewModel(
     private val setAutoPlayUseCase: SetAutoPlayUseCase,
     private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
     private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
+    private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
+    private val setVibrationUseCase: SetVibrationUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
@@ -45,6 +49,9 @@ class SettingsViewModel(
     private val _keepScreenOn = mutableStateOf(false)
     val keepScreenOn: State<Boolean> = _keepScreenOn
 
+    private val _vibrationEnabled = mutableStateOf(false)
+    val vibrationEnabled: State<Boolean> = _vibrationEnabled
+
     init {
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
@@ -63,6 +70,7 @@ class SettingsViewModel(
         _restTime.postValue(pomodoro.restTime.millisecondsToMinutes())
         _autoPlay.value = getAutoPlayUseCase.invoke()
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
+        _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
     }
 
     /**
@@ -108,6 +116,13 @@ class SettingsViewModel(
         viewModelScope.launch {
             _keepScreenOn.value = value
             setKeepScreenOnUseCase.invoke(value)
+        }
+    }
+
+    fun setVibration(value: Boolean) {
+        viewModelScope.launch {
+            _vibrationEnabled.value = value
+            setVibrationUseCase.invoke(value)
         }
     }
 

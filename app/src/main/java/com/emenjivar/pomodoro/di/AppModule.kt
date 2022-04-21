@@ -27,7 +27,9 @@ val appModule = module {
             getAutoPlayUseCase = get(),
             setAutoPlayUseCase = get(),
             isKeepScreenOnUseCase = get(),
-            setKeepScreenOnUseCase = get()
+            setKeepScreenOnUseCase = get(),
+            isVibrationEnabledUseCase = get(),
+            setVibrationUseCase = get()
         )
     }
 

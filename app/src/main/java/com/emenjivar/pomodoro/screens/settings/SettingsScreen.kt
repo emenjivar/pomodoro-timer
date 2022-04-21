@@ -42,12 +42,14 @@ fun SettingsScreen(
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
+    val vibrationEnabled by viewModel.vibrationEnabled
 
     SettingsScreen(
         pomodoroTime = pomodoroTime,
         restTime = restTime,
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
+        vibrationEnabled = vibrationEnabled,
         backAction = { viewModel.closeSettings() },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
@@ -59,6 +61,9 @@ fun SettingsScreen(
         },
         onKeepScreenChange = {
             viewModel.setKeepScreenOn(it)
+        },
+        onVibrationEnabledChange = {
+            viewModel.setVibration(it)
         }
     )
 }
@@ -69,11 +74,13 @@ fun SettingsScreen(
     restTime: Long,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
+    vibrationEnabled: Boolean,
     backAction: () -> Unit,
     setPomodoroTime: (time: String) -> Unit,
     setRestTime: (time: String) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
-    onKeepScreenChange: (Boolean) -> Unit
+    onKeepScreenChange: (Boolean) -> Unit,
+    onVibrationEnabledChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -122,6 +129,14 @@ fun SettingsScreen(
                 ) {
                     SettingsRightText("$restTime min.")
                 }
+            }
+
+            SettingsGroup(title = "Sounds") {
+                SwitchItem(
+                    title = "Vibration",
+                    value = vibrationEnabled,
+                    onCheckedChange = onVibrationEnabledChange
+                )
             }
 
             SettingsGroup(title = "Others") {
@@ -285,11 +300,13 @@ fun PreviewStingsItem() {
             restTime = 0L,
             autoPlay = false,
             keepScreenOn = false,
+            vibrationEnabled = false,
             backAction = {},
             setPomodoroTime = {},
             setRestTime = {},
             onAutoPlayChange = {},
-            onKeepScreenChange = {}
+            onKeepScreenChange = {},
+            onVibrationEnabledChange = {}
         )
     }
 }
