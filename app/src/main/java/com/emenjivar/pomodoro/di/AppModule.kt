@@ -4,6 +4,8 @@ import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsViewModel
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp
+import com.emenjivar.pomodoro.system.CustomVibrationImp
+import com.emenjivar.pomodoro.system.CustomVibrator
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -16,7 +18,9 @@ val appModule = module {
             getAutoPlayUseCase = get(),
             isNightModeUseCase = get(),
             isKeepScreenOnUseCase = get(),
-            notificationManager = get()
+            isVibrationEnabledUseCase = get(),
+            notificationManager = get(),
+            customVibrator = get()
         )
     }
     viewModel {
@@ -35,5 +39,9 @@ val appModule = module {
 
     single<CustomNotificationManager> {
         CustomNotificationManagerImp(androidContext())
+    }
+
+    single<CustomVibrator> {
+        CustomVibrationImp(androidContext())
     }
 }

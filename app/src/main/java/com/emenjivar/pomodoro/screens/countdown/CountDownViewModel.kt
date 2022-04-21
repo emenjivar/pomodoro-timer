@@ -13,10 +13,12 @@ import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
+import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
@@ -29,7 +31,9 @@ class CountDownViewModel(
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val isNightModeUseCase: IsNightModeUseCase,
     private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
+    private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
     private val notificationManager: CustomNotificationManager,
+    private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
 ) : ViewModel() {
@@ -57,6 +61,7 @@ class CountDownViewModel(
     val keepScreenOn: LiveData<Boolean?> = _keepScreenOn
 
     var autoPlay: Boolean = false
+    var vibrationEnabled: Boolean = false
     var displayNotification: Boolean = false
 
     init {
@@ -70,6 +75,7 @@ class CountDownViewModel(
     suspend fun loadDefaultValues() {
         _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
+        vibrationEnabled = isVibrationEnabledUseCase.invoke()
 
         // Set default pomodoro and load on livedata
         _counter.value = fetchCounter()
@@ -159,6 +165,10 @@ class CountDownViewModel(
     }
 
     fun finishCounter() {
+        if (vibrationEnabled) {
+            customVibrator.vibrate()
+        }
+
         when (counter.value?.phase) {
             Phase.WORK -> {
                 _counter.value?.setRest()
@@ -236,6 +246,10 @@ class CountDownViewModel(
      */
     fun forceFetchKeepScreenConfig() = viewModelScope.launch {
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
+    }
+
+    fun forceFetchVibrationConfig() = viewModelScope.launch {
+        vibrationEnabled = isVibrationEnabledUseCase.invoke()
     }
 
     fun openSettings() {
