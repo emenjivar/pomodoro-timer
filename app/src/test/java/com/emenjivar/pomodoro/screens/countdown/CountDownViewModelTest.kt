@@ -6,11 +6,13 @@ import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
+import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
 import com.emenjivar.pomodoro.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
+import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.utils.Action
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,9 +34,11 @@ class CountDownViewModelTest {
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setNighModeUseCase: SetNighModeUseCase
     private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
-    private lateinit var notificationManager: CustomNotificationManager
     private lateinit var isNightModeUseCase: IsNightModeUseCase
     private lateinit var isKeepScreenOnUseCase: IsKeepScreenOnUseCase
+    private lateinit var isVibrationEnabledUseCase: IsVibrationEnabledUseCase
+    private lateinit var notificationManager: CustomNotificationManager
+    private lateinit var customVibrator: CustomVibrator
     private lateinit var viewModel: CountDownViewModel
 
     private var nightMode = true
@@ -52,7 +56,9 @@ class CountDownViewModelTest {
         getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
         isNightModeUseCase = Mockito.mock(IsNightModeUseCase::class.java)
         isKeepScreenOnUseCase = Mockito.mock(IsKeepScreenOnUseCase::class.java)
+        isVibrationEnabledUseCase = Mockito.mock(IsVibrationEnabledUseCase::class.java)
         notificationManager = Mockito.mock(CustomNotificationManager::class.java)
+        customVibrator = Mockito.mock(CustomVibrator::class.java)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
@@ -69,7 +75,9 @@ class CountDownViewModelTest {
             getAutoPlayUseCase = getAutoPlayUseCase,
             isNightModeUseCase = isNightModeUseCase,
             isKeepScreenOnUseCase = isKeepScreenOnUseCase,
+            isVibrationEnabledUseCase = isVibrationEnabledUseCase,
             notificationManager = notificationManager,
+            customVibrator = customVibrator,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -84,6 +92,7 @@ class CountDownViewModelTest {
             assertFalse(openSettings.value ?: true)
             assertFalse(autoPlay)
             assertNull(keepScreenOn.value)
+            assertFalse(vibrationEnabled)
             assertFalse(displayNotification)
         }
     }
@@ -95,11 +104,14 @@ class CountDownViewModelTest {
                 .thenReturn(false)
             Mockito.`when`(isKeepScreenOnUseCase.invoke())
                 .thenReturn(false)
+            Mockito.`when`(isVibrationEnabledUseCase.invoke())
+                .thenReturn(true)
 
             loadDefaultValues()
 
             assertTrue(isNightMode.value)
             assertFalse(autoPlay)
+            assertTrue(vibrationEnabled)
             assertFalse(keepScreenOn.getOrAwaitValue() ?: true)
             assertEquals(25000L, counter.value?.workTime)
             assertEquals(5000L, counter.value?.restTime)
@@ -230,6 +242,40 @@ class CountDownViewModelTest {
     }
 
     @Test
+    fun `finishCounter when vibrationEnabled is true`() {
+        with(viewModel) {
+            var wasCustomVibratorExecuted = false
+            vibrationEnabled = true
+
+            Mockito.`when`(customVibrator.vibrate())
+                .then {
+                    wasCustomVibratorExecuted = true
+                    it
+                }
+
+            finishCounter()
+            assertTrue(wasCustomVibratorExecuted)
+        }
+    }
+
+    @Test
+    fun `finishCounter when vibrationEnabled is false`() {
+        with(viewModel) {
+            var wasCustomVibratorExecuted = false
+            vibrationEnabled = false
+
+            Mockito.`when`(customVibrator.vibrate())
+                .then {
+                    wasCustomVibratorExecuted = true
+                    it
+                }
+
+            finishCounter()
+            assertFalse(wasCustomVibratorExecuted)
+        }
+    }
+
+    @Test
     fun `restartCounter when autoPlay is true`() {
         with(viewModel) {
             autoPlay = true
@@ -265,12 +311,15 @@ class CountDownViewModelTest {
         with(viewModel) {
             Mockito.`when`(getAutoPlayUseCase.invoke())
                 .thenReturn(true)
+            Mockito.`when`(isVibrationEnabledUseCase.invoke())
+                .thenReturn(true)
 
             // Load counter value
             loadDefaultValues()
 
             setTime(10000)
             assertTrue(autoPlay)
+            assertTrue(vibrationEnabled)
             assertEquals(10000L, counter.value?.countDown)
             assertFalse(displayNotification)
         }
@@ -316,6 +365,17 @@ class CountDownViewModelTest {
         with(viewModel) {
             forceFetchKeepScreenConfig()
             assertTrue(keepScreenOn.getOrAwaitValue() ?: false)
+        }
+    }
+
+    @Test
+    fun `forceFetchVibrationConfig test`() = runTest {
+        Mockito.`when`(isVibrationEnabledUseCase.invoke())
+            .thenReturn(true)
+
+        with(viewModel) {
+            forceFetchVibrationConfig()
+            assertTrue(vibrationEnabled)
         }
     }
 

@@ -5,9 +5,11 @@ import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
+import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
@@ -33,6 +35,8 @@ class SettingsViewModelTest {
     private lateinit var setAutoPlayUseCase: SetAutoPlayUseCase
     private lateinit var isKeepScreenOnUseCase: IsKeepScreenOnUseCase
     private lateinit var setKeepScreenOnUseCase: SetKeepScreenOnUseCase
+    private lateinit var isVibrationEnabledUseCase: IsVibrationEnabledUseCase
+    private lateinit var setVibrationUseCase: SetVibrationUseCase
     private lateinit var settingsViewModel: SettingsViewModel
 
     @get:Rule
@@ -50,6 +54,8 @@ class SettingsViewModelTest {
         setAutoPlayUseCase = Mockito.mock(SetAutoPlayUseCase::class.java)
         isKeepScreenOnUseCase = Mockito.mock(IsKeepScreenOnUseCase::class.java)
         setKeepScreenOnUseCase = Mockito.mock(SetKeepScreenOnUseCase::class.java)
+        isVibrationEnabledUseCase = Mockito.mock(IsVibrationEnabledUseCase::class.java)
+        setVibrationUseCase = Mockito.mock(SetVibrationUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
@@ -59,6 +65,8 @@ class SettingsViewModelTest {
             setAutoPlayUseCase = setAutoPlayUseCase,
             isKeepScreenOnUseCase = isKeepScreenOnUseCase,
             setKeepScreenOnUseCase = setKeepScreenOnUseCase,
+            isVibrationEnabledUseCase = isVibrationEnabledUseCase,
+            setVibrationUseCase = setVibrationUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -72,6 +80,7 @@ class SettingsViewModelTest {
             assertFalse(closeSettings.value ?: true)
             assertFalse(autoPlay.value)
             assertFalse(keepScreenOn.value)
+            assertFalse(vibrationEnabled.value)
         }
     }
 
@@ -85,6 +94,8 @@ class SettingsViewModelTest {
             .thenReturn(true)
         Mockito.`when`(isKeepScreenOnUseCase.invoke())
             .thenReturn(true)
+        Mockito.`when`(isVibrationEnabledUseCase.invoke())
+            .thenReturn(true)
 
         with(settingsViewModel) {
             // When
@@ -95,6 +106,7 @@ class SettingsViewModelTest {
             assertEquals(5, restTime.getOrAwaitValue())
             assertTrue(autoPlay.value)
             assertTrue(keepScreenOn.value)
+            assertTrue(vibrationEnabled.value)
         }
     }
 
@@ -153,14 +165,10 @@ class SettingsViewModelTest {
         with(settingsViewModel) {
             var localKeepScreenOn = false
 
-            Mockito.`when`(setKeepScreenOnUseCase.invoke(true))
+            Mockito.`when`(setKeepScreenOnUseCase.invoke(Mockito.anyBoolean()))
                 .then {
-                    localKeepScreenOn = true
-                    it
-                }
-            Mockito.`when`(setKeepScreenOnUseCase.invoke(false))
-                .then {
-                    localKeepScreenOn = false
+                    // Getting the useCase argument and set in a local var
+                    localKeepScreenOn = it.getArgument(0)
                     it
                 }
 
@@ -171,6 +179,28 @@ class SettingsViewModelTest {
             setKeepScreenOn(false)
             assertFalse(keepScreenOn.value)
             assertFalse(localKeepScreenOn)
+        }
+    }
+
+    @Test
+    fun `setVibration test`() = runTest {
+        var localVibration = false
+
+        Mockito.`when`(setVibrationUseCase.invoke(Mockito.anyBoolean()))
+            .then {
+                // Getting the useCase argument and set in a local var
+                localVibration = it.getArgument(0)
+                it
+            }
+
+        with(settingsViewModel) {
+            setVibration(true)
+            assertTrue(vibrationEnabled.value)
+            assertTrue(localVibration)
+
+            setVibration(false)
+            assertFalse(vibrationEnabled.value)
+            assertFalse(localVibration)
         }
     }
 
