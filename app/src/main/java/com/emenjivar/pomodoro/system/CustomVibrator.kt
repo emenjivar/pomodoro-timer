@@ -1,5 +1,5 @@
 package com.emenjivar.pomodoro.system
 
 interface CustomVibrator {
-    fun vibrate()
+    fun vibrate(times: Int = 1)
 }

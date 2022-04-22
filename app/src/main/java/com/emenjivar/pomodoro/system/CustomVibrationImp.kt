@@ -10,9 +10,15 @@ import android.os.VibratorManager
 class CustomVibrationImp(private val context: Context) : CustomVibrator {
 
     @SuppressLint("WrongConstant")
-    override fun vibrate() {
+    override fun vibrate(times: Int) {
         val vibrator = getVibrator()
 
+        for (i in 1..times) {
+            vibrate(vibrator)
+        }
+    }
+
+    private fun vibrate(vibrator: Vibrator) {
         // Api 26 code
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
@@ -40,6 +46,6 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
         }
 
     companion object {
-        private const val VIBRATION_TIME: Long = 500
+        private const val VIBRATION_TIME: Long = 1000
     }
 }

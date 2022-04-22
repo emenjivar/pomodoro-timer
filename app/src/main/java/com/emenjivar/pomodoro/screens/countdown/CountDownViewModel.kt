@@ -165,10 +165,7 @@ class CountDownViewModel(
     }
 
     fun finishCounter() {
-        if (vibrationEnabled) {
-            customVibrator.vibrate()
-        }
-
+        var vibrationTimes = 1
         when (counter.value?.phase) {
             Phase.WORK -> {
                 _counter.value?.setRest()
@@ -177,7 +174,13 @@ class CountDownViewModel(
                 // This line force fetch pomodoro configurations and start from work
                 _counter.value = null
                 _action.value = Action.Stop
+                vibrationTimes = 2
             }
+        }
+
+        if (vibrationEnabled) {
+            // Vibrate 2 times when complete pomodoro is finished
+            customVibrator.vibrate(vibrationTimes)
         }
     }
 
