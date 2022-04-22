@@ -58,8 +58,9 @@ class MainActivity : ComponentActivity() {
         with(countDownViewModel) {
             closeNotification()
 
-            // Make sure to call this property on every onRestart
+            // Make sure to call this properties on every onRestart
             forceFetchKeepScreenConfig()
+            forceFetchVibrationConfig()
         }
     }
 
