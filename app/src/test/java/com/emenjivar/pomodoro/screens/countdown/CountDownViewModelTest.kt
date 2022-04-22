@@ -242,19 +242,21 @@ class CountDownViewModelTest {
     }
 
     @Test
-    fun `finishCounter when vibrationEnabled is true`() {
+    fun `finishCounter when vibrationEnabled is true and phase is WORK`() {
         with(viewModel) {
-            var wasCustomVibratorExecuted = false
+            var localVibrationTimes = 0
             vibrationEnabled = true
 
-            Mockito.`when`(customVibrator.vibrate())
+            Mockito.`when`(customVibrator.vibrate(Mockito.anyInt()))
                 .then {
-                    wasCustomVibratorExecuted = true
+                    localVibrationTimes = it.getArgument(0)
                     it
                 }
 
             finishCounter()
-            assertTrue(wasCustomVibratorExecuted)
+
+            // Then vibration is executed just one time
+            assertEquals(1, localVibrationTimes)
         }
     }
 
