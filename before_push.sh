@@ -19,6 +19,12 @@ function sanity() {
 
   status=$?
   error_message "$status" "Kotlin linter error."
+
+  echo -e "\n\e[93mExecuting static code analysis..."
+  ./gradlew detekt
+
+  status=$?
+  error_message "$status" "Detekt error."
 }
 
 function unit_test() {
