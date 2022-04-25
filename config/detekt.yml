@@ -1,0 +1,26 @@
+# This configuration file could change as the project progresses
+naming:
+  ClassNaming:
+    excludes:
+      - '**/test/**'
+  FunctionNaming:
+    ignoreAnnotated: [ 'Composable' ]
+
+style:
+  MagicNumber:
+    active: false
+
+complexity:
+  LongParameterList:
+    active: true
+    constructorThreshold: 20
+    ignoreAnnotated:
+      - 'Composable'
+  LongMethod:
+    active: true
+    threshold: 75 # Keep in mind compose methods are long
+  TooManyFunctions:
+    active: true
+    thresholdInClasses: 30
+    thresholdInInterfaces: 20 # This rule is to keep repository interfaces simple
+
