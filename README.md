@@ -8,7 +8,7 @@ It's a simple and configurable anti procrastination app that helps you focus and
 ![settings](.github/images/settings.png)
 
 ## How it works
-The app follow the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), breaking the time into two intervals, 30 min to work and 5 min to rest.
+The app follow the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), breaking the time into two intervals, 25 min to work and 5 min to rest.
 
 You can set the time of the intervals on the configuration, put your device and silent mode and keep the screen on to see the timer.
 
