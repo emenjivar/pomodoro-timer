@@ -13,7 +13,7 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
     override fun vibrate(times: Int) {
         val vibrator = getVibrator()
 
-        for (i in 1..times) {
+        repeat(times) {
             vibrate(vibrator)
         }
     }

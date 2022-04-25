@@ -1,10 +1,6 @@
 name: Android Build
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: pull_request
 
 jobs:
   build:
@@ -24,6 +20,9 @@ jobs:
 
       - name: Kotlin sintax
         run: ./gradlew ktlintCheck
+
+      - name: Static code analysis
+        run: ./gradlew detekt
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest

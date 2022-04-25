@@ -66,23 +66,6 @@ fun CountDownScreen(
 ) {
     val horizontalSpace = 30.dp
 
-    val playPauseIcon = when (action) {
-        Action.Play, Action.Resume -> R.drawable.ic_baseline_pause_24
-        else -> R.drawable.ic_baseline_play_arrow_24
-    }
-
-    val fullScreenIcon =
-        if (isNightMode) R.drawable.ic_baseline_wb_sunny_24
-        else R.drawable.ic_baseline_mode_night_24
-
-    val backgroundColor = animateColorAsState(
-        targetValue = colorResource(if (isNightMode) R.color.primary else R.color.white),
-        animationSpec = tween(TRANSITION_DURATION)
-    )
-    val iconColor = animateColorAsState(
-        targetValue = colorResource(if (isNightMode) R.color.white else R.color.primary),
-        animationSpec = tween(TRANSITION_DURATION)
-    )
     val nextAction = when (action) {
         Action.Play -> pauseAction
         Action.Pause -> resumeAction
@@ -93,7 +76,7 @@ fun CountDownScreen(
 
     ConstraintLayout(
         modifier = modifier
-            .background(backgroundColor.value)
+            .background(getBackgroundColor(isNightMode).value)
     ) {
         val (_settingsButton, _container) = createRefs()
 
@@ -103,11 +86,11 @@ fun CountDownScreen(
                     top.linkTo(anchor = parent.top, margin = 16.dp)
                     end.linkTo(anchor = parent.end, margin = 16.dp)
                 },
-            onClick = { openSettings() }
+            onClick = openSettings
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_baseline_settings_24),
-                tint = iconColor.value,
+                tint = getIconColor(isNightMode).value,
                 contentDescription = null
             )
         }
@@ -129,8 +112,6 @@ fun CountDownScreen(
                 progress = counter?.getScaleProgress() ?: 1f,
                 phase = counter?.phase,
                 action = action,
-                size = 230,
-                stroke = 7,
                 isFullScreen = isNightMode
             )
 
@@ -139,7 +120,7 @@ fun CountDownScreen(
                     .padding(vertical = 25.dp)
             ) {
                 ActionButton(
-                    icon = playPauseIcon,
+                    icon = getPlayPauseIcon(action),
                     isFullScreen = isNightMode,
                     onClick = nextAction
                 )
@@ -151,7 +132,7 @@ fun CountDownScreen(
                 )
                 Spacer(modifier = Modifier.width(horizontalSpace))
                 ActionButton(
-                    icon = fullScreenIcon,
+                    icon = getFullScreenIcon(isNightMode),
                     isFullScreen = isNightMode,
                     onClick = fullScreenAction
                 )
@@ -159,6 +140,27 @@ fun CountDownScreen(
         }
     }
 }
+
+private fun getPlayPauseIcon(action: Action?) = when (action) {
+    Action.Play, Action.Resume -> R.drawable.ic_baseline_pause_24
+    else -> R.drawable.ic_baseline_play_arrow_24
+}
+
+private fun getFullScreenIcon(isNightMode: Boolean) =
+    if (isNightMode) R.drawable.ic_baseline_wb_sunny_24
+    else R.drawable.ic_baseline_mode_night_24
+
+@Composable
+private fun getBackgroundColor(isNightMode: Boolean) = animateColorAsState(
+    targetValue = colorResource(if (isNightMode) R.color.primary else R.color.white),
+    animationSpec = tween(TRANSITION_DURATION)
+)
+
+@Composable
+private fun getIconColor(isNightMode: Boolean) = animateColorAsState(
+    targetValue = colorResource(if (isNightMode) R.color.white else R.color.primary),
+    animationSpec = tween(TRANSITION_DURATION)
+)
 
 @Preview(name = "Normal counter")
 @Composable

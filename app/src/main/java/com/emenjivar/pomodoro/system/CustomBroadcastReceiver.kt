@@ -14,7 +14,6 @@ class CustomBroadcastReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val TAG = "MyBroadcastReceiver"
         const val INTENT_NAME = "pomodoroCounter"
         const val ACTION_NAME = "pomodoroAction"
     }
