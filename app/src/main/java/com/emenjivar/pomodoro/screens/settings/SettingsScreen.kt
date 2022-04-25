@@ -273,8 +273,9 @@ private fun TimeSettings(
     SettingsItem(
         defaultValue = workTime.toString(),
         title = "Work",
-        titleDialog = "Defines the duration of the intervals",
-        descriptionDialog = "Work time",
+        description = "Defines the duration of the intervals",
+        titleDialog = "Work time",
+        descriptionDialog = "Please enter the duration in minutes",
         onSaveItem = setPomodoroTime
     ) {
         SettingsRightText(text = "$workTime min.")
