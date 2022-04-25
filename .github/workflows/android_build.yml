@@ -21,5 +21,8 @@ jobs:
       - name: Kotlin sintax
         run: ./gradlew ktlintCheck
 
+      - name: Static code analysis
+        run: ./gradlew detekt
+
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
