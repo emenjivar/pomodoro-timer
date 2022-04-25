@@ -1,31 +1,19 @@
-# Pomodoro scheduler 
+# Pomodoro counter 
 [![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml)
 
-It is a simple countdown using [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), developed in jetpack compose and kotlin, following my own [figma design](https://www.figma.com/file/Y6oJ51KCgG7vcZNQN8ZDu0/Pomodoro).
+It's a simple and configurable anti procrastination app that helps you focus and get your tasks done.
+
+![preview](.github/images/preview.gif)
+
+![settings](.github/images/settings.png)
 
 ## How it works
-Start a standar 25 minutes pomodoro using the play button, when the countdown is finished,  5 minutes break will automatically start.
+The app follow the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), breaking the time into two intervals, 30 min to work and 5 min to rest.
 
-![imagge](.github/images/pomodoro-countdown.gif)
+You can set the time of the intervals on the configuration, put your device and silent mode and keep the screen on to see the timer.
 
-## Before pushing
-Before push your commits, you should execute the following ``gradle commands`` to verify that nothing has broken:
-```shell
-./gradlew lint
-./gradlew ktlintCheck
-./gradlew testDebugUnitTest
-```
+## Would you like to contribute with this project?
+Do you have any idea for this project? Feel free to open an **issue** or **pull request**, just make sure to read before the [CONTRIBUTING](CONTRIBUTING.md) guide.
 
-Or simply execute the next bash script which contains all the steps from the pipeline:
-```shell
-./before_push.sh
-```
-
-## Features
-- [x] Pomodoro counter
-- [ ] Schedule pomodoros using the calendar
-- [ ] Sync app with google calendar
-- [x] Unit testing
-- [ ] Integration testing
-- [ ] CI/CD pipeline
-- [ ] Playstore uploaded
+## Extra resources
+- [Figma design](https://www.figma.com/file/Y6oJ51KCgG7vcZNQN8ZDu0/Pomodoro)
