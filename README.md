@@ -13,7 +13,7 @@ The app follow the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_T
 You can set the time of the intervals on the configuration, put your device and silent mode and keep the screen on to see the timer.
 
 ## Would you like to contribute with this project?
-Do you have any idea for this project? Feel free to open an **issue** or **pull request**, just make sure to read before the [CONTRIBUTING](CONTRIBUTING.md) guide.
+Feel free to open an **issue** and tell me about your idea or create **pull request**, just make sure to read before the [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 ## Extra resources
 - [Figma design](https://www.figma.com/file/Y6oJ51KCgG7vcZNQN8ZDu0/Pomodoro)
