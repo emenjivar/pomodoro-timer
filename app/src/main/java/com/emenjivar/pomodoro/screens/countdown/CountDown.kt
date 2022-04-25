@@ -51,8 +51,8 @@ fun CountDown(
     progress: Float,
     phase: Phase? = Phase.WORK,
     action: Action? = Action.Play,
-    size: Int,
-    stroke: Int,
+    size: Int = 230,
+    stroke: Int = 7,
     isFullScreen: Boolean = false
 ) {
     val animatedProgress by animateFloatAsState(

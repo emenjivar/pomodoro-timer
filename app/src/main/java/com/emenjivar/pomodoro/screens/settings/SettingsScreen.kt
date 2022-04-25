@@ -86,9 +86,7 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Settings"
-                    )
+                    Text(text = "Settings")
                 },
                 navigationIcon = {
                     IconButton(onClick = backAction) {
@@ -108,50 +106,24 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
-            SettingsGroup(title = "Time settings") {
-                SettingsItem(
-                    defaultValue = pomodoroTime.toString(),
-                    title = "Pomodoro",
-                    description = "Defines the duration of the intervals",
-                    titleDialog = "Pomodoro time",
-                    descriptionDialog = "Please enter the duration in minutes",
-                    onSaveItem = setPomodoroTime
-                ) {
-                    SettingsRightText("$pomodoroTime min.")
-                }
-                SettingsItem(
-                    defaultValue = restTime.toString(),
-                    title = "Rest",
-                    description = "Defines the duration of the intervals after Pomodoros",
-                    titleDialog = "Rest time",
-                    descriptionDialog = "Please enter the duration in minutes",
-                    onSaveItem = setRestTime
-                ) {
-                    SettingsRightText("$restTime min.")
-                }
-            }
+            TimeSettings(
+                workTime = pomodoroTime,
+                restTime = restTime,
+                setPomodoroTime = setPomodoroTime,
+                setRestTime = setRestTime
+            )
 
-            SettingsGroup(title = "Sounds") {
-                SwitchItem(
-                    title = "Vibration",
-                    value = vibrationEnabled,
-                    onCheckedChange = onVibrationEnabledChange
-                )
-            }
+            SoundSettings(
+                isVibrationEnabled = vibrationEnabled,
+                onVibrationEnabledChange = onVibrationEnabledChange
+            )
 
-            SettingsGroup(title = "Others") {
-                SwitchItem(
-                    title = "Autoplay",
-                    subtitle = "At the end of a pomodoro, the next one start automatically",
-                    value = autoPlay,
-                    onCheckedChange = onAutoPlayChange
-                )
-                SwitchItem(
-                    title = "Keep screen on",
-                    value = keepScreenOn,
-                    onCheckedChange = onKeepScreenChange
-                )
-            }
+            OthersSettings(
+                autoPlay = autoPlay,
+                keepScreenOn = keepScreenOn,
+                onAutoPlayChange = onAutoPlayChange,
+                onKeepScreenChange = onKeepScreenChange
+            )
         }
     }
 }
@@ -288,6 +260,67 @@ fun SettingsRightText(text: String) {
     Text(
         text = text,
         fontFamily = FontFamily(Font(R.font.ubuntu_regular))
+    )
+}
+
+@Composable
+private fun TimeSettings(
+    workTime: Long,
+    restTime: Long,
+    setPomodoroTime: (time: String) -> Unit,
+    setRestTime: (time: String) -> Unit
+) = SettingsGroup(title = "Time settings") {
+    SettingsItem(
+        defaultValue = workTime.toString(),
+        title = "Work",
+        titleDialog = "Defines the duration of the intervals",
+        descriptionDialog = "Work time",
+        onSaveItem = setPomodoroTime
+    ) {
+        SettingsRightText(text = "$workTime min.")
+    }
+
+    SettingsItem(
+        defaultValue = restTime.toString(),
+        title = "Rest",
+        description = "Defines the duration of the rest intervals",
+        titleDialog = "Rest time",
+        descriptionDialog = "Please enter the duration in minutes",
+        onSaveItem = setRestTime
+    ) {
+        SettingsRightText("$restTime min.")
+    }
+}
+
+@Composable
+private fun SoundSettings(
+    isVibrationEnabled: Boolean,
+    onVibrationEnabledChange: (Boolean) -> Unit
+) = SettingsGroup(title = "Sounds") {
+    SwitchItem(
+        title = "Vibration",
+        value = isVibrationEnabled,
+        onCheckedChange = onVibrationEnabledChange
+    )
+}
+
+@Composable
+private fun OthersSettings(
+    autoPlay: Boolean,
+    keepScreenOn: Boolean,
+    onAutoPlayChange: (Boolean) -> Unit,
+    onKeepScreenChange: (Boolean) -> Unit,
+) = SettingsGroup(title = "Others") {
+    SwitchItem(
+        title = "Autoplay",
+        subtitle = "At the end of a pomodoro, the next one start automatically",
+        value = autoPlay,
+        onCheckedChange = onAutoPlayChange
+    )
+    SwitchItem(
+        title = "Keep screen on",
+        value = keepScreenOn,
+        onCheckedChange = onKeepScreenChange
     )
 }
 
