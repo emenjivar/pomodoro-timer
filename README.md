@@ -9,6 +9,7 @@ The app follow the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_T
 ![preview](.github/images/preview.gif)
 
 You can set the time of the intervals on the configuration, put your device and silent mode and keep the screen on.
+
 ![settings](.github/images/settings.png)
 
 ## Would you like to contribute with this project?
