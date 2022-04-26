@@ -1,4 +1,4 @@
-# Pomodoro counter 
+# Pomodoro timer 
 [![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml)
 
 It's a simple and configurable anti procrastination app that helps you focus and get your tasks done.
