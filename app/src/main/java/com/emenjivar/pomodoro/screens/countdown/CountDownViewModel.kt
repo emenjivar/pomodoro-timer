@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
@@ -19,6 +20,7 @@ import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
+import com.emenjivar.pomodoro.system.SoundsManager
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,8 +34,10 @@ class CountDownViewModel(
     private val isNightModeUseCase: IsNightModeUseCase,
     private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
     private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
+    private val areSoundsEnableUseCase: AreSoundsEnableUseCase,
     private val notificationManager: CustomNotificationManager,
     private val customVibrator: CustomVibrator,
+    private val soundsManager: SoundsManager,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
 ) : ViewModel() {
@@ -63,6 +67,7 @@ class CountDownViewModel(
     var autoPlay: Boolean = false
     var vibrationEnabled: Boolean = false
     var displayNotification: Boolean = false
+    var areSoundsEnable: Boolean = true
 
     init {
         if (!testMode) {
@@ -192,6 +197,9 @@ class CountDownViewModel(
         finishCounter()
 
         if (counter.value != null || autoPlay) {
+            if (areSoundsEnable) {
+                soundsManager.play()
+            }
             startCounter()
         } else {
             viewModelScope.launch(Dispatchers.Main) {
@@ -253,6 +261,10 @@ class CountDownViewModel(
 
     fun forceFetchVibrationConfig() = viewModelScope.launch {
         vibrationEnabled = isVibrationEnabledUseCase.invoke()
+    }
+
+    fun forceFetchSoundsConfig() = viewModelScope.launch(ioDispatcher) {
+        areSoundsEnable = areSoundsEnableUseCase.invoke()
     }
 
     fun openSettings() {

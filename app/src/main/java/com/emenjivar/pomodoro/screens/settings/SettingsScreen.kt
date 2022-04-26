@@ -43,6 +43,7 @@ fun SettingsScreen(
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
     val vibrationEnabled by viewModel.vibrationEnabled
+    val soundsEnable by viewModel.soundsEnable
 
     SettingsScreen(
         pomodoroTime = pomodoroTime,
@@ -50,6 +51,7 @@ fun SettingsScreen(
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
         vibrationEnabled = vibrationEnabled,
+        soundsEnable = soundsEnable,
         backAction = { viewModel.closeSettings() },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
@@ -64,6 +66,9 @@ fun SettingsScreen(
         },
         onVibrationEnabledChange = {
             viewModel.setVibration(it)
+        },
+        onSoundsEnableChange = {
+            viewModel.setSoundsEnable(it)
         }
     )
 }
@@ -75,12 +80,14 @@ fun SettingsScreen(
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     vibrationEnabled: Boolean,
+    soundsEnable: Boolean,
     backAction: () -> Unit,
     setPomodoroTime: (time: String) -> Unit,
     setRestTime: (time: String) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
     onKeepScreenChange: (Boolean) -> Unit,
-    onVibrationEnabledChange: (Boolean) -> Unit
+    onVibrationEnabledChange: (Boolean) -> Unit,
+    onSoundsEnableChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -115,7 +122,9 @@ fun SettingsScreen(
 
             SoundSettings(
                 isVibrationEnabled = vibrationEnabled,
-                onVibrationEnabledChange = onVibrationEnabledChange
+                soundsEnable = soundsEnable,
+                onVibrationEnabledChange = onVibrationEnabledChange,
+                onSoundsEnableChange = onSoundsEnableChange
             )
 
             OthersSettings(
@@ -296,8 +305,16 @@ private fun TimeSettings(
 @Composable
 private fun SoundSettings(
     isVibrationEnabled: Boolean,
-    onVibrationEnabledChange: (Boolean) -> Unit
+    soundsEnable: Boolean,
+    onVibrationEnabledChange: (Boolean) -> Unit,
+    onSoundsEnableChange: (Boolean) -> Unit
 ) = SettingsGroup(title = "Sounds") {
+    SwitchItem(
+        title = "Tune",
+        subtitle = "Play a small sound when after every interval on time",
+        value = soundsEnable,
+        onCheckedChange = onSoundsEnableChange
+    )
     SwitchItem(
         title = "Vibration",
         value = isVibrationEnabled,
@@ -335,12 +352,14 @@ fun PreviewStingsItem() {
             autoPlay = false,
             keepScreenOn = false,
             vibrationEnabled = false,
+            soundsEnable = false,
             backAction = {},
             setPomodoroTime = {},
             setRestTime = {},
             onAutoPlayChange = {},
             onKeepScreenChange = {},
-            onVibrationEnabledChange = {}
+            onVibrationEnabledChange = {},
+            onSoundsEnableChange = {}
         )
     }
 }

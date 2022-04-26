@@ -6,6 +6,8 @@ import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp
 import com.emenjivar.pomodoro.system.CustomVibrationImp
 import com.emenjivar.pomodoro.system.CustomVibrator
+import com.emenjivar.pomodoro.system.SoundManagerImp
+import com.emenjivar.pomodoro.system.SoundsManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -19,8 +21,10 @@ val appModule = module {
             isNightModeUseCase = get(),
             isKeepScreenOnUseCase = get(),
             isVibrationEnabledUseCase = get(),
+            areSoundsEnableUseCase = get(),
             notificationManager = get(),
-            customVibrator = get()
+            customVibrator = get(),
+            soundsManager = get()
         )
     }
     viewModel {
@@ -33,7 +37,9 @@ val appModule = module {
             isKeepScreenOnUseCase = get(),
             setKeepScreenOnUseCase = get(),
             isVibrationEnabledUseCase = get(),
-            setVibrationUseCase = get()
+            setVibrationUseCase = get(),
+            areSoundsEnableUseCase = get(),
+            setSoundsEnableUseCase = get()
         )
     }
 
@@ -43,5 +49,9 @@ val appModule = module {
 
     single<CustomVibrator> {
         CustomVibrationImp(androidContext())
+    }
+
+    single<SoundsManager> {
+        SoundManagerImp(androidContext())
     }
 }

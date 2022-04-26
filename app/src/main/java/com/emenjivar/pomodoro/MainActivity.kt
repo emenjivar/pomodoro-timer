@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
             // Make sure to call this properties on every onRestart
             forceFetchKeepScreenConfig()
             forceFetchVibrationConfig()
+            forceFetchSoundsConfig()
         }
     }
 

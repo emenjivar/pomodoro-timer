@@ -21,6 +21,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     private val keepScreen = booleanPreferencesKey(KEEP_SCREEN)
     private val nightMode = booleanPreferencesKey(NIGHT_MODE)
     private val vibration = booleanPreferencesKey(VIBRATION)
+    private val sounds = booleanPreferencesKey(SOUNDS)
 
     override suspend fun getPomodoro(): Pomodoro =
         context.dataStore.data.map { pref ->
@@ -86,6 +87,17 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         }
     }
 
+    override suspend fun areSoundsEnabled(): Boolean = context.dataStore.data
+        .map { pref ->
+            pref[sounds] ?: true
+        }.first()
+
+    override suspend fun setSounds(value: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[sounds] = value
+        }
+    }
+
     companion object {
         const val SETTINGS_NAME = "settings"
         const val POMODORO_TIME = "pomodoro_time"
@@ -94,6 +106,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         const val KEEP_SCREEN = "keep_screen"
         const val NIGHT_MODE = "night_mode"
         const val VIBRATION = "vibration"
+        const val SOUNDS = "sounds"
         const val DEFAULT_WORK_TIME: Long = 1000 * 60 * 25 // 25 min
         const val DEFAULT_REST_TIME: Long = 1000 * 60 * 5 // 5 min
     }
