@@ -33,7 +33,9 @@ val appModule = module {
             isKeepScreenOnUseCase = get(),
             setKeepScreenOnUseCase = get(),
             isVibrationEnabledUseCase = get(),
-            setVibrationUseCase = get()
+            setVibrationUseCase = get(),
+            areSoundsEnableUseCase = get(),
+            setSoundsEnableUseCase = get()
         )
     }
 

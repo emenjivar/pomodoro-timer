@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
@@ -12,6 +13,7 @@ import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetSoundsEnableUseCase
 import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
@@ -30,6 +32,8 @@ class SettingsViewModel(
     private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
     private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
     private val setVibrationUseCase: SetVibrationUseCase,
+    private val areSoundsEnableUseCase: AreSoundsEnableUseCase,
+    private val setSoundsEnableUseCase: SetSoundsEnableUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
@@ -52,6 +56,9 @@ class SettingsViewModel(
     private val _vibrationEnabled = mutableStateOf(false)
     val vibrationEnabled: State<Boolean> = _vibrationEnabled
 
+    private val _soundsEnable = mutableStateOf(true)
+    val soundsEnable: State<Boolean> = _soundsEnable
+
     init {
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
@@ -71,6 +78,7 @@ class SettingsViewModel(
         _autoPlay.value = getAutoPlayUseCase.invoke()
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
         _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
+        _soundsEnable.value = areSoundsEnableUseCase.invoke()
     }
 
     /**
@@ -123,6 +131,14 @@ class SettingsViewModel(
         viewModelScope.launch {
             _vibrationEnabled.value = value
             setVibrationUseCase.invoke(value)
+        }
+    }
+
+    fun setSoundsEnable(value: Boolean) {
+        _soundsEnable.value = value
+
+        viewModelScope.launch(ioDispatcher) {
+            setSoundsEnableUseCase.invoke(value)
         }
     }
 
