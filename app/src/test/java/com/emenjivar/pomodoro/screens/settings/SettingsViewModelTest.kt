@@ -2,6 +2,7 @@ package com.emenjivar.pomodoro.screens.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
@@ -9,6 +10,7 @@ import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
+import com.emenjivar.core.usecase.SetSoundsEnableUseCase
 import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
@@ -37,6 +39,8 @@ class SettingsViewModelTest {
     private lateinit var setKeepScreenOnUseCase: SetKeepScreenOnUseCase
     private lateinit var isVibrationEnabledUseCase: IsVibrationEnabledUseCase
     private lateinit var setVibrationUseCase: SetVibrationUseCase
+    private lateinit var areSoundsEnableUseCase: AreSoundsEnableUseCase
+    private lateinit var setSoundsEnableUseCase: SetSoundsEnableUseCase
     private lateinit var settingsViewModel: SettingsViewModel
 
     @get:Rule
@@ -56,6 +60,8 @@ class SettingsViewModelTest {
         setKeepScreenOnUseCase = Mockito.mock(SetKeepScreenOnUseCase::class.java)
         isVibrationEnabledUseCase = Mockito.mock(IsVibrationEnabledUseCase::class.java)
         setVibrationUseCase = Mockito.mock(SetVibrationUseCase::class.java)
+        areSoundsEnableUseCase = Mockito.mock(AreSoundsEnableUseCase::class.java)
+        setSoundsEnableUseCase = Mockito.mock(SetSoundsEnableUseCase::class.java)
 
         settingsViewModel = SettingsViewModel(
             getPomodoroUseCase = getPomodoroUseCase,
@@ -67,6 +73,8 @@ class SettingsViewModelTest {
             setKeepScreenOnUseCase = setKeepScreenOnUseCase,
             isVibrationEnabledUseCase = isVibrationEnabledUseCase,
             setVibrationUseCase = setVibrationUseCase,
+            areSoundsEnableUseCase = areSoundsEnableUseCase,
+            setSoundsEnableUseCase = setSoundsEnableUseCase,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -81,6 +89,7 @@ class SettingsViewModelTest {
             assertFalse(autoPlay.value)
             assertFalse(keepScreenOn.value)
             assertFalse(vibrationEnabled.value)
+            assertTrue(soundsEnable.value)
         }
     }
 
@@ -96,6 +105,8 @@ class SettingsViewModelTest {
             .thenReturn(true)
         Mockito.`when`(isVibrationEnabledUseCase.invoke())
             .thenReturn(true)
+        Mockito.`when`(areSoundsEnableUseCase.invoke())
+            .thenReturn(false)
 
         with(settingsViewModel) {
             // When
@@ -107,6 +118,7 @@ class SettingsViewModelTest {
             assertTrue(autoPlay.value)
             assertTrue(keepScreenOn.value)
             assertTrue(vibrationEnabled.value)
+            assertFalse(soundsEnable.value)
         }
     }
 
@@ -201,6 +213,28 @@ class SettingsViewModelTest {
             setVibration(false)
             assertFalse(vibrationEnabled.value)
             assertFalse(localVibration)
+        }
+    }
+
+    @Test
+    fun `setSoundsEnable test`() = runTest {
+        var localSoundsEnable = false
+
+        Mockito.`when`(setSoundsEnableUseCase.invoke(Mockito.anyBoolean()))
+            .then {
+                // Getting the useCase argument and set in a local var
+                localSoundsEnable = it.getArgument(0)
+                it
+            }
+
+        with(settingsViewModel) {
+            setSoundsEnable(true)
+            assertTrue(soundsEnable.value)
+            assertTrue(localSoundsEnable)
+
+            setSoundsEnable(false)
+            assertFalse(soundsEnable.value)
+            assertFalse(localSoundsEnable)
         }
     }
 

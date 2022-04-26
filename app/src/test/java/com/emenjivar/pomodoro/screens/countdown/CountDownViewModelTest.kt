@@ -2,6 +2,7 @@ package com.emenjivar.pomodoro.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
@@ -13,6 +14,7 @@ import com.emenjivar.pomodoro.getOrAwaitValue
 import com.emenjivar.pomodoro.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
+import com.emenjivar.pomodoro.system.SoundsManager
 import com.emenjivar.pomodoro.utils.Action
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,8 +39,10 @@ class CountDownViewModelTest {
     private lateinit var isNightModeUseCase: IsNightModeUseCase
     private lateinit var isKeepScreenOnUseCase: IsKeepScreenOnUseCase
     private lateinit var isVibrationEnabledUseCase: IsVibrationEnabledUseCase
+    private lateinit var areSoundsEnableUseCase: AreSoundsEnableUseCase
     private lateinit var notificationManager: CustomNotificationManager
     private lateinit var customVibrator: CustomVibrator
+    private lateinit var soundsManager: SoundsManager
     private lateinit var viewModel: CountDownViewModel
 
     private var nightMode = true
@@ -57,8 +61,10 @@ class CountDownViewModelTest {
         isNightModeUseCase = Mockito.mock(IsNightModeUseCase::class.java)
         isKeepScreenOnUseCase = Mockito.mock(IsKeepScreenOnUseCase::class.java)
         isVibrationEnabledUseCase = Mockito.mock(IsVibrationEnabledUseCase::class.java)
+        areSoundsEnableUseCase = Mockito.mock(AreSoundsEnableUseCase::class.java)
         notificationManager = Mockito.mock(CustomNotificationManager::class.java)
         customVibrator = Mockito.mock(CustomVibrator::class.java)
+        soundsManager = Mockito.mock(SoundsManager::class.java)
 
         Mockito.`when`(isNightModeUseCase.invoke()).thenReturn(nightMode)
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
@@ -77,7 +83,9 @@ class CountDownViewModelTest {
             isKeepScreenOnUseCase = isKeepScreenOnUseCase,
             isVibrationEnabledUseCase = isVibrationEnabledUseCase,
             notificationManager = notificationManager,
+            areSoundsEnableUseCase = areSoundsEnableUseCase,
             customVibrator = customVibrator,
+            soundsManager = soundsManager,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
@@ -94,6 +102,7 @@ class CountDownViewModelTest {
             assertNull(keepScreenOn.value)
             assertFalse(vibrationEnabled)
             assertFalse(displayNotification)
+            assertTrue(areSoundsEnable)
         }
     }
 
@@ -309,6 +318,42 @@ class CountDownViewModelTest {
     }
 
     @Test
+    fun `restartCounter when areSoundsEnable is true`() = runTest {
+        with(viewModel) {
+            var soundPlayed = false
+            autoPlay = true
+            areSoundsEnable = true
+
+            Mockito.`when`(soundsManager.play())
+                .then {
+                    soundPlayed = true
+                    it
+                }
+
+            restartCounter()
+            assertTrue(soundPlayed)
+        }
+    }
+
+    @Test
+    fun `restartCounter when areSoundsEnable is false`() = runTest {
+        with(viewModel) {
+            var soundPlayed = false
+            autoPlay = true
+            areSoundsEnable = false
+
+            Mockito.`when`(soundsManager.play())
+                .then {
+                    soundPlayed = true
+                    it
+                }
+
+            restartCounter()
+            assertFalse(soundPlayed)
+        }
+    }
+
+    @Test
     fun `setTime when displayNotification is false`() = runTest {
         with(viewModel) {
             Mockito.`when`(getAutoPlayUseCase.invoke())
@@ -378,6 +423,17 @@ class CountDownViewModelTest {
         with(viewModel) {
             forceFetchVibrationConfig()
             assertTrue(vibrationEnabled)
+        }
+    }
+
+    @Test
+    fun `forceFetchSoundsConfig test`() = runTest {
+        Mockito.`when`(areSoundsEnableUseCase.invoke())
+            .thenReturn(false)
+
+        with(viewModel) {
+            forceFetchSoundsConfig()
+            assertFalse(areSoundsEnable)
         }
     }
 
