@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    //id 'com.google.gms.google-services'
+    //id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -23,6 +25,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "app_name", "@string/app_name_release"
+            manifestPlaceholders = [crashlyticsEnabled:"true"]
+        }
+        debug {
+            debuggable true
+            resValue "string", "app_name", "@string/app_name_debug"
+            manifestPlaceholders = [crashlyticsEnabled:"false"]
+            applicationIdSuffix ".debug"
         }
     }
     compileOptions {
@@ -86,6 +96,12 @@ dependencies {
     api "io.insert-koin:koin-core:$koin_version"
     api "io.insert-koin:koin-android:$koin_version"
     api "io.insert-koin:koin-androidx-compose:$koin_version"
+
+    // Google
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-core:20.1.2'
 
     // Testing
     testImplementation 'junit:junit:4.+'

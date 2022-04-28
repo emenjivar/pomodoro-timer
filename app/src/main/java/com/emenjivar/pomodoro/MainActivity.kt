@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
         countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
