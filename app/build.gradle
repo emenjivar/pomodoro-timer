@@ -1,11 +1,17 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    //id 'com.google.gms.google-services'
-    //id 'com.google.firebase.crashlytics'
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\CarlosMenjivar\\Desktop\\pomodoro-keystore.jks')
+            storePassword 'c0rn-fl4kes-gluten-free'
+            keyPassword 'c0rn-fl4kes-gluten-free'
+            keyAlias 'key0'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
@@ -24,14 +30,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            ext.crashlyticsEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_name", "@string/app_name_release"
-            manifestPlaceholders = [crashlyticsEnabled:"true"]
+            manifestPlaceholders = [crashlyticsEnabled:"${ext.crashlyticsEnabled}"]
+            signingConfig signingConfigs.release
+
         }
         debug {
             debuggable true
+            ext.crashlyticsEnabled = false
             resValue "string", "app_name", "@string/app_name_debug"
-            manifestPlaceholders = [crashlyticsEnabled:"false"]
+            manifestPlaceholders = [crashlyticsEnabled:"${ext.crashlyticsEnabled}"]
             applicationIdSuffix ".debug"
         }
     }
@@ -53,6 +63,17 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+
+afterEvaluate {
+    android.buildTypes.each { build ->
+        if (build.ext.crashlyticsEnabled) {
+            println("Crashlytic enabled on ${build.name}")
+            apply plugin: 'com.google.gms.google-services'
+            apply plugin: 'com.google.firebase.crashlytics'
         }
     }
 }
