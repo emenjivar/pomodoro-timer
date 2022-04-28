@@ -29,6 +29,10 @@
         </activity>
 
         <receiver android:name=".system.CustomBroadcastReceiver" android:exported="true" />
+
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${crashlyticsEnabled}" />
     </application>
 
 </manifest>
