@@ -45,8 +45,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        throw RuntimeException("Test Crash")
     }
 
     override fun onPause() {
