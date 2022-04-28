@@ -15,5 +15,6 @@
 .cxx
 local.properties
 
+app/pomodoro-keystore.jks
 app/google-services.json
 app/release/

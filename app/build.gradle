@@ -6,10 +6,10 @@ plugins {
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\CarlosMenjivar\\Desktop\\pomodoro-keystore.jks')
-            storePassword 'c0rn-fl4kes-gluten-free'
-            keyPassword 'c0rn-fl4kes-gluten-free'
-            keyAlias 'key0'
+            storeFile file(findProperty('pomodoro.storeFile') ?: 'mock')
+            storePassword findProperty('pomodoro.storePassword') ?: ''
+            keyPassword findProperty('pomodoro.keyPassword') ?: ''
+            keyAlias findProperty('pomodoro.keyAlias') ?: ''
         }
     }
     compileSdk 31
