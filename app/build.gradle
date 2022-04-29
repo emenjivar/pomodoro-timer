@@ -58,7 +58,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.21'
     }
     packagingOptions {
         resources {
@@ -66,7 +65,6 @@ android {
         }
     }
 }
-
 
 afterEvaluate {
     android.buildTypes.each { build ->
@@ -84,34 +82,34 @@ def koin_version= "3.2.0-beta-1"
 dependencies {
     implementation project(':core')
     implementation project(':data')
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
 
     // UI
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation 'androidx.activity:activity-compose:1.4.0'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
     implementation "androidx.core:core-ktx:$core_version"
 
 
     // Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
     // LiveData
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-beta01"
 
     // DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     // Coroutine
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
 
     // Dependency injection - global library
     api "io.insert-koin:koin-core:$koin_version"
@@ -125,7 +123,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:20.1.2'
 
     // Testing
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
     testImplementation "org.mockito:mockito-core:4.3.1"
