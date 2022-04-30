@@ -31,6 +31,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
@@ -52,7 +53,7 @@ fun CountDown(
     phase: Phase? = Phase.WORK,
     action: Action? = Action.Play,
     size: Int = 230,
-    stroke: Int = 7,
+    stroke: Int = 4,
     isFullScreen: Boolean = false
 ) {
     val animatedProgress by animateFloatAsState(
@@ -101,8 +102,8 @@ fun CountDown(
                 Text(
                     text = time,
                     color = itemColor.value,
-                    fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
                     fontSize = 70.sp,
+                    fontWeight = FontWeight.W300,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 AnimatedVisibility(
@@ -112,7 +113,6 @@ fun CountDown(
                     Text(
                         text = phaseText,
                         color = itemColor.value,
-                        fontFamily = FontFamily(Font(R.font.ubuntu_regular)),
                         fontSize = 16.sp
                     )
                 }
