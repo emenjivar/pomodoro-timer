@@ -118,7 +118,7 @@ fun CountDownScreen(
                     isFullScreen = isNightMode,
                     onClick = nextAction
                 )
-                Spacer(modifier = Modifier.width(60.dp))
+                Spacer(modifier = Modifier.width(50.dp))
                 ActionButton(
                     icon = R.drawable.ic_baseline_stop_24,
                     isFullScreen = isNightMode,
