@@ -12,4 +12,9 @@
     <color name="dark">#C7452E</color>
     <color name="primary">#E14D33</color>
     <color name="light">#FFFCD2D1</color>
+
+    <color name="orange">#FF6542</color>
+    <color name="wine">#702632</color>
+    <color name="basil">#0B6E4F</color>
+    <color name="charcoal">#273E47</color>
 </resources>

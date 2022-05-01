@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.screens.common.ColorMenu
 import com.emenjivar.pomodoro.screens.common.CustomDialog
 
 @Composable
@@ -113,6 +114,7 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
+            AppearanceSettings()
             TimeSettings(
                 workTime = pomodoroTime,
                 restTime = restTime,
@@ -270,6 +272,13 @@ fun SettingsRightText(text: String) {
         text = text,
         fontFamily = FontFamily(Font(R.font.ubuntu_regular))
     )
+}
+
+@Composable
+private fun AppearanceSettings() = SettingsGroup(title = "Appearance settings") {
+    Row(modifier = Modifier.padding(16.dp)) {
+        ColorMenu()
+    }
 }
 
 @Composable
