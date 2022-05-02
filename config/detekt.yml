@@ -21,6 +21,7 @@ complexity:
     threshold: 75 # Keep in mind compose methods are long
   TooManyFunctions:
     active: true
+    thresholdInFiles: 30
     thresholdInClasses: 30
     thresholdInInterfaces: 20 # This rule is to keep repository interfaces simple
 
