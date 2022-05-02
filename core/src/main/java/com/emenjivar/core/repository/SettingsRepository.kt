@@ -16,4 +16,6 @@ interface SettingsRepository {
     suspend fun setVibration(value: Boolean)
     suspend fun areSoundsEnabled(): Boolean
     suspend fun setSounds(value: Boolean)
+    suspend fun getColor(): Int?
+    suspend fun setColor(value: Int)
 }
