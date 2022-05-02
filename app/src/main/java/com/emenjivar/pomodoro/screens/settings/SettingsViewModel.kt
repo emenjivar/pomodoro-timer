@@ -18,6 +18,7 @@ import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.core.usecase.SetSoundsEnableUseCase
 import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
+import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.utils.millisecondsToMinutes
 import com.emenjivar.pomodoro.utils.minutesToMilliseconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,6 +39,7 @@ class SettingsViewModel(
     private val setVibrationUseCase: SetVibrationUseCase,
     private val areSoundsEnableUseCase: AreSoundsEnableUseCase,
     private val setSoundsEnableUseCase: SetSoundsEnableUseCase,
+    private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
@@ -92,6 +94,7 @@ class SettingsViewModel(
     fun setColor(value: Int) {
         _selectedColor.value = value
         viewModelScope.launch(ioDispatcher) {
+            customVibrator.shortVibrate()
             setColorUseCase.invoke(value)
         }
     }

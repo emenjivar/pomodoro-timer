@@ -41,7 +41,8 @@ val appModule = module {
             isVibrationEnabledUseCase = get(),
             setVibrationUseCase = get(),
             areSoundsEnableUseCase = get(),
-            setSoundsEnableUseCase = get()
+            setSoundsEnableUseCase = get(),
+            customVibrator = get()
         )
     }
 
