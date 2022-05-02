@@ -7,14 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +25,8 @@ import com.emenjivar.pomodoro.utils.toColor
 import com.emenjivar.pomodoro.utils.toIcon
 
 @Composable
-private fun Square(theme: ThemeColor, selected: Boolean) {
-    val check = remember { mutableStateOf(selected ) }
+private fun Square(theme: ThemeColor, selected: Boolean = false) {
+    val check = remember { mutableStateOf(selected) }
     Box(
         modifier = Modifier
             .width(60.dp)
@@ -54,53 +51,20 @@ private fun Square(theme: ThemeColor, selected: Boolean) {
 }
 
 @Composable
-private fun SquareTheme(
-    text: String,
-    theme: ThemeColor,
-    selected: Boolean = false
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Square(
-            theme = theme,
-            selected = selected
-        )
-        // Text(text = text)
-    }
-}
-
-@Composable
 fun ColorMenu() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        SquareTheme(
-            text = "Tomato",
+        Square(
             theme = ThemeColor.Tomato(),
             selected = true
         )
 
-        SquareTheme(
-            text = "Orange",
-            theme = ThemeColor.Orange()
-        )
-
-        SquareTheme(
-            text = "Wine",
-            theme = ThemeColor.Wine()
-        )
-
-        SquareTheme(
-            text = "Basil",
-            theme = ThemeColor.Basil()
-        )
-
-        SquareTheme(
-            text = "Night",
-            theme = ThemeColor.Charcoal()
-        )
+        Square(theme = ThemeColor.Orange())
+        Square(theme = ThemeColor.Wine())
+        Square(theme = ThemeColor.Basil())
+        Square(theme = ThemeColor.Charcoal())
     }
 }
 
