@@ -4,9 +4,9 @@ import androidx.annotation.ColorRes
 import com.emenjivar.pomodoro.R
 
 sealed class ThemeColor(@ColorRes val color: Int) {
-    class Tomato : ThemeColor(R.color.primary)
-    class Orange : ThemeColor(R.color.orange)
-    class Wine : ThemeColor(R.color.wine)
-    class Basil : ThemeColor(R.color.basil)
-    class Charcoal : ThemeColor(R.color.charcoal)
+    object Tomato : ThemeColor(R.color.primary)
+    object Orange : ThemeColor(R.color.orange)
+    object Wine : ThemeColor(R.color.wine)
+    object Basil : ThemeColor(R.color.basil)
+    object Charcoal : ThemeColor(R.color.charcoal)
 }

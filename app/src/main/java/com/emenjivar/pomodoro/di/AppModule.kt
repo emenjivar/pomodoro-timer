@@ -29,6 +29,8 @@ val appModule = module {
     }
     viewModel {
         SettingsViewModel(
+            getColorUseCase = get(),
+            setColorUseCase = get(),
             getPomodoroUseCase = get(),
             setWorkTimeUseCase = get(),
             setRestTimeUseCase = get(),

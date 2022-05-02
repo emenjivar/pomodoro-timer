@@ -39,6 +39,7 @@ import com.emenjivar.pomodoro.screens.common.CustomDialog
 fun SettingsScreen(
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val selectedColor by viewModel.selectedColor
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
@@ -47,6 +48,7 @@ fun SettingsScreen(
     val soundsEnable by viewModel.soundsEnable
 
     SettingsScreen(
+        selectedColor = selectedColor,
         pomodoroTime = pomodoroTime,
         restTime = restTime,
         autoPlay = autoPlay,
@@ -54,10 +56,10 @@ fun SettingsScreen(
         vibrationEnabled = vibrationEnabled,
         soundsEnable = soundsEnable,
         backAction = { viewModel.closeSettings() },
+        onSelectTheme = { viewModel.setColor(it) },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
             viewModel.setRestTime(it)
-            Log.d("SettingsScreen", "onSaveItem...")
         },
         onAutoPlayChange = {
             viewModel.setAutoPlay(it)
@@ -76,6 +78,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
+    selectedColor: Int? = null,
     pomodoroTime: Long,
     restTime: Long,
     autoPlay: Boolean,
@@ -83,6 +86,7 @@ fun SettingsScreen(
     vibrationEnabled: Boolean,
     soundsEnable: Boolean,
     backAction: () -> Unit,
+    onSelectTheme: (Int) -> Unit,
     setPomodoroTime: (time: String) -> Unit,
     setRestTime: (time: String) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
@@ -114,7 +118,11 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
-            AppearanceSettings()
+            AppearanceSettings(
+                selectedColor = selectedColor,
+                onSelectTheme = onSelectTheme
+            )
+
             TimeSettings(
                 workTime = pomodoroTime,
                 restTime = restTime,
@@ -275,9 +283,15 @@ fun SettingsRightText(text: String) {
 }
 
 @Composable
-private fun AppearanceSettings() = SettingsGroup(title = "Appearance settings") {
+private fun AppearanceSettings(
+    selectedColor: Int?,
+    onSelectTheme: (Int) -> Unit
+) = SettingsGroup(title = "Appearance settings") {
     Row(modifier = Modifier.padding(16.dp)) {
-        ColorMenu()
+        ColorMenu(
+            selectedColor = selectedColor,
+            onSelectTheme = onSelectTheme
+        )
     }
 }
 
@@ -363,6 +377,7 @@ fun PreviewStingsItem() {
             vibrationEnabled = false,
             soundsEnable = false,
             backAction = {},
+            onSelectTheme = {},
             setPomodoroTime = {},
             setRestTime = {},
             onAutoPlayChange = {},

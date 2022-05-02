@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetColorUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
+import com.emenjivar.core.usecase.SetColorUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.core.usecase.SetSoundsEnableUseCase
@@ -23,6 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
+    private val getColorUseCase: GetColorUseCase,
+    private val setColorUseCase: SetColorUseCase,
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setWorkTimeUseCase: SetWorkTimeUseCase,
     private val setRestTimeUseCase: SetRestTimeUseCase,
@@ -59,6 +63,9 @@ class SettingsViewModel(
     private val _soundsEnable = mutableStateOf(true)
     val soundsEnable: State<Boolean> = _soundsEnable
 
+    private val _selectedColor = mutableStateOf<Int?>(null)
+    val selectedColor: State<Int?> = _selectedColor
+
     init {
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
@@ -79,6 +86,14 @@ class SettingsViewModel(
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
         _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
         _soundsEnable.value = areSoundsEnableUseCase.invoke()
+        _selectedColor.value = getColorUseCase.invoke()
+    }
+
+    fun setColor(value: Int) {
+        _selectedColor.value = value
+        viewModelScope.launch(ioDispatcher) {
+            setColorUseCase.invoke(value)
+        }
     }
 
     /**
