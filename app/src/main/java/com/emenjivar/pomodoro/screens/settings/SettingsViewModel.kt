@@ -94,7 +94,7 @@ class SettingsViewModel(
     fun setColor(value: Int) {
         _selectedColor.value = value
         viewModelScope.launch(ioDispatcher) {
-            customVibrator.shortVibrate()
+            customVibrator.click()
             setColorUseCase.invoke(value)
         }
     }

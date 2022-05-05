@@ -18,7 +18,7 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
         }
     }
 
-    override fun shortVibrate() {
+    override fun click() {
         val vibrator = getVibrator()
         vibrate(vibrator, SHORT_VIBRATION_TIME)
     }
@@ -52,6 +52,6 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
 
     companion object {
         private const val VIBRATION_TIME: Long = 1000
-        private const val SHORT_VIBRATION_TIME: Long = 500
+        private const val SHORT_VIBRATION_TIME: Long = 200
     }
 }
