@@ -23,6 +23,7 @@ import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.system.SoundsManager
 import com.emenjivar.pomodoro.utils.Action
+import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -83,7 +84,9 @@ class CountDownViewModel(
     }
 
     suspend fun loadDefaultValues() {
-        _selectedColor.postValue(getColorUseCase.invoke())
+        with(getColorUseCase.invoke()) {
+            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
+        }
         _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
         vibrationEnabled = isVibrationEnabledUseCase.invoke()
