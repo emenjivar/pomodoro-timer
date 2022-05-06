@@ -2,6 +2,7 @@ package com.emenjivar.pomodoro.screens.settings
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -65,8 +66,8 @@ class SettingsViewModel(
     private val _soundsEnable = mutableStateOf(true)
     val soundsEnable: State<Boolean> = _soundsEnable
 
-    private val _selectedColor = mutableStateOf<Int?>(null)
-    val selectedColor: State<Int?> = _selectedColor
+    private val _selectedColor = MutableLiveData<Int?>(null)
+    val selectedColor: LiveData<Int?> = _selectedColor
 
     init {
         if (!testMode) {
@@ -88,7 +89,7 @@ class SettingsViewModel(
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
         _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
         _soundsEnable.value = areSoundsEnableUseCase.invoke()
-        _selectedColor.value = getColorUseCase.invoke()
+        _selectedColor.postValue(getColorUseCase.invoke())
     }
 
     fun setColor(value: Int) {

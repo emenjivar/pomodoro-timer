@@ -40,7 +40,7 @@ import com.emenjivar.pomodoro.utils.ThemeColor
 fun SettingsScreen(
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val selectedColor by viewModel.selectedColor
+    val selectedColor by viewModel.selectedColor.observeAsState()
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
