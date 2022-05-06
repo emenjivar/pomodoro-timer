@@ -68,7 +68,7 @@ fun CountDown(
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
-    val phaseText = if (phase == Phase.WORK) "work time" else "rest time"
+    val phaseText = if (phase == Phase.WORK) "Work time" else "Rest time"
 
     val showPhaseText = when (action) {
         Action.Play -> true
@@ -98,6 +98,16 @@ fun CountDown(
             )
 
             Column(modifier = Modifier.align(Alignment.Center)) {
+                AnimatedVisibility(
+                    visible = action == Action.Pause,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = "Paused",
+                        color = itemColor.value,
+                        fontSize = 16.sp
+                    )
+                }
                 Text(
                     text = time,
                     color = itemColor.value,
