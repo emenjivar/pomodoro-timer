@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setObservables()
-
         // Make sure to always pass a value on this parameter
         val selectedColor = intent.extras?.getInt(EXTRA_SELECTED_COLOR)
         selectedColor?.let { safeColor ->
@@ -122,7 +121,9 @@ class MainActivity : ComponentActivity() {
 
     private val observeOpenSettings = Observer<Boolean> { status ->
         if (status) {
-            val intent = Intent(this, SettingsActivity::class.java)
+            val intent = Intent(this, SettingsActivity::class.java).apply {
+                putExtra(EXTRA_SELECTED_COLOR, countDownViewModel.selectedColor.value)
+            }
             startActivity(intent)
         }
     }

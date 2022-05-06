@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.emenjivar.pomodoro.MainActivity
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,17 +17,34 @@ class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.closeSettings.observe(this, observeCloseSettings)
-        viewModel.selectedColor.observe(this, observeColorSettings)
+
+        setStatusBarColor(getSelectedColor())
+        setObservers()
 
         setContent {
             PomodoroSchedulerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    SettingsScreen(viewModel)
+                    SettingsScreen(
+                        viewModel = viewModel,
+                        selectedColor = getSelectedColor()
+                    )
                 }
             }
         }
+    }
+
+    private fun getSelectedColor() = intent.extras?.getInt(MainActivity.EXTRA_SELECTED_COLOR)
+
+    private fun setStatusBarColor(selectedColor: Int?) {
+        selectedColor?.let { safeColor ->
+            window.statusBarColor = ContextCompat.getColor(this, safeColor)
+        }
+    }
+
+    private fun setObservers() {
+        viewModel.closeSettings.observe(this, observeCloseSettings)
+        viewModel.selectedColor.observe(this, observeColorSettings)
     }
 
     private val observeCloseSettings = Observer<Boolean> { status ->
@@ -35,8 +53,6 @@ class SettingsActivity : ComponentActivity() {
     }
 
     private val observeColorSettings = Observer<Int?> { color ->
-        color?.let { safeColor ->
-            window.statusBarColor = ContextCompat.getColor(this, safeColor)
-        }
+        setStatusBarColor(color)
     }
 }

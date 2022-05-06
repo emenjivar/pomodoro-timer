@@ -40,11 +40,17 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
 
+/**
+ * @param selectedColor reduce ui color delay, loading this value
+ *  while viewModel finish to fetch the color
+ */
 @Composable
 fun SettingsScreen(
+    selectedColor: Int? = null,
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val selectedColor by viewModel.selectedColor.observeAsState()
+    val viewModelSelectedColor by viewModel.selectedColor.observeAsState()
+    val themeColor = viewModelSelectedColor ?: selectedColor
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
@@ -53,7 +59,7 @@ fun SettingsScreen(
     val soundsEnable by viewModel.soundsEnable
 
     SettingsScreen(
-        selectedColor = selectedColor,
+        selectedColor = themeColor,
         pomodoroTime = pomodoroTime,
         restTime = restTime,
         autoPlay = autoPlay,
