@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
+        countDownViewModel.selectedColor.observe(this, observeSelectedColor)
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
         countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
 
@@ -58,6 +60,7 @@ class MainActivity : ComponentActivity() {
             closeNotification()
 
             // Make sure to call this properties on every onRestart
+            forceSelectedColorConfig()
             forceFetchKeepScreenConfig()
             forceFetchVibrationConfig()
             forceFetchSoundsConfig()
@@ -93,6 +96,12 @@ class MainActivity : ComponentActivity() {
                     countDownViewModel.stopCounter()
                 }
             }
+        }
+    }
+
+    private val observeSelectedColor = Observer<Int?> {
+        it?.let { safeColor ->
+            window.statusBarColor = ContextCompat.getColor(this, safeColor)
         }
     }
 

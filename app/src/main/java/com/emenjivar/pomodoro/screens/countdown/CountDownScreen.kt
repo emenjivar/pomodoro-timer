@@ -33,6 +33,7 @@ fun CountDownScreen(
     modifier: Modifier = Modifier,
     countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val selectedColor by countDownViewModel.selectedColor.observeAsState()
     val counter by countDownViewModel.counter
     val action by countDownViewModel.action.observeAsState()
 
@@ -40,6 +41,7 @@ fun CountDownScreen(
         modifier = modifier,
         action = action,
         counter = counter,
+        selectedColor = selectedColor,
         playAction = { countDownViewModel.startCounter() },
         pauseAction = { countDownViewModel.pauseCounter() },
         resumeAction = { countDownViewModel.resumeCounter() },
@@ -53,6 +55,7 @@ fun CountDownScreen(
     modifier: Modifier = Modifier,
     action: Action?,
     counter: Counter?,
+    selectedColor: Int? = null,
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     resumeAction: () -> Unit,
@@ -70,7 +73,7 @@ fun CountDownScreen(
 
     ConstraintLayout(
         modifier = modifier
-            .background(getBackgroundColor(isNightMode).value)
+            .background(getBackgroundColor(selectedColor).value)
     ) {
         val (_settingsButton, _container) = createRefs()
 
@@ -84,7 +87,7 @@ fun CountDownScreen(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_baseline_settings_24),
-                tint = getIconColor(isNightMode).value,
+                tint = getIconColor(true).value,
                 contentDescription = null
             )
         }
@@ -116,12 +119,14 @@ fun CountDownScreen(
                 ActionButton(
                     icon = getPlayPauseIcon(action),
                     isFullScreen = isNightMode,
+                    selectedColor = selectedColor,
                     onClick = nextAction
                 )
                 Spacer(modifier = Modifier.width(50.dp))
                 ActionButton(
                     icon = R.drawable.ic_baseline_stop_24,
                     isFullScreen = isNightMode,
+                    selectedColor = selectedColor,
                     onClick = stopAction
                 )
             }
@@ -135,8 +140,8 @@ private fun getPlayPauseIcon(action: Action?) = when (action) {
 }
 
 @Composable
-private fun getBackgroundColor(isNightMode: Boolean) = animateColorAsState(
-    targetValue = colorResource(if (isNightMode) R.color.primary else R.color.white),
+private fun getBackgroundColor(selectedColor: Int?) = animateColorAsState(
+    targetValue = colorResource(selectedColor ?: R.color.primary),
     animationSpec = tween(TRANSITION_DURATION)
 )
 

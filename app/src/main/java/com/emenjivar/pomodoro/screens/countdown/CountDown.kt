@@ -153,6 +153,7 @@ fun CircularProgressIndicatorBackground(
 fun ActionButton(
     icon: Int,
     isFullScreen: Boolean = true,
+    selectedColor: Int?,
     onClick: () -> Unit
 ) {
     val itemColor = animateColorAsState(
@@ -160,7 +161,7 @@ fun ActionButton(
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val iconColor = animateColorAsState(
-        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.white),
+        targetValue = colorResource(selectedColor ?: R.color.primary),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 

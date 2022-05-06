@@ -15,6 +15,7 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel {
         CountDownViewModel(
+            getColorUseCase = get(),
             getPomodoroUseCase = get(),
             setNighModeUseCase = get(),
             getAutoPlayUseCase = get(),

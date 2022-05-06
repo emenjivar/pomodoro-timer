@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetColorUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
@@ -28,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CountDownViewModel(
+    private val getColorUseCase: GetColorUseCase,
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
@@ -64,6 +66,9 @@ class CountDownViewModel(
     private val _keepScreenOn: MutableLiveData<Boolean?> = MutableLiveData()
     val keepScreenOn: LiveData<Boolean?> = _keepScreenOn
 
+    private val _selectedColor = MutableLiveData<Int?>(null)
+    val selectedColor: LiveData<Int?> = _selectedColor
+
     var autoPlay: Boolean = false
     var vibrationEnabled: Boolean = false
     var displayNotification: Boolean = false
@@ -78,6 +83,7 @@ class CountDownViewModel(
     }
 
     suspend fun loadDefaultValues() {
+        _selectedColor.postValue(getColorUseCase.invoke())
         _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
         vibrationEnabled = isVibrationEnabledUseCase.invoke()
@@ -255,6 +261,10 @@ class CountDownViewModel(
     /**
      * Fetch local storage configurations
      */
+    fun forceSelectedColorConfig() = viewModelScope.launch(ioDispatcher) {
+        _selectedColor.postValue(getColorUseCase.invoke())
+    }
+
     fun forceFetchKeepScreenConfig() = viewModelScope.launch {
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
     }
