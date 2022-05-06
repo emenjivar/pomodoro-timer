@@ -2,6 +2,7 @@ package com.emenjivar.pomodoro.di
 
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.screens.settings.SettingsViewModel
+import com.emenjivar.pomodoro.screens.splashscreen.SplashScreenViewModel
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp
 import com.emenjivar.pomodoro.system.CustomVibrationImp
@@ -13,6 +14,12 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    viewModel {
+        SplashScreenViewModel(
+            getColorUseCase = get()
+        )
+    }
+
     viewModel {
         CountDownViewModel(
             getColorUseCase = get(),

@@ -28,12 +28,19 @@ import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.formatTime
 
+/**
+ * @param selectedColor value from mainActivity, it would be probably
+ *  this value reduce fetch delay when color is selected different to primary
+ */
 @Composable
 fun CountDownScreen(
     modifier: Modifier = Modifier,
-    countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    selectedColor: Int? = null
 ) {
-    val selectedColor by countDownViewModel.selectedColor.observeAsState()
+    val viewModelSelectedColor by countDownViewModel.selectedColor.observeAsState()
+    val themeColor = viewModelSelectedColor ?: selectedColor
+
     val counter by countDownViewModel.counter
     val action by countDownViewModel.action.observeAsState()
 
@@ -41,7 +48,7 @@ fun CountDownScreen(
         modifier = modifier,
         action = action,
         counter = counter,
-        selectedColor = selectedColor,
+        selectedColor = themeColor,
         playAction = { countDownViewModel.startCounter() },
         pauseAction = { countDownViewModel.pauseCounter() },
         resumeAction = { countDownViewModel.resumeCounter() },
