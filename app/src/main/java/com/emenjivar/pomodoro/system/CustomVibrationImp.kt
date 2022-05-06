@@ -52,6 +52,6 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
 
     companion object {
         private const val VIBRATION_TIME: Long = 1000
-        private const val SHORT_VIBRATION_TIME: Long = 200
+        private const val SHORT_VIBRATION_TIME: Long = 100
     }
 }
