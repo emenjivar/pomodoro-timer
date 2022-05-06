@@ -112,6 +112,7 @@ fun CountDownScreen(
             CountDown(
                 modifier = Modifier
                     .padding(top = 50.dp),
+                progressColor = selectedColor,
                 time = counter?.countDown.formatTime(),
                 progress = counter?.getScaleProgress() ?: 1f,
                 phase = counter?.phase,

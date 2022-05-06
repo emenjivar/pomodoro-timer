@@ -437,12 +437,12 @@ fun PreviewSettingsItemOrange() {
     }
 }
 
-@Preview(name = "Settings screen wine theme", showBackground = true)
+@Preview(name = "Settings screen green theme", showBackground = true)
 @Composable
 fun PreviewSettingsItemWine() {
     MaterialTheme {
         SettingsScreen(
-            selectedColor = ThemeColor.Wine.color,
+            selectedColor = ThemeColor.Green.color,
             pomodoroTime = 0L,
             restTime = 0L,
             autoPlay = true,
@@ -461,36 +461,12 @@ fun PreviewSettingsItemWine() {
     }
 }
 
-@Preview(name = "Settings screen basil theme", showBackground = true)
+@Preview(name = "Settings screen leaf green theme", showBackground = true)
 @Composable
 fun PreviewSettingsItemBasil() {
     MaterialTheme {
         SettingsScreen(
-            selectedColor = ThemeColor.Basil.color,
-            pomodoroTime = 0L,
-            restTime = 0L,
-            autoPlay = true,
-            keepScreenOn = true,
-            vibrationEnabled = true,
-            soundsEnable = true,
-            backAction = {},
-            onSelectTheme = {},
-            setPomodoroTime = {},
-            setRestTime = {},
-            onAutoPlayChange = {},
-            onKeepScreenChange = {},
-            onVibrationEnabledChange = {},
-            onSoundsEnableChange = {}
-        )
-    }
-}
-
-@Preview(name = "Settings screen charcoal theme", showBackground = true)
-@Composable
-fun PreviewSettingsItemCharcoal() {
-    MaterialTheme {
-        SettingsScreen(
-            selectedColor = ThemeColor.Charcoal.color,
+            selectedColor = ThemeColor.LeafGreen.color,
             pomodoroTime = 0L,
             restTime = 0L,
             autoPlay = true,

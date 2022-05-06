@@ -75,18 +75,18 @@ fun ColorMenu(
             onSelectTheme = onSelectTheme
         )
         Square(
-            theme = ThemeColor.Wine,
-            selected = selectedColor == ThemeColor.Wine.color,
+            theme = ThemeColor.Yellow,
+            selected = selectedColor == ThemeColor.Yellow.color,
             onSelectTheme = onSelectTheme
         )
         Square(
-            theme = ThemeColor.Basil,
-            selected = selectedColor == ThemeColor.Basil.color,
+            theme = ThemeColor.Green,
+            selected = selectedColor == ThemeColor.Green.color,
             onSelectTheme = onSelectTheme
         )
         Square(
-            theme = ThemeColor.Charcoal,
-            selected = selectedColor == ThemeColor.Charcoal.color,
+            theme = ThemeColor.LeafGreen,
+            selected = selectedColor == ThemeColor.LeafGreen.color,
             onSelectTheme = onSelectTheme
         )
     }
@@ -104,20 +104,20 @@ fun PreviewColorMenuOrange() {
     ColorMenu(ThemeColor.Orange.color) {}
 }
 
-@Preview(name = "Wine theme", showBackground = true)
+@Preview(name = "Yellow theme", showBackground = true)
+@Composable
+fun PreviewColorMenuYellow() {
+    ColorMenu(ThemeColor.Orange.color) {}
+}
+
+@Preview(name = "Green theme", showBackground = true)
 @Composable
 fun PreviewColorMenuWine() {
-    ColorMenu(ThemeColor.Wine.color) {}
+    ColorMenu(ThemeColor.Green.color) {}
 }
 
-@Preview(name = "Basil theme", showBackground = true)
+@Preview(name = "Leaf green theme", showBackground = true)
 @Composable
 fun PreviewColorMenuBasil() {
-    ColorMenu(ThemeColor.Basil.color) {}
-}
-
-@Preview(name = "Charcoal theme", showBackground = true)
-@Composable
-fun PreviewColorMenuCharcoal() {
-    ColorMenu(ThemeColor.Charcoal.color) {}
+    ColorMenu(ThemeColor.LeafGreen.color) {}
 }

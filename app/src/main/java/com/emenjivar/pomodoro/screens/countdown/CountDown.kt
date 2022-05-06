@@ -46,6 +46,7 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 @Composable
 fun CountDown(
     modifier: Modifier = Modifier,
+    progressColor: Int? = null,
     time: String,
     progress: Float,
     phase: Phase? = Phase.WORK,
@@ -63,7 +64,7 @@ fun CountDown(
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val progressBackgroundColor = animateColorAsState(
-        targetValue = colorResource(if (isFullScreen) R.color.primary else R.color.light),
+        targetValue = colorResource(id = progressColor ?: R.color.primary),
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
