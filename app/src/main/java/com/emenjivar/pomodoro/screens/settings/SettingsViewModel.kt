@@ -78,6 +78,7 @@ class SettingsViewModel(
     }
 
     suspend fun loadSettings() {
+        _selectedColor.postValue(getColorUseCase.invoke())
         /**
          * Values are expressed in milliseconds
          * transform to minutes to show a readable value on UI
@@ -89,7 +90,6 @@ class SettingsViewModel(
         _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
         _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
         _soundsEnable.value = areSoundsEnableUseCase.invoke()
-        _selectedColor.postValue(getColorUseCase.invoke())
     }
 
     fun setColor(value: Int) {

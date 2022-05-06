@@ -1,6 +1,8 @@
 package com.emenjivar.pomodoro.screens.settings
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +36,9 @@ import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.screens.common.ColorMenu
 import com.emenjivar.pomodoro.screens.common.CustomDialog
+import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
+import com.emenjivar.pomodoro.utils.toColor
 
 @Composable
 fun SettingsScreen(
@@ -95,6 +99,11 @@ fun SettingsScreen(
     onVibrationEnabledChange: (Boolean) -> Unit,
     onSoundsEnableChange: (Boolean) -> Unit
 ) {
+    val topAppBarColor = animateColorAsState(
+        targetValue = selectedColor?.toColor() ?: ThemeColor.Tomato.color.toColor(),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -109,7 +118,7 @@ fun SettingsScreen(
                         )
                     }
                 },
-                backgroundColor = colorResource(id = selectedColor ?: ThemeColor.Tomato.color),
+                backgroundColor = topAppBarColor.value,
                 contentColor = colorResource(R.color.white)
             )
         }
