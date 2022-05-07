@@ -4,10 +4,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetColorUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
+import com.emenjivar.core.usecase.SetColorUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
 import com.emenjivar.core.usecase.SetSoundsEnableUseCase
@@ -15,6 +17,7 @@ import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
+import com.emenjivar.pomodoro.system.CustomVibrator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -30,6 +33,8 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
+    private lateinit var getColorUseCase: GetColorUseCase
+    private lateinit var setColorUseCase: SetColorUseCase
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setWorkTimeUseCase: SetWorkTimeUseCase
     private lateinit var setRestTimeUseCase: SetRestTimeUseCase
@@ -41,6 +46,7 @@ class SettingsViewModelTest {
     private lateinit var setVibrationUseCase: SetVibrationUseCase
     private lateinit var areSoundsEnableUseCase: AreSoundsEnableUseCase
     private lateinit var setSoundsEnableUseCase: SetSoundsEnableUseCase
+    private lateinit var customVibrator: CustomVibrator
     private lateinit var settingsViewModel: SettingsViewModel
 
     @get:Rule
@@ -51,6 +57,8 @@ class SettingsViewModelTest {
 
     @Before
     fun prepareTest() {
+        getColorUseCase = Mockito.mock(GetColorUseCase::class.java)
+        setColorUseCase = Mockito.mock(SetColorUseCase::class.java)
         getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
         setWorkTimeUseCase = Mockito.mock(SetWorkTimeUseCase::class.java)
         setRestTimeUseCase = Mockito.mock(SetRestTimeUseCase::class.java)
@@ -62,8 +70,11 @@ class SettingsViewModelTest {
         setVibrationUseCase = Mockito.mock(SetVibrationUseCase::class.java)
         areSoundsEnableUseCase = Mockito.mock(AreSoundsEnableUseCase::class.java)
         setSoundsEnableUseCase = Mockito.mock(SetSoundsEnableUseCase::class.java)
+        customVibrator = Mockito.mock(CustomVibrator::class.java)
 
         settingsViewModel = SettingsViewModel(
+            getColorUseCase = getColorUseCase,
+            setColorUseCase = setColorUseCase,
             getPomodoroUseCase = getPomodoroUseCase,
             setWorkTimeUseCase = setWorkTimeUseCase,
             setRestTimeUseCase = setRestTimeUseCase,
@@ -75,6 +86,7 @@ class SettingsViewModelTest {
             setVibrationUseCase = setVibrationUseCase,
             areSoundsEnableUseCase = areSoundsEnableUseCase,
             setSoundsEnableUseCase = setSoundsEnableUseCase,
+            customVibrator = customVibrator,
             ioDispatcher = Dispatchers.Main,
             testMode = true
         )
