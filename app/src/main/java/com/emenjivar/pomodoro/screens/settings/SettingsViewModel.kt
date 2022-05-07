@@ -109,10 +109,12 @@ class SettingsViewModel(
     }
 
     private fun setPomodoroTime(time: Long) {
-        viewModelScope.launch(ioDispatcher) {
-            _pomodoroTime.postValue(time)
-            // Parse to milliseconds
-            setWorkTimeUseCase.invoke(time.minutesToMilliseconds())
+        if (time in 1..99) {
+            viewModelScope.launch(ioDispatcher) {
+                _pomodoroTime.postValue(time)
+                // Parse to milliseconds
+                setWorkTimeUseCase.invoke(time.minutesToMilliseconds())
+            }
         }
     }
 
@@ -125,10 +127,12 @@ class SettingsViewModel(
     }
 
     private fun setRestTime(time: Long) {
-        viewModelScope.launch(ioDispatcher) {
-            _restTime.postValue(time)
-            // Parse to milliSeconds
-            setRestTimeUseCase.invoke(time.minutesToMilliseconds())
+        if (time in 1..99) {
+            viewModelScope.launch(ioDispatcher) {
+                _restTime.postValue(time)
+                // Parse to milliSeconds
+                setRestTimeUseCase.invoke(time.minutesToMilliseconds())
+            }
         }
     }
 
