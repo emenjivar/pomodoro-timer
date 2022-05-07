@@ -1,5 +1,6 @@
 # Pomodoro timer 
 [![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml)
+<a href="https://ktlint.github.io/"><img src="https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg" alt="ktlint"></a>
 
 It's a simple and configurable anti procrastination app that helps you focus and get your tasks done.
 
