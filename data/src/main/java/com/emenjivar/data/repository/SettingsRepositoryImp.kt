@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.emenjivar.core.model.Pomodoro
@@ -22,6 +23,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     private val nightMode = booleanPreferencesKey(NIGHT_MODE)
     private val vibration = booleanPreferencesKey(VIBRATION)
     private val sounds = booleanPreferencesKey(SOUNDS)
+    private val color = intPreferencesKey(COLOR)
 
     override suspend fun getPomodoro(): Pomodoro =
         context.dataStore.data.map { pref ->
@@ -98,6 +100,17 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         }
     }
 
+    override suspend fun getColor(): Int? = context.dataStore.data
+        .map { pref ->
+            pref[color]
+        }.first()
+
+    override suspend fun setColor(value: Int) {
+        context.dataStore.edit { pref ->
+            pref[color] = value
+        }
+    }
+
     companion object {
         const val SETTINGS_NAME = "settings"
         const val POMODORO_TIME = "pomodoro_time"
@@ -107,6 +120,7 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
         const val NIGHT_MODE = "night_mode"
         const val VIBRATION = "vibration"
         const val SOUNDS = "sounds"
+        const val COLOR = "color"
         const val DEFAULT_WORK_TIME: Long = 1000 * 60 * 25 // 25 min
         const val DEFAULT_REST_TIME: Long = 1000 * 60 * 5 // 5 min
     }

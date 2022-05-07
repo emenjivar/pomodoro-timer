@@ -2,11 +2,13 @@ package com.emenjivar.pomodoro.di
 
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetColorUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetAutoPlayUseCase
+import com.emenjivar.core.usecase.SetColorUseCase
 import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.core.usecase.SetRestTimeUseCase
@@ -29,4 +31,6 @@ val coreModule = module {
     single { SetVibrationUseCase(get()) }
     single { AreSoundsEnableUseCase(get()) }
     single { SetSoundsEnableUseCase(get()) }
+    single { GetColorUseCase(get()) }
+    single { SetColorUseCase(get()) }
 }

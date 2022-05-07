@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.GetColorUseCase
 import com.emenjivar.core.usecase.GetPomodoroUseCase
 import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
@@ -33,6 +34,7 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 class CountDownViewModelTest {
 
+    private lateinit var getColorUseCase: GetColorUseCase
     private lateinit var getPomodoroUseCase: GetPomodoroUseCase
     private lateinit var setNighModeUseCase: SetNighModeUseCase
     private lateinit var getAutoPlayUseCase: GetAutoPlayUseCase
@@ -55,6 +57,7 @@ class CountDownViewModelTest {
 
     @Before
     fun setup() = runTest {
+        getColorUseCase = Mockito.mock(GetColorUseCase::class.java)
         getPomodoroUseCase = Mockito.mock(GetPomodoroUseCase::class.java)
         setNighModeUseCase = Mockito.mock(SetNighModeUseCase::class.java)
         getAutoPlayUseCase = Mockito.mock(GetAutoPlayUseCase::class.java)
@@ -76,6 +79,7 @@ class CountDownViewModelTest {
         Mockito.`when`(isKeepScreenOnUseCase.invoke()).thenReturn(false)
 
         viewModel = CountDownViewModel(
+            getColorUseCase = getColorUseCase,
             getPomodoroUseCase = getPomodoroUseCase,
             setNighModeUseCase = setNighModeUseCase,
             getAutoPlayUseCase = getAutoPlayUseCase,

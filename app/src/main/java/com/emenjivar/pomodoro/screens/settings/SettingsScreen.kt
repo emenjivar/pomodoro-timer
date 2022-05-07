@@ -1,6 +1,8 @@
 package com.emenjivar.pomodoro.screens.settings
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,12 +34,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.screens.common.ColorMenu
 import com.emenjivar.pomodoro.screens.common.CustomDialog
+import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
+import com.emenjivar.pomodoro.utils.ThemeColor
+import com.emenjivar.pomodoro.utils.toColor
 
+/**
+ * @param selectedColor reduce ui color delay, loading this value
+ *  while viewModel finish to fetch the color
+ */
 @Composable
 fun SettingsScreen(
+    selectedColor: Int? = null,
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val viewModelSelectedColor by viewModel.selectedColor.observeAsState()
+    val themeColor = viewModelSelectedColor ?: selectedColor
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
@@ -46,6 +59,7 @@ fun SettingsScreen(
     val soundsEnable by viewModel.soundsEnable
 
     SettingsScreen(
+        selectedColor = themeColor,
         pomodoroTime = pomodoroTime,
         restTime = restTime,
         autoPlay = autoPlay,
@@ -53,10 +67,10 @@ fun SettingsScreen(
         vibrationEnabled = vibrationEnabled,
         soundsEnable = soundsEnable,
         backAction = { viewModel.closeSettings() },
+        onSelectTheme = { viewModel.setColor(it) },
         setPomodoroTime = { viewModel.setPomodoroTime(it) },
         setRestTime = {
             viewModel.setRestTime(it)
-            Log.d("SettingsScreen", "onSaveItem...")
         },
         onAutoPlayChange = {
             viewModel.setAutoPlay(it)
@@ -75,6 +89,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
+    selectedColor: Int? = null,
     pomodoroTime: Long,
     restTime: Long,
     autoPlay: Boolean,
@@ -82,6 +97,7 @@ fun SettingsScreen(
     vibrationEnabled: Boolean,
     soundsEnable: Boolean,
     backAction: () -> Unit,
+    onSelectTheme: (Int) -> Unit,
     setPomodoroTime: (time: String) -> Unit,
     setRestTime: (time: String) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
@@ -89,6 +105,11 @@ fun SettingsScreen(
     onVibrationEnabledChange: (Boolean) -> Unit,
     onSoundsEnableChange: (Boolean) -> Unit
 ) {
+    val topAppBarColor = animateColorAsState(
+        targetValue = selectedColor?.toColor() ?: ThemeColor.Tomato.color.toColor(),
+        animationSpec = tween(durationMillis = TRANSITION_DURATION)
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,7 +124,7 @@ fun SettingsScreen(
                         )
                     }
                 },
-                backgroundColor = colorResource(R.color.primary),
+                backgroundColor = topAppBarColor.value,
                 contentColor = colorResource(R.color.white)
             )
         }
@@ -113,6 +134,11 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
+            AppearanceSettings(
+                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
+                onSelectTheme = onSelectTheme
+            )
+
             TimeSettings(
                 workTime = pomodoroTime,
                 restTime = restTime,
@@ -121,6 +147,7 @@ fun SettingsScreen(
             )
 
             SoundSettings(
+                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
                 isVibrationEnabled = vibrationEnabled,
                 soundsEnable = soundsEnable,
                 onVibrationEnabledChange = onVibrationEnabledChange,
@@ -128,6 +155,7 @@ fun SettingsScreen(
             )
 
             OthersSettings(
+                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
                 autoPlay = autoPlay,
                 keepScreenOn = keepScreenOn,
                 onAutoPlayChange = onAutoPlayChange,
@@ -162,6 +190,7 @@ fun SwitchItem(
     title: String,
     subtitle: String? = null,
     value: Boolean,
+    selectedColor: Int,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
@@ -196,7 +225,7 @@ fun SwitchItem(
                 checked = value,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = colorResource(R.color.primary),
+                    checkedThumbColor = colorResource(selectedColor),
                     uncheckedThumbColor = colorResource(R.color.light_gray)
                 )
             )
@@ -273,6 +302,19 @@ fun SettingsRightText(text: String) {
 }
 
 @Composable
+private fun AppearanceSettings(
+    selectedColor: Int?,
+    onSelectTheme: (Int) -> Unit
+) = SettingsGroup(title = "Appearance settings") {
+    Row(modifier = Modifier.padding(16.dp)) {
+        ColorMenu(
+            selectedColor = selectedColor,
+            onSelectTheme = onSelectTheme
+        )
+    }
+}
+
+@Composable
 private fun TimeSettings(
     workTime: Long,
     restTime: Long,
@@ -304,6 +346,7 @@ private fun TimeSettings(
 
 @Composable
 private fun SoundSettings(
+    selectedColor: Int,
     isVibrationEnabled: Boolean,
     soundsEnable: Boolean,
     onVibrationEnabledChange: (Boolean) -> Unit,
@@ -313,17 +356,20 @@ private fun SoundSettings(
         title = "Tune",
         subtitle = "Play a small sound when after every interval on time",
         value = soundsEnable,
+        selectedColor = selectedColor,
         onCheckedChange = onSoundsEnableChange
     )
     SwitchItem(
         title = "Vibration",
         value = isVibrationEnabled,
+        selectedColor = selectedColor,
         onCheckedChange = onVibrationEnabledChange
     )
 }
 
 @Composable
 private fun OthersSettings(
+    selectedColor: Int,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     onAutoPlayChange: (Boolean) -> Unit,
@@ -333,11 +379,13 @@ private fun OthersSettings(
         title = "Autoplay",
         subtitle = "At the end of a pomodoro, the next one start automatically",
         value = autoPlay,
+        selectedColor = selectedColor,
         onCheckedChange = onAutoPlayChange
     )
     SwitchItem(
         title = "Keep screen on",
         value = keepScreenOn,
+        selectedColor = selectedColor,
         onCheckedChange = onKeepScreenChange
     )
 }
@@ -349,11 +397,84 @@ fun PreviewStingsItem() {
         SettingsScreen(
             pomodoroTime = 0L,
             restTime = 0L,
-            autoPlay = false,
-            keepScreenOn = false,
-            vibrationEnabled = false,
-            soundsEnable = false,
+            autoPlay = true,
+            keepScreenOn = true,
+            vibrationEnabled = true,
+            soundsEnable = true,
             backAction = {},
+            onSelectTheme = {},
+            setPomodoroTime = {},
+            setRestTime = {},
+            onAutoPlayChange = {},
+            onKeepScreenChange = {},
+            onVibrationEnabledChange = {},
+            onSoundsEnableChange = {}
+        )
+    }
+}
+
+@Preview(name = "Settings screen orange theme", showBackground = true)
+@Composable
+fun PreviewSettingsItemOrange() {
+    MaterialTheme {
+        SettingsScreen(
+            selectedColor = ThemeColor.Orange.color,
+            pomodoroTime = 0L,
+            restTime = 0L,
+            autoPlay = true,
+            keepScreenOn = true,
+            vibrationEnabled = true,
+            soundsEnable = true,
+            backAction = {},
+            onSelectTheme = {},
+            setPomodoroTime = {},
+            setRestTime = {},
+            onAutoPlayChange = {},
+            onKeepScreenChange = {},
+            onVibrationEnabledChange = {},
+            onSoundsEnableChange = {}
+        )
+    }
+}
+
+@Preview(name = "Settings screen green theme", showBackground = true)
+@Composable
+fun PreviewSettingsItemWine() {
+    MaterialTheme {
+        SettingsScreen(
+            selectedColor = ThemeColor.Green.color,
+            pomodoroTime = 0L,
+            restTime = 0L,
+            autoPlay = true,
+            keepScreenOn = true,
+            vibrationEnabled = true,
+            soundsEnable = true,
+            backAction = {},
+            onSelectTheme = {},
+            setPomodoroTime = {},
+            setRestTime = {},
+            onAutoPlayChange = {},
+            onKeepScreenChange = {},
+            onVibrationEnabledChange = {},
+            onSoundsEnableChange = {}
+        )
+    }
+}
+
+@Preview(name = "Settings screen leaf green theme", showBackground = true)
+@Composable
+fun PreviewSettingsItemBasil() {
+    MaterialTheme {
+        SettingsScreen(
+            selectedColor = ThemeColor.LeafGreen.color,
+            pomodoroTime = 0L,
+            restTime = 0L,
+            autoPlay = true,
+            keepScreenOn = true,
+            vibrationEnabled = true,
+            soundsEnable = true,
+            backAction = {},
+            onSelectTheme = {},
             setPomodoroTime = {},
             setRestTime = {},
             onAutoPlayChange = {},

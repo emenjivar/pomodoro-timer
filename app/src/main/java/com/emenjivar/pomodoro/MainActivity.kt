@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
@@ -30,18 +31,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
-        countDownViewModel.openSettings.observe(this, observeOpenSettings)
-        countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
+        setObservables()
+        // Make sure to always pass a value on this parameter
+        val selectedColor = intent.extras?.getInt(EXTRA_SELECTED_COLOR)
+        selectedColor?.let { safeColor ->
+            setStatusBarColor(safeColor)
 
-        setContent {
-            PomodoroSchedulerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    CountDownScreen(
-                        countDownViewModel = countDownViewModel,
-                        modifier = Modifier.fillMaxSize()
-                    )
+            setContent {
+                PomodoroSchedulerTheme {
+                    // A surface container using the 'background' color from the theme
+                    Surface(color = MaterialTheme.colors.background) {
+                        CountDownScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            countDownViewModel = countDownViewModel,
+                            selectedColor = safeColor
+                        )
+                    }
                 }
             }
         }
@@ -58,6 +63,7 @@ class MainActivity : ComponentActivity() {
             closeNotification()
 
             // Make sure to call this properties on every onRestart
+            forceSelectedColorConfig()
             forceFetchKeepScreenConfig()
             forceFetchVibrationConfig()
             forceFetchSoundsConfig()
@@ -80,6 +86,13 @@ class MainActivity : ComponentActivity() {
         unregisterReceiver(broadcastReceiver)
     }
 
+    private fun setObservables() {
+        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
+        countDownViewModel.selectedColor.observe(this, observeSelectedColor)
+        countDownViewModel.openSettings.observe(this, observeOpenSettings)
+        countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
+    }
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
@@ -96,9 +109,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val observeSelectedColor = Observer<Int?> {
+        it?.let { safeColor ->
+            setStatusBarColor(safeColor)
+        }
+    }
+
+    private fun setStatusBarColor(selectedColor: Int) {
+        window.statusBarColor = ContextCompat.getColor(this, selectedColor)
+    }
+
     private val observeOpenSettings = Observer<Boolean> { status ->
         if (status) {
-            val intent = Intent(this, SettingsActivity::class.java)
+            val intent = Intent(this, SettingsActivity::class.java).apply {
+                putExtra(EXTRA_SELECTED_COLOR, countDownViewModel.selectedColor.value)
+            }
             startActivity(intent)
         }
     }
@@ -112,5 +137,9 @@ class MainActivity : ComponentActivity() {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_SELECTED_COLOR = "selected_color"
     }
 }

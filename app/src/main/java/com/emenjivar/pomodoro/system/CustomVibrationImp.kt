@@ -18,18 +18,23 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
         }
     }
 
-    private fun vibrate(vibrator: Vibrator) {
+    override fun click() {
+        val vibrator = getVibrator()
+        vibrate(vibrator, SHORT_VIBRATION_TIME)
+    }
+
+    private fun vibrate(vibrator: Vibrator, time: Long = VIBRATION_TIME) {
         // Api 26 code
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
-                    VIBRATION_TIME,
+                    time,
                     VibrationEffect.DEFAULT_AMPLITUDE
                 )
             )
         } else { // Api 25 or less
             @Suppress("DEPRECATION")
-            vibrator.vibrate(VIBRATION_TIME)
+            vibrator.vibrate(time)
         }
     }
 
@@ -47,5 +52,6 @@ class CustomVibrationImp(private val context: Context) : CustomVibrator {
 
     companion object {
         private const val VIBRATION_TIME: Long = 1000
+        private const val SHORT_VIBRATION_TIME: Long = 100
     }
 }
