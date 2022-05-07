@@ -32,7 +32,6 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
             Action.Play -> {
                 builder
                     .setContentTitle(phase)
-                    .setSmallIcon(R.drawable.ic_baseline_play_arrow_24)
                     .setContentText(formatTime)
                     .setProgress(totalTime, progress, false)
                     .clearActions()
@@ -42,7 +41,6 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
             Action.Pause -> {
                 builder
                     .setContentTitle("$phase - paused")
-                    .setSmallIcon(R.drawable.ic_baseline_pause_24)
                     .setContentText(formatTime)
                     .setProgress(totalTime, progress, false)
                     .clearActions()
@@ -68,7 +66,7 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
             context,
             CHANNEL_ID
         )
-            .setSmallIcon(R.drawable.ic_baseline_play_arrow_24)
+            .setSmallIcon(R.drawable.tomato)
             .setContentTitle("Pomodoro")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOnlyAlertOnce(true)
