@@ -66,7 +66,7 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
             context,
             CHANNEL_ID
         )
-            .setSmallIcon(R.drawable.tomato)
+            .setSmallIcon(R.drawable.tomato_status_bar_icon)
             .setContentTitle("Pomodoro")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOnlyAlertOnce(true)
