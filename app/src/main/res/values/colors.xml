@@ -15,7 +15,7 @@
     <!-- theme colors -->
     <color name="primary">#E14D33</color>
     <color name="orange">#f7633c</color>
-    <color name="yellow">#e39533</color>
-    <color name="green">#a2a500</color>
-    <color name="leaf_green">#3d614e</color>
+    <color name="yellow">#FAA739</color>
+    <color name="green">#71c404</color>
+    <color name="leaf_green">#029e29</color>
 </resources>
