@@ -104,6 +104,7 @@ class CountDownViewModelTest {
             assertFalse(openSettings.value ?: true)
             assertFalse(autoPlay)
             assertNull(keepScreenOn.value)
+            assertNull(selectedColor.value)
             assertFalse(vibrationEnabled)
             assertFalse(displayNotification)
             assertTrue(areSoundsEnable)
@@ -113,6 +114,8 @@ class CountDownViewModelTest {
     @Test
     fun `loadDefaultValues test`() = runTest {
         with(viewModel) {
+            Mockito.`when`(getColorUseCase.invoke())
+                .thenReturn(1)
             Mockito.`when`(getAutoPlayUseCase.invoke())
                 .thenReturn(false)
             Mockito.`when`(isKeepScreenOnUseCase.invoke())
@@ -122,6 +125,7 @@ class CountDownViewModelTest {
 
             loadDefaultValues()
 
+            assertEquals(1, selectedColor.value)
             assertTrue(isNightMode.value)
             assertFalse(autoPlay)
             assertTrue(vibrationEnabled)
@@ -406,6 +410,18 @@ class CountDownViewModelTest {
         assertTrue(first)
         assertFalse(second)
         assertTrue(third)
+    }
+
+    @Test
+    fun `forceSelectedColorConfig test`() = runTest {
+        val color = 10
+        Mockito.`when`(getColorUseCase.invoke())
+            .thenReturn(color)
+
+        with(viewModel) {
+            forceSelectedColorConfig()
+            assertEquals(color, selectedColor.value)
+        }
     }
 
     @Test

@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -102,11 +103,16 @@ class SettingsViewModelTest {
             assertFalse(keepScreenOn.value)
             assertFalse(vibrationEnabled.value)
             assertTrue(soundsEnable.value)
+            assertNull(selectedColor.value)
         }
     }
 
     @Test
     fun `loadSettings test`() = runTest {
+        val color = 10
+
+        Mockito.`when`(getColorUseCase.invoke())
+            .thenReturn(color)
         // Given 25 and 5 minutes
         Mockito.`when`(getPomodoroUseCase.invoke()).thenReturn(
             Pomodoro(workTime = 1500000L, restTime = 300000L)
@@ -125,12 +131,36 @@ class SettingsViewModelTest {
             settingsViewModel.loadSettings()
 
             // Then verify the values are loaded in readable minutes
+            assertEquals(color, selectedColor.getOrAwaitValue())
             assertEquals(25, pomodoroTime.getOrAwaitValue())
             assertEquals(5, restTime.getOrAwaitValue())
             assertTrue(autoPlay.value)
             assertTrue(keepScreenOn.value)
             assertTrue(vibrationEnabled.value)
             assertFalse(soundsEnable.value)
+        }
+    }
+
+    @Test
+    fun `setColor test`() = runTest {
+        val color = 10
+        var clicked = false
+        var localSelectedColor: Int? = null
+
+        with(settingsViewModel) {
+            Mockito.`when`(customVibrator.click()).then {
+                clicked = true
+                it
+            }
+            Mockito.`when`(setColorUseCase.invoke(color)).then {
+                localSelectedColor = it.getArgument(0)
+                it
+            }
+            setColor(color)
+
+            assertEquals(color, selectedColor.getOrAwaitValue())
+            assertTrue(clicked)
+            assertEquals(color, localSelectedColor)
         }
     }
 
