@@ -68,8 +68,9 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
         )
             .setSmallIcon(R.drawable.tomato_status_bar_icon)
             .setContentTitle("Pomodoro")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOnlyAlertOnce(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setSilent(true)
     }
 
     private fun playIntent(): PendingIntent {
