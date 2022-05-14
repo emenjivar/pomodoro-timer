@@ -190,6 +190,9 @@ class CountDownViewModel(
                 _action.value = Action.Stop
                 vibrationTimes = 2
             }
+            else -> {
+                // Nothing to do here
+            }
         }
 
         if (vibrationEnabled) {
