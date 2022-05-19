@@ -283,6 +283,10 @@ class CountDownViewModel(
         areSoundsEnable = areSoundsEnableUseCase.invoke()
     }
 
+    fun forceAutoPlayConfig() = viewModelScope.launch(ioDispatcher) {
+        autoPlay = getAutoPlayUseCase.invoke()
+    }
+
     fun openSettings() {
         _openSettings.value = true
     }

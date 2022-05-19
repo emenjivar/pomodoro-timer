@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
             forceFetchKeepScreenConfig()
             forceFetchVibrationConfig()
             forceFetchSoundsConfig()
+            forceAutoPlayConfig()
         }
     }
 
