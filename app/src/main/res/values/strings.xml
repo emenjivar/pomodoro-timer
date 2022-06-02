@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">Pomodoro counter</string>
     <string name="app_name_release">Pomodoro counter</string>
     <string name="app_name_debug">Pomodoro counter (d)</string>
     <string name="title_activity_full_screen">FullScreenActivity</string>
