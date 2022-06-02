@@ -263,7 +263,7 @@ class CountDownViewModel(
             setNighModeUseCase.invoke(nightMode)
         }
     }
-
+    
     /**
      * Fetch local storage configurations
      */

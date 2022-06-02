@@ -8,6 +8,7 @@ import androidx.compose.material.Surface
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.emenjivar.pomodoro.MainActivity
+import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -34,11 +35,12 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    private fun getSelectedColor() = intent.extras?.getInt(MainActivity.EXTRA_SELECTED_COLOR)
+    private fun getSelectedColor() = intent.extras?.getInt(MainActivity.EXTRA_SELECTED_COLOR) ?: R.color.primary
 
     private fun setStatusBarColor(selectedColor: Int?) {
         selectedColor?.let { safeColor ->
-            window.statusBarColor = ContextCompat.getColor(this, safeColor)
+            if (safeColor != 0)
+                window.statusBarColor = ContextCompat.getColor(this, safeColor)
         }
     }
 

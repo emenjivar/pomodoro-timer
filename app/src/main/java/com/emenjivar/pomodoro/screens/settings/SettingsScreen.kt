@@ -50,7 +50,10 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val viewModelSelectedColor by viewModel.selectedColor.observeAsState()
-    val themeColor = viewModelSelectedColor ?: selectedColor
+    val themeColor = with(viewModelSelectedColor ?: selectedColor) {
+        if (this != 0) this
+        else R.color.primary
+    }
     val pomodoroTime by viewModel.pomodoroTime.observeAsState(0L)
     val restTime by viewModel.restTime.observeAsState(0L)
     val autoPlay by viewModel.autoPlay
