@@ -33,9 +33,9 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            // pomodoro.release.enableCrashlytics is set on github actions
+            // release.enableCrashlytics is set on github actions
             // to enable|disable according the type of pipeline
-            ext.enableCrashlytics = System.getenv('RELEASE_ENABLE_CRASHLYTICS') ?: true
+            ext.enableCrashlytics = findProperty('release.enableCrashlytics') ?: true
 
             manifestPlaceholders = [enableCrashlytics:"${ext.enableCrashlytics}"]
             signingConfig signingConfigs.release
@@ -44,9 +44,9 @@ android {
         debug {
             debuggable true
 
-            // pomodoro.debug.enableCrashlytics is set on github actions
+            // debug.enableCrashlytics is set on github actions
             // to enable|disable according the type of pipeline
-            ext.enableCrashlytics = System.getenv('DEBUG_ENABLE_CRASHLYTICS') ?: false
+            ext.enableCrashlytics = findProperty('debug.enableCrashlytics') ?: false
             manifestPlaceholders = [enableCrashlytics:"${ext.enableCrashlytics}"]
             // applicationIdSuffix ".debug"
             buildConfigField "boolean", "enableCrashlytics", "$enableCrashlytics"
@@ -75,7 +75,8 @@ android {
 
 afterEvaluate {
     android.buildTypes.each { build ->
-        if (build.ext.enableCrashlytics) {
+        println("buildName: ${build.name}, enableCrashlytics: ${build.ext.enableCrashlytics}")
+        if (build.ext.enableCrashlytics == 'true') {
             println("Crashlytic enabled on ${build.name}")
             apply plugin: 'com.google.gms.google-services'
             apply plugin: 'com.google.firebase.crashlytics'
