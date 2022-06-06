@@ -6,6 +6,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      RELEASE_ENABLE_CRASHLYTICS: false
+      DEBUG_ENABLE_CRASHLYTICS: false
 
     steps:
       - uses: actions/checkout@v1
@@ -14,12 +17,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-
-      - name: Set local properties
-        run: |
-          cat gradle.properties
-          echo -e "\npomodoro.release.enableCrashlytics=false" >> gradle.properties
-          cat gradle.properties
 
       - name: Linter
         run: ./gradlew lint

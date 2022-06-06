@@ -35,7 +35,7 @@ android {
 
             // pomodoro.release.enableCrashlytics is set on github actions
             // to enable|disable according the type of pipeline
-            ext.enableCrashlytics = findProperty('pomodoro.release.enableCrashlytics') ?: true
+            ext.enableCrashlytics = System.getenv('RELEASE_ENABLE_CRASHLYTICS') ?: true
 
             manifestPlaceholders = [enableCrashlytics:"${ext.enableCrashlytics}"]
             signingConfig signingConfigs.release
@@ -46,7 +46,7 @@ android {
 
             // pomodoro.debug.enableCrashlytics is set on github actions
             // to enable|disable according the type of pipeline
-            ext.enableCrashlytics = findProperty('pomodoro.debug.enableCrashlytics') ?: false
+            ext.enableCrashlytics = System.getenv('DEBUG_ENABLE_CRASHLYTICS') ?: false
             manifestPlaceholders = [enableCrashlytics:"${ext.enableCrashlytics}"]
             // applicationIdSuffix ".debug"
             buildConfigField "boolean", "enableCrashlytics", "$enableCrashlytics"
