@@ -3,6 +3,9 @@
 <a href="https://ktlint.github.io/"><img src="https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg" alt="ktlint"></a>
 [![Made With Love](https://img.shields.io/badge/Made%20With-Love-orange.svg)](https://github.com/chetanraj/awesome-github-badges)
 
+
+<a href='https://play.google.com/store/apps/details?id=com.emenjivar.pomodoro'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/></a>
+
 It's a simple anti procrastination app that helps you to focus and get your tasks done.
 
 # Table of contents
