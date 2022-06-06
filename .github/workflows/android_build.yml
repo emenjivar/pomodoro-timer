@@ -16,7 +16,10 @@ jobs:
           java-version: 11
 
       - name: Set local properties
-        run: echo -e "\npomodoro.release.enableCrashlytics=false" >> gradle.properties
+        run: |
+          cat gradle.properties
+          echo -e "\npomodoro.release.enableCrashlytics=false" >> gradle.properties
+          cat gradle.properties
 
       - name: Linter
         run: ./gradlew lint
