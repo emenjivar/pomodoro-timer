@@ -17,8 +17,7 @@ jobs:
 
       - name: Set local properties
         run: |
-          echo -e "\release.enableCrashlytics=false" >> gradle.properties
-          echo -e "\debug.enableCrashlytics=false" >> gradle.properties
+          sed -i "s/release.enableCrashlytics=false/release.enableCrashlytics=true/g" gradle.properties
 
       - name: Linter
         run: ./gradlew lint
