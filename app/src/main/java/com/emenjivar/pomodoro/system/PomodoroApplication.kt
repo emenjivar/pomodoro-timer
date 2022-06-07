@@ -5,6 +5,7 @@ import com.emenjivar.pomodoro.BuildConfig
 import com.emenjivar.pomodoro.di.appModule
 import com.emenjivar.pomodoro.di.coreModule
 import com.emenjivar.pomodoro.di.dataModule
+import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
