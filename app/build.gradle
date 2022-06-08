@@ -35,7 +35,8 @@ android {
 
             // release.enableCrashlytics is set on github actions
             // to enable|disable according the type of pipeline
-            ext.enableCrashlytics = findProperty('release.enableCrashlytics') ?: true
+            ext.enableCrashlytics = findProperty('release.enableCrashlytics') ?: false
+            //
 
             manifestPlaceholders = [enableCrashlytics:"${ext.enableCrashlytics}"]
             signingConfig signingConfigs.release

@@ -21,8 +21,10 @@ class PomodoroApplication : Application() {
         CustomNotificationManagerImp.createChannel(this)
 
         // Disable crashlytics when build flag is true
-        FirebaseCrashlytics
-            .getInstance()
-            .setCrashlyticsCollectionEnabled(BuildConfig.enableCrashlytics)
+        if (BuildConfig.enableCrashlytics) {
+            FirebaseCrashlytics
+                .getInstance()
+                .setCrashlyticsCollectionEnabled(BuildConfig.enableCrashlytics)
+        }
     }
 }

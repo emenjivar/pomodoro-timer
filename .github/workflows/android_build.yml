@@ -15,11 +15,6 @@ jobs:
         with:
           java-version: 11
 
-      - name: Set local properties
-        run: |
-          echo -e "\release.enableCrashlytics=false" >> gradle.properties
-          echo -e "\debug.enableCrashlytics=false" >> gradle.properties
-
       - name: Linter
         run: ./gradlew lint
 
