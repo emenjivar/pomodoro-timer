@@ -1,8 +1,10 @@
 package com.emenjivar.pomodoro.screens.settings
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -135,7 +138,9 @@ fun SettingsScreen(
         val scrollState = rememberScrollState()
 
         Column(
-            modifier = Modifier.verticalScroll(scrollState)
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .background(MaterialTheme.colors.background)
         ) {
             AppearanceSettings(
                 selectedColor = selectedColor ?: ThemeColor.Tomato.color,
@@ -393,9 +398,13 @@ private fun OthersSettings(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(
+    name = "Normal settings",
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES
+)
 @Composable
-fun PreviewStingsItem() {
+fun PreviewSettingsItem() {
     MaterialTheme {
         SettingsScreen(
             pomodoroTime = 0L,
