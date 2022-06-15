@@ -17,9 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.DefaultFont
-import com.emenjivar.pomodoro.utils.toColor
+import com.emenjivar.pomodoro.ui.theme.shark
 
 @Composable
 fun CustomDialog(
@@ -59,9 +58,9 @@ fun CustomDialog(
                         keyboardType = KeyboardType.Number
                     ),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = R.color.black.toColor(),
-                        backgroundColor = R.color.white.toColor(),
-                        focusedIndicatorColor = R.color.primary.toColor()
+                        textColor = shark,
+                        backgroundColor = Color.White,
+                        focusedIndicatorColor = MaterialTheme.colors.primary
                     )
                 )
 
@@ -75,9 +74,9 @@ fun CustomDialog(
                         text = "CANCEL",
                         onClick = onDismiss
                     )
-                    
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    
+
                     CustomTextButton(
                         text = "SAVE",
                         onClick = onSaveItem(text).run { onDismiss }

@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.screens.common.ColorMenu
 import com.emenjivar.pomodoro.screens.common.CustomDialog
+import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
@@ -234,7 +234,7 @@ fun SwitchItem(
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = colorResource(selectedColor),
-                    uncheckedThumbColor = colorResource(R.color.light_gray)
+                    uncheckedThumbColor = lightGray
                 )
             )
         }
