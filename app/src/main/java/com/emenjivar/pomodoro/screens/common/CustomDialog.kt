@@ -1,16 +1,19 @@
 package com.emenjivar.pomodoro.screens.common
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -23,12 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.DefaultFont
-import com.emenjivar.pomodoro.utils.toColor
+import com.emenjivar.pomodoro.ui.theme.shark
 
 @Composable
 fun CustomDialog(
@@ -41,7 +44,7 @@ fun CustomDialog(
     var text by remember { mutableStateOf(defaultValue) }
 
     Dialog(onDismissRequest = onDismiss) {
-        Card {
+        Card(backgroundColor = MaterialTheme.colors.background) {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -68,8 +71,9 @@ fun CustomDialog(
                         keyboardType = KeyboardType.Number
                     ),
                     colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = R.color.white.toColor(),
-                        focusedIndicatorColor = R.color.primary.toColor()
+                        textColor = shark,
+                        backgroundColor = Color.White,
+                        focusedIndicatorColor = MaterialTheme.colors.primary
                     )
                 )
 
@@ -83,6 +87,8 @@ fun CustomDialog(
                         text = "CANCEL",
                         onClick = onDismiss
                     )
+
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     CustomTextButton(
                         text = "SAVE",
@@ -102,11 +108,23 @@ private fun CustomTextButton(
     TextButton(
         modifier = Modifier.background(Color.Transparent),
         colors = ButtonDefaults.buttonColors(
-            contentColor = R.color.primary.toColor(),
-            backgroundColor = R.color.white.toColor()
+            contentColor = MaterialTheme.colors.primaryVariant,
+            backgroundColor = MaterialTheme.colors.surface
         ),
         onClick = onClick
     ) {
         Text(text)
     }
+}
+
+@Preview(name = "Night mode", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun CustomDialogPreview() {
+    CustomDialog(
+        defaultValue = "25:00",
+        title = "Work time",
+        subtitle = "Please enter the time in minutes",
+        onSaveItem = {},
+        onDismiss = {}
+    )
 }

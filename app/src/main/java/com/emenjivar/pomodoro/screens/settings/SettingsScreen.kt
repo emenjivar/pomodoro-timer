@@ -1,8 +1,10 @@
 package com.emenjivar.pomodoro.screens.settings
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.screens.common.ColorMenu
 import com.emenjivar.pomodoro.screens.common.CustomDialog
+import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
@@ -135,7 +138,9 @@ fun SettingsScreen(
         val scrollState = rememberScrollState()
 
         Column(
-            modifier = Modifier.verticalScroll(scrollState)
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .background(MaterialTheme.colors.background)
         ) {
             AppearanceSettings(
                 selectedColor = selectedColor ?: ThemeColor.Tomato.color,
@@ -229,7 +234,7 @@ fun SwitchItem(
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = colorResource(selectedColor),
-                    uncheckedThumbColor = colorResource(R.color.light_gray)
+                    uncheckedThumbColor = lightGray
                 )
             )
         }
@@ -393,9 +398,13 @@ private fun OthersSettings(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(
+    name = "Normal settings",
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES
+)
 @Composable
-fun PreviewStingsItem() {
+fun PreviewSettingsItem() {
     MaterialTheme {
         SettingsScreen(
             pomodoroTime = 0L,
