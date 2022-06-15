@@ -11,6 +11,3 @@ val orange = Color(0xfff7633c)
 val yellow = Color(0xffFAA739)
 val green = Color(0xff71c404)
 val leafGreen = Color(0xff029e29)
-
-
-
