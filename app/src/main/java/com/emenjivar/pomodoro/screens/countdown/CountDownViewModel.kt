@@ -24,6 +24,7 @@ import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.system.SoundsManager
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.ThemeColor
+import com.emenjivar.pomodoro.utils.countDownInterval
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -135,7 +136,7 @@ class CountDownViewModel(
     }
 
     private fun countDownTimer(milliseconds: Long) =
-        object : CountDownTimer(milliseconds, 500) {
+        object : CountDownTimer(milliseconds, countDownInterval(milliseconds)) {
             override fun onTick(millisUntilFinished: Long) {
                 setTime(millisUntilFinished)
             }
