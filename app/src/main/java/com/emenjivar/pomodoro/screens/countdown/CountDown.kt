@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,10 +31,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.ui.theme.headline2
+import com.emenjivar.pomodoro.ui.theme.headline3
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 
@@ -78,6 +81,10 @@ fun CountDown(
         else -> false
     }
 
+    val countDownTextStyle =
+        if (time.length > 5) MaterialTheme.typography.headline3
+        else MaterialTheme.typography.headline2
+
     Column(modifier = modifier) {
         Box {
             CircularProgressIndicatorBackground(
@@ -105,13 +112,13 @@ fun CountDown(
                     Text(
                         text = "Paused",
                         color = itemColor.value,
-                        fontSize = 16.sp
+                        style = MaterialTheme.typography.subtitle1
                     )
                 }
                 Text(
                     text = time,
                     color = itemColor.value,
-                    fontSize = 70.sp,
+                    style = countDownTextStyle,
                     fontWeight = FontWeight.W300,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
@@ -122,7 +129,7 @@ fun CountDown(
                     Text(
                         text = phaseText,
                         color = itemColor.value,
-                        fontSize = 16.sp
+                        style = MaterialTheme.typography.subtitle1
                     )
                 }
             }
@@ -188,4 +195,22 @@ fun ActionButton(
             tint = iconColor.value
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCountDown() {
+    CountDown(
+        time = "00:00",
+        progress = 100f
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCountDownLongTime() {
+    CountDown(
+        time = "00:00:00",
+        progress = 100f
+    )
 }

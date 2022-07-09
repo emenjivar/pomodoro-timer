@@ -21,7 +21,16 @@ val Typography.headline2: TextStyle
     get() = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 64.sp,
+        fontSize = 60.sp,
+        color = shark
+    )
+
+@get:Composable
+val Typography.headline3: TextStyle
+    get() = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 48.sp,
         color = shark
     )
 
