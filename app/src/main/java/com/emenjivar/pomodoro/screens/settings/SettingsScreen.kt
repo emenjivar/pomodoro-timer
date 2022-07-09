@@ -191,12 +191,12 @@ fun SwitchItem(
         Column(
             modifier = Modifier.weight(2f)
         ) {
-            Text(title)
+            Text(text = title)
 
             subtitle?.let { safeSubtitle ->
                 Text(
                     text = safeSubtitle,
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(
                         top = 8.dp
                     )
