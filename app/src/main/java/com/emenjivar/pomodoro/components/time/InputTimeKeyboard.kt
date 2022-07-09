@@ -10,7 +10,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
@@ -18,41 +17,41 @@ import com.emenjivar.pomodoro.ui.theme.headline5
 
 @Composable
 fun InputKeyboard(
-    onPressKey: (digit: Int) -> Unit
+    onInputChange: (digit: Int) -> Unit
 ) {
     Column(modifier = Modifier.width(IntrinsicSize.Min)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            InputKeyboardButton(digit = 1, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 2, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 3, onPressKey = onPressKey)
+            InputKeyboardButton(digit = 1, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 2, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 3, onPressKey = onInputChange)
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            InputKeyboardButton(digit = 4, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 5, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 6, onPressKey = onPressKey)
+            InputKeyboardButton(digit = 4, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 5, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 6, onPressKey = onInputChange)
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            InputKeyboardButton(digit = 7, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 8, onPressKey = onPressKey)
-            InputKeyboardButton(digit = 7, onPressKey = onPressKey)
+            InputKeyboardButton(digit = 7, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 8, onPressKey = onInputChange)
+            InputKeyboardButton(digit = 9, onPressKey = onInputChange)
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            InputKeyboardButton(digit = 0, onPressKey = onPressKey)
+            InputKeyboardButton(digit = 0, onPressKey = onInputChange)
         }
     }
 }
@@ -83,9 +82,7 @@ fun InputKeyboardButton(
 @Composable
 fun PreviewInputKeyboard() {
     PomodoroSchedulerTheme {
-        InputKeyboard(
-            onPressKey = {}
-        )
+        InputKeyboard(onInputChange = {})
     }
 }
 
@@ -93,8 +90,6 @@ fun PreviewInputKeyboard() {
 @Composable
 fun PreviewInputKeyboardDarkMode() {
     PomodoroSchedulerTheme {
-        InputKeyboard(
-            onPressKey = {}
-        )
+        InputKeyboard(onInputChange = {})
     }
 }
