@@ -35,9 +35,6 @@ val appModule = module {
         SettingsViewModel(
             getColorUseCase = get(),
             setColorUseCase = get(),
-            getPomodoroUseCase = get(),
-            setWorkTimeUseCase = get(),
-            setRestTimeUseCase = get(),
             getAutoPlayUseCase = get(),
             setAutoPlayUseCase = get(),
             isKeepScreenOnUseCase = get(),
