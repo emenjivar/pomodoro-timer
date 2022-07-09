@@ -1,15 +1,17 @@
 package com.emenjivar.pomodoro.screens.settings.time
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import com.emenjivar.pomodoro.components.Item
-import com.emenjivar.pomodoro.components.ItemGroup
+import com.emenjivar.pomodoro.components.ItemTitle
 import com.emenjivar.pomodoro.components.time.InputTime
-import com.emenjivar.pomodoro.utils.millisecondsToMinutes
+import com.emenjivar.pomodoro.utils.toSplitTime
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -49,8 +51,11 @@ fun TimeSettings(
     val showCustomDialog = remember { mutableStateOf(false) }
     val isPomodoro = remember { mutableStateOf(true) }
     val modalTitle = remember { mutableStateOf("Pomodoro time") }
+    val workTimeSplit = workTime.toSplitTime()
+    val restTimeSplit = restTime.toSplitTime()
 
-    ItemGroup(title = "Time settings") {
+    Column {
+        ItemTitle(title = "Time settings")
         Item(
             title = "Work",
             subtitle = "Defines the duration of the interval",
@@ -62,8 +67,8 @@ fun TimeSettings(
             }
         ) {
             Text(
-                text = "${workTime.millisecondsToMinutes()} min.",
-                style = MaterialTheme.typography.subtitle1
+                text = "${workTimeSplit.hours}:${workTimeSplit.minutes}:${workTimeSplit.seconds}",
+                style = MaterialTheme.typography.caption
             )
         }
 
@@ -78,8 +83,8 @@ fun TimeSettings(
             }
         ) {
             Text(
-                text = "${restTime.millisecondsToMinutes()} min.",
-                style = MaterialTheme.typography.subtitle1
+                text = "${restTimeSplit.hours}:${restTimeSplit.minutes}:${restTimeSplit.seconds}",
+                style = MaterialTheme.typography.caption
             )
         }
     }
@@ -98,6 +103,25 @@ fun TimeSettings(
                 onSaveLoadedTime(it)
                 showCustomDialog.value = false
             }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTimeSettings() {
+    MaterialTheme {
+        TimeSettings(
+            hours = "25",
+            minutes = "00",
+            seconds = "00",
+            workTime = 1500000,
+            restTime = 300000, // 5 min
+            openWorkTimeModal = { },
+            openRestTimeModal = { },
+            onInputChange = {},
+            onBackSpace = { },
+            onSaveLoadedTime = {}
         )
     }
 }

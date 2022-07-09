@@ -32,7 +32,7 @@ fun Item(
         Column(modifier = Modifier.weight(2f)) {
             Text(text = title)
             if (subtitle != null) {
-                Text(text = subtitle, style = MaterialTheme.typography.subtitle1)
+                Text(text = subtitle, style = MaterialTheme.typography.caption)
             }
         }
 
