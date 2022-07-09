@@ -6,7 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emenjivar.core.usecase.*
+import com.emenjivar.core.usecase.GetColorUseCase
+import com.emenjivar.core.usecase.SetColorUseCase
+import com.emenjivar.core.usecase.GetAutoPlayUseCase
+import com.emenjivar.core.usecase.SetAutoPlayUseCase
+import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
+import com.emenjivar.core.usecase.SetKeepScreenOnUseCase
+import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
+import com.emenjivar.core.usecase.SetVibrationUseCase
+import com.emenjivar.core.usecase.AreSoundsEnableUseCase
+import com.emenjivar.core.usecase.SetSoundsEnableUseCase
 import com.emenjivar.pomodoro.system.CustomVibrator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

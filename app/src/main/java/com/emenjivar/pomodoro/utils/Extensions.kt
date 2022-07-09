@@ -3,7 +3,7 @@ package com.emenjivar.pomodoro.utils
 import com.emenjivar.core.model.Pomodoro
 import com.emenjivar.pomodoro.model.Counter
 import com.emenjivar.pomodoro.model.Phase
-import java.util.*
+import java.util.Locale.US
 import java.util.concurrent.TimeUnit
 
 fun Pomodoro.toCounter() = Counter(
@@ -35,20 +35,20 @@ fun Long?.formatTime() = when {
     this == null -> "00:00:00"
     // formatting seconds
     this < 60000 -> String.format(
-        locale = Locale.US,
+        locale = US,
         format = "%02d",
         TimeUnit.MILLISECONDS.toSeconds(this) % 60
     )
     // formatting minutes:seconds
     this < 3600000 -> String.format(
-        locale = Locale.US,
+        locale = US,
         format = "%02d:%02d",
         TimeUnit.MILLISECONDS.toMinutes(this),
         TimeUnit.MILLISECONDS.toSeconds(this) % 60
     )
     // formatting hours:minutes:seconds
     else -> String.format(
-        locale = Locale.US,
+        locale = US,
         format = "%02d:%02d:%02d",
         TimeUnit.MILLISECONDS.toHours(this),
         TimeUnit.MILLISECONDS.toMinutes(this) % 60,
