@@ -179,6 +179,19 @@ class CountDownViewModel(
         }
     }
 
+    /**
+     * Update time only when counter is stopped
+     * This is an easier way to update the value
+     * instead on press stop button
+     */
+    fun updateCounterTime() {
+        viewModelScope.launch(ioDispatcher) {
+            if (action.value == Action.Stop) {
+                _counter.value = fetchCounter()
+            }
+        }
+    }
+
     fun finishCounter() {
         var vibrationTimes = 1
         when (counter.value?.phase) {

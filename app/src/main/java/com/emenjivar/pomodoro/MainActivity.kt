@@ -62,6 +62,9 @@ class MainActivity : ComponentActivity() {
         with(countDownViewModel) {
             closeNotification()
 
+            // Update time when user comes from settings
+            updateCounterTime()
+
             // Make sure to call this properties on every onRestart
             forceSelectedColorConfig()
             forceFetchKeepScreenConfig()
