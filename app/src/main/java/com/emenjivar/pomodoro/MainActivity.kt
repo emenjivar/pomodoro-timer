@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
         val updateInfo = updateManager.appUpdateInfo
 
         updateInfo.addOnSuccessListener { info ->
-            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
             ) {
                 updateManager.startUpdateFlowForResult(
                     info,
