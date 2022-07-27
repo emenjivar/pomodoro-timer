@@ -23,6 +23,10 @@ import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTE
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PLAY
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +35,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setObservables()
+        verifyUpdateAvailability()
+
         // Make sure to always pass a value on this parameter
         val selectedColor = intent.extras?.getInt(EXTRA_SELECTED_COLOR)
         selectedColor?.let { safeColor ->
@@ -48,6 +55,26 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun verifyUpdateAvailability() {
+        val updateManager = AppUpdateManagerFactory.create(this)
+        val updateInfo = updateManager.appUpdateInfo
+
+        updateInfo.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+            ) {
+                updateManager.startUpdateFlowForResult(
+                    info,
+                    this,
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE)
+                        .setAllowAssetPackDeletion(true)
+                        .build(),
+                    IN_APP_UPDATE_REQUEST_CODE
+                )
             }
         }
     }
@@ -142,5 +169,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_SELECTED_COLOR = "selected_color"
+        private const val IN_APP_UPDATE_REQUEST_CODE = 10
     }
 }
