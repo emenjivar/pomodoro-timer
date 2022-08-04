@@ -41,7 +41,3 @@ detekt {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-tasks.koverCollectReports {
-    outputDir.set(layout.buildDirectory.dir("all-projects-reports"))
-}
