@@ -27,6 +27,9 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
+      - name: Generate coverage report
+        run: ./gradlew koverXmlReport
+
       - name: Generate JaCocO Badge
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
