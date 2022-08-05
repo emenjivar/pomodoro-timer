@@ -1,0 +1,21 @@
+name: Merge pull request
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate coverage report
+        run: ./gradlew koverXmlReport
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: app/build/reports/kover/project-xml/report.xml
+          

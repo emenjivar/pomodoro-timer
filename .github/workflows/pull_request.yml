@@ -1,4 +1,4 @@
-name: Android Build
+name: Pull request
 
 on: pull_request
 
@@ -26,11 +26,3 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
-
-      - name: Generate coverage report
-        run: ./gradlew koverXmlReport
-
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
-        with:
-          files: app/build/reports/kover/project-xml/report.xml
