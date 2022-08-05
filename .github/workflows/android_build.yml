@@ -28,15 +28,9 @@ jobs:
         run: ./gradlew testDebugUnitTest
 
       - name: Generate coverage report
-        run: ./gradlew koverReport
-
-      - name: Check coverage metrics
-        run: ./gradlew koverVerify
-
-      - name: Check reports
-        run: echo "+build/" && ls build && echo "+app/build" && ls app/build && echo "+app/build/reports/" && ls app/build/reports/
+        run: ./gradlew koverXmlReport
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
-          files: appbuild/reports/kover/report.xml
+          files: app/build/reports/kover/project-xml/report.xml

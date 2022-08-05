@@ -3,8 +3,9 @@ apply plugin: "kover"
 tasks.koverHtmlReport {
     excludes = [
             "com.emenjivar.pomodoro.components.*",
-            "com.emenjivar.pomodoro.ui.theme.BuildConfig",
-            "com.emenjivar.pomodoro.ui.theme.MainActivity",
+            "com.emenjivar.pomodoro.screens.common.*",
+            "com.emenjivar.pomodoro.BuildConfig",
+            "com.emenjivar.pomodoro.MainActivity",
             "com.emenjivar.pomodoro.ui.theme.*",
             "com.emenjivar.pomodoro.di.*"
     ]
@@ -13,8 +14,9 @@ tasks.koverHtmlReport {
 tasks.koverXmlReport {
     excludes = [
             "com.emenjivar.pomodoro.components.*",
-            "com.emenjivar.pomodoro.ui.theme.BuildConfig",
-            "com.emenjivar.pomodoro.ui.theme.MainActivity",
+            "com.emenjivar.pomodoro.screens.common.*",
+            "com.emenjivar.pomodoro.BuildConfig",
+            "com.emenjivar.pomodoro.MainActivity",
             "com.emenjivar.pomodoro.ui.theme.*",
             "com.emenjivar.pomodoro.di.*"
     ]
