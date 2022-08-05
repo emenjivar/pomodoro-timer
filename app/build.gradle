@@ -72,6 +72,21 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    testOptions {
+        unitTests.all {
+            kover {
+                disabled = false // true to disable instrumentation tests of this task, Kover reports will not depend on the results of their execution
+                excludes = [
+                        "com.emenjivar.pomodoro.components.*",
+                        "com.emenjivar.pomodoro.ui.theme.BuildConfig",
+                        "com.emenjivar.pomodoro.ui.theme.MainActivity",
+                        'com.emenjivar.pomodoro.ui.theme.*',
+                        'com.emenjivar.pomodoro.di.*',
+                ]
+            }
+        }
+    }
 }
 
 afterEvaluate {
