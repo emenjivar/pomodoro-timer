@@ -31,4 +31,4 @@ jobs:
         with:
           override_branch: main
           files: core/build/reports/kover/project-xml/report.xml, app/build/reports/kover/project-xml/report.xml
-        run: ls -R
+          
