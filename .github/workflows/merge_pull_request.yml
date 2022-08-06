@@ -23,6 +23,9 @@ jobs:
       - name: Generate coverage report
         run: ./gradlew koverXmlReport
 
+      - name: List reports
+        run: ls -R
+
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
