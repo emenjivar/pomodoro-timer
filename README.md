@@ -1,6 +1,6 @@
 # Pomodoro timer 
-[![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/android_build.yml)
-[![codecov](https://codecov.io/gh/emenjivar/pomodoro-timer/branch/main/graph/badge.svg?token=PPGQFJH13R)](https://codecov.io/gh/emenjivar/pomodoro-timer)
+[![Android Build](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/pull_request.yml/badge.svg)](https://github.com/emenjivar/pomodoro-scheduler/actions/workflows/pull_request.yml)
+[![coverage](https://codecov.io/gh/emenjivar/pomodoro-timer/branch/main/graph/badge.svg?token=PPGQFJH13R)](https://codecov.io/gh/emenjivar/pomodoro-timer)
 <a href="https://ktlint.github.io/"><img src="https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg" alt="ktlint"></a>
 [![Made With Love](https://img.shields.io/badge/Made%20With-Love-orange.svg)](https://github.com/chetanraj/awesome-github-badges)
 
