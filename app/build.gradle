@@ -103,6 +103,7 @@ afterEvaluate {
 def core_version = "1.7.0"
 def koin_version= "3.2.0-beta-1"
 def mockito_version = "4.3.1"
+def nav_version = "2.5.1"
 
 dependencies {
     implementation project(':core')
@@ -119,7 +120,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
     implementation "androidx.core:core-ktx:$core_version"
-
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 
     // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
