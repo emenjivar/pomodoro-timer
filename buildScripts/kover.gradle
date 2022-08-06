@@ -2,22 +2,24 @@ apply plugin: "kover"
 
 tasks.koverHtmlReport {
     excludes = [
-            "com.emenjivar.pomodoro.components.*",
-            "com.emenjivar.pomodoro.screens.common.*",
+            "com.emenjivar.pomodoro.ui.components.*",
+            "com.emenjivar.pomodoro.ui.screens.common.*",
             "com.emenjivar.pomodoro.BuildConfig",
             "com.emenjivar.pomodoro.MainActivity",
             "com.emenjivar.pomodoro.ui.theme.*",
-            "com.emenjivar.pomodoro.di.*"
+            "com.emenjivar.pomodoro.di.*",
+            "com.emenjivar.core.BuildConfig"
     ]
 }
 
 tasks.koverXmlReport {
     excludes = [
-            "com.emenjivar.pomodoro.components.*",
-            "com.emenjivar.pomodoro.screens.common.*",
+            "com.emenjivar.pomodoro.ui.components.*",
+            "com.emenjivar.pomodoro.ui.screens.common.*",
             "com.emenjivar.pomodoro.BuildConfig",
             "com.emenjivar.pomodoro.MainActivity",
             "com.emenjivar.pomodoro.ui.theme.*",
-            "com.emenjivar.pomodoro.di.*"
+            "com.emenjivar.pomodoro.di.*",
+            "com.emenjivar.core.BuildConfig"
     ]
 }

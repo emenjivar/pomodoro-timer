@@ -15,9 +15,9 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import com.emenjivar.pomodoro.screens.countdown.CountDownScreen
-import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
-import com.emenjivar.pomodoro.screens.settings.SettingsActivity
+import com.emenjivar.pomodoro.ui.screens.countdown.CountDownScreen
+import com.emenjivar.pomodoro.ui.screens.countdown.CountDownViewModel
+import com.emenjivar.pomodoro.ui.screens.settings.SettingsActivity
 import com.emenjivar.pomodoro.system.CustomBroadcastReceiver
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PAUSE
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PLAY

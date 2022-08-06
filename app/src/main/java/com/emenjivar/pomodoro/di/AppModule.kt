@@ -1,9 +1,9 @@
 package com.emenjivar.pomodoro.di
 
-import com.emenjivar.pomodoro.screens.countdown.CountDownViewModel
-import com.emenjivar.pomodoro.screens.settings.time.SettingsTimeViewModel
-import com.emenjivar.pomodoro.screens.settings.SettingsViewModel
-import com.emenjivar.pomodoro.screens.splashscreen.SplashScreenViewModel
+import com.emenjivar.pomodoro.ui.screens.countdown.CountDownViewModel
+import com.emenjivar.pomodoro.ui.screens.settings.time.SettingsTimeViewModel
+import com.emenjivar.pomodoro.ui.screens.settings.SettingsViewModel
+import com.emenjivar.pomodoro.ui.screens.splashscreen.SplashScreenViewModel
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp
 import com.emenjivar.pomodoro.system.CustomVibrator
