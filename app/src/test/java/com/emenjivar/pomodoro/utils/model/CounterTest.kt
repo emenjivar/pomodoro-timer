@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.model
+package com.emenjivar.pomodoro.utils.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.model
+package com.emenjivar.pomodoro.utils.model
 
 open class Counter(
     val workTime: Long,
