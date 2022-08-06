@@ -12,12 +12,12 @@ android {
             keyAlias findProperty('pomodoro.keyAlias') ?: ''
         }
     }
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.emenjivar.pomodoro"
         minSdk 23
-        targetSdk 31
+        targetSdk 32
         versionCode 5
         versionName "1.0.3"
 
@@ -59,7 +59,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        useIR = true
     }
     buildFeatures {
         compose true
