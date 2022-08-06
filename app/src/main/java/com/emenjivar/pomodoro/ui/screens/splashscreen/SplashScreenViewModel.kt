@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.splashscreen
+package com.emenjivar.pomodoro.ui.screens.splashscreen
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

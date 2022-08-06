@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.settings
+package com.emenjivar.pomodoro.ui.screens.settings
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateColorAsState
@@ -31,8 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.screens.common.ColorMenu
-import com.emenjivar.pomodoro.screens.settings.time.TimeSettings
+import com.emenjivar.pomodoro.ui.screens.common.ColorMenu
+import com.emenjivar.pomodoro.ui.screens.settings.time.TimeSettings
 import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor

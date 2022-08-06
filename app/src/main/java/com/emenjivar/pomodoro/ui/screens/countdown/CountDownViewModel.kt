@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.countdown
+package com.emenjivar.pomodoro.ui.screens.countdown
 
 import android.os.CountDownTimer
 import androidx.compose.runtime.MutableState
@@ -17,8 +17,8 @@ import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
-import com.emenjivar.pomodoro.model.Counter
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Counter
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.system.SoundsManager

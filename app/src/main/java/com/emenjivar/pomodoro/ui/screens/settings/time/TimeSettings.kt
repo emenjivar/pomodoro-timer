@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.settings.time
+package com.emenjivar.pomodoro.ui.screens.settings.time
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
@@ -8,9 +8,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.emenjivar.pomodoro.components.Item
-import com.emenjivar.pomodoro.components.ItemTitle
-import com.emenjivar.pomodoro.components.time.InputTime
+import com.emenjivar.pomodoro.ui.components.Item
+import com.emenjivar.pomodoro.ui.components.ItemTitle
+import com.emenjivar.pomodoro.ui.components.time.InputTime
 import com.emenjivar.pomodoro.utils.toSplitTime
 import org.koin.androidx.compose.getViewModel
 

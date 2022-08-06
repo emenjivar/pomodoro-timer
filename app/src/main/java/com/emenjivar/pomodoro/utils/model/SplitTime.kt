@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.utils
+package com.emenjivar.pomodoro.utils.model
 
 class SplitTime(
     val hours: String,

@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.settings.time
+package com.emenjivar.pomodoro.ui.screens.settings.time
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

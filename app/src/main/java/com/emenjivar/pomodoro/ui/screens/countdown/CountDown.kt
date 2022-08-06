@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.countdown
+package com.emenjivar.pomodoro.ui.screens.countdown
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.ui.theme.headline2
 import com.emenjivar.pomodoro.ui.theme.headline3
 import com.emenjivar.pomodoro.utils.Action

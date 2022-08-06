@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.countdown
+package com.emenjivar.pomodoro.ui.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.model.Pomodoro
@@ -12,7 +12,7 @@ import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
 import com.emenjivar.pomodoro.MainCoroutineRule
 import com.emenjivar.pomodoro.getOrAwaitValue
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.system.SoundsManager

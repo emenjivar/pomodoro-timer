@@ -1,9 +1,9 @@
-package com.emenjivar.pomodoro.screens.countdown
+package com.emenjivar.pomodoro.ui.screens.countdown
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import org.junit.Rule
 import org.junit.Test

@@ -1,6 +1,6 @@
 package com.emenjivar.pomodoro.system
 
-import com.emenjivar.pomodoro.model.Counter
+import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.Action
 
 interface CustomNotificationManager {

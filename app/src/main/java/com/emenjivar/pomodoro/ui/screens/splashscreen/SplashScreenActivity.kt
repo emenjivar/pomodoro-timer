@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.splashscreen
+package com.emenjivar.pomodoro.ui.screens.splashscreen
 
 import android.annotation.SuppressLint
 import android.content.Intent

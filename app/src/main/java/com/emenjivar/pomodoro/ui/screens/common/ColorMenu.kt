@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.common
+package com.emenjivar.pomodoro.ui.screens.common
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

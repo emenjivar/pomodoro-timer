@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.countdown
+package com.emenjivar.pomodoro.ui.screens.countdown
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.model.Counter
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Counter
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.formatTime

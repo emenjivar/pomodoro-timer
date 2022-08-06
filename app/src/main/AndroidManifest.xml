@@ -14,7 +14,7 @@
         android:theme="@style/Theme.PomodoroScheduler">
 
         <activity
-            android:name=".screens.splashscreen.SplashScreenActivity"
+            android:name="com.emenjivar.pomodoro.ui.screens.splashscreen.SplashScreenActivity"
             android:theme="@style/SplashTheme"
             android:exported="true">
             <intent-filter>
@@ -29,7 +29,7 @@
             android:theme="@style/Theme.PomodoroScheduler.NoActionBar" />
 
         <activity
-            android:name=".screens.settings.SettingsActivity"
+            android:name="com.emenjivar.pomodoro.ui.screens.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.PomodoroScheduler.NoActionBar" />

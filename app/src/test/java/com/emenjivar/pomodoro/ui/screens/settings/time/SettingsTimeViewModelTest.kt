@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.settings.time
+package com.emenjivar.pomodoro.ui.screens.settings.time
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.emenjivar.core.usecase.GetPomodoroUseCase

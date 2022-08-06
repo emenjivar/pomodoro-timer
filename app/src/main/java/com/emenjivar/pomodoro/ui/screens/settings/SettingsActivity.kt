@@ -1,4 +1,4 @@
-package com.emenjivar.pomodoro.screens.settings
+package com.emenjivar.pomodoro.ui.screens.settings
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

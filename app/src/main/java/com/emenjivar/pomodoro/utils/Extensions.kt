@@ -1,8 +1,9 @@
 package com.emenjivar.pomodoro.utils
 
 import com.emenjivar.core.model.Pomodoro
-import com.emenjivar.pomodoro.model.Counter
-import com.emenjivar.pomodoro.model.Phase
+import com.emenjivar.pomodoro.utils.model.Counter
+import com.emenjivar.pomodoro.utils.model.Phase
+import com.emenjivar.pomodoro.utils.model.SplitTime
 import java.util.Locale.US
 import java.util.concurrent.TimeUnit
 
