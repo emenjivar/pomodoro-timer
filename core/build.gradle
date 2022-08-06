@@ -29,7 +29,11 @@ android {
     }
 }
 
+def mockito_version = "4.3.1"
+
 dependencies {
     implementation 'androidx.core:core-ktx:1.6.0'
     testImplementation 'junit:junit:4.+'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 }
