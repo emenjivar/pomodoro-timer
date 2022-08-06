@@ -107,6 +107,7 @@ def material_version = "1.6.1"
 def activity_compose_version = "1.5.1"
 def view_model_compose_version = "2.6.0-alpha01"
 def constraint_layout_compose_version = "1.0.1"
+def lifecycle_runtime_ktx = "2.5.1"
 
 dependencies {
     implementation project(':core')
@@ -126,7 +127,7 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
     // Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx"
 
     // LiveData
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
