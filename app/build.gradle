@@ -104,6 +104,7 @@ def koin_version= "3.2.0-beta-1"
 def mockito_version = "4.3.1"
 def nav_version = "2.5.1"
 def material_version = "1.6.1"
+def view_model_compose_version = "2.6.0-alpha01"
 
 dependencies {
     implementation project(':core')
@@ -129,7 +130,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-beta01"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$view_model_compose_version"
 
     // DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
