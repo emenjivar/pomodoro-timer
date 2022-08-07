@@ -99,7 +99,9 @@ afterEvaluate {
     }
 }
 
-def core_version = "1.7.0"
+def core_version = "1.8.0"
+def core_ktx_version = "1.8.0"
+def app_compat_version = "1.4.2"
 def koin_version= "3.2.0-beta-1"
 def mockito_version = "4.3.1"
 def nav_version = "2.5.1"
@@ -108,12 +110,15 @@ def activity_compose_version = "1.5.1"
 def view_model_compose_version = "2.6.0-alpha01"
 def constraint_layout_compose_version = "1.0.1"
 def lifecycle_runtime_ktx = "2.5.1"
+def lifecycle_viewmodel_ktx = "2.5.1"
+def firebase_core = "21.1.0"
+def kotlinx_coroutines_test = "1.6.1"
 
 dependencies {
     implementation project(':core')
     implementation project(':data')
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
     // UI
     implementation "com.google.android.material:material:$material_version"
@@ -139,7 +144,7 @@ dependencies {
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     // Coroutine
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_viewmodel_ktx"
 
     // Dependency injection - global library
     api "io.insert-koin:koin-core:$koin_version"
@@ -150,13 +155,13 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.3.1')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-core:20.1.2'
+    implementation "com.google.firebase:firebase-core:$firebase_core"
     implementation 'com.google.android.play:core:1.10.3'
 
     // Testing
     testImplementation 'junit:junit:'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_test"
     testImplementation "org.mockito:mockito-core:$mockito_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
