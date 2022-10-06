@@ -3,30 +3,27 @@ package com.emenjivar.pomodoro.ui.screens.countdown
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.formatTime
+import org.koin.androidx.compose.getViewModel
 
 /**
  * @param selectedColor value from mainActivity, it would be probably
@@ -34,27 +31,50 @@ import com.emenjivar.pomodoro.utils.formatTime
  */
 @Composable
 fun CountDownScreen(
+    navController: NavController,
     modifier: Modifier = Modifier,
-    countDownViewModel: CountDownViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     selectedColor: Int? = null
 ) {
+    val countDownViewModel = getViewModel<CountDownViewModel>()
     val viewModelSelectedColor by countDownViewModel.selectedColor.observeAsState()
     val themeColor = viewModelSelectedColor ?: selectedColor
 
     val counter by countDownViewModel.counter
     val action by countDownViewModel.action.observeAsState()
 
-    CountDownScreen(
-        modifier = modifier,
-        action = action,
-        counter = counter,
-        selectedColor = themeColor,
-        playAction = { countDownViewModel.startCounter() },
-        pauseAction = { countDownViewModel.pauseCounter() },
-        resumeAction = { countDownViewModel.resumeCounter() },
-        stopAction = { countDownViewModel.stopCounter() },
-        openSettings = { countDownViewModel.openSettings() }
-    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { },
+                backgroundColor = getBackgroundColor(themeColor).value,
+                elevation = 0.dp,
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate("settings")
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_baseline_settings_24),
+                            tint = getIconColor(true).value,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        CountDownScreen(
+            modifier = modifier.padding(paddingValues),
+            action = action,
+            counter = counter,
+            selectedColor = themeColor,
+            playAction = { countDownViewModel.startCounter() },
+            pauseAction = { countDownViewModel.pauseCounter() },
+            resumeAction = { countDownViewModel.resumeCounter() },
+            stopAction = { countDownViewModel.stopCounter() },
+            openSettings = { countDownViewModel.openSettings() }
+        )
+
+    }
 }
 
 @Composable
@@ -80,6 +100,7 @@ fun CountDownScreen(
 
     ConstraintLayout(
         modifier = modifier
+            .fillMaxSize()
             .background(getBackgroundColor(selectedColor).value)
     ) {
         val (_settingsButton, _container) = createRefs()

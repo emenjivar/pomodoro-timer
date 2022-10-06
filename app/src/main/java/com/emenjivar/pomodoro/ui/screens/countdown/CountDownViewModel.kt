@@ -88,12 +88,12 @@ class CountDownViewModel(
         with(getColorUseCase.invoke()) {
             _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
         }
-        _isNightMode.value = isNightModeUseCase.invoke()
+//        _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
         vibrationEnabled = isVibrationEnabledUseCase.invoke()
 
         // Set default pomodoro and load on livedata
-        _counter.value = fetchCounter()
+//        _counter.value = fetchCounter()
         _keepScreenOn.postValue(isKeepScreenOnUseCase.invoke())
     }
 

@@ -69,10 +69,10 @@ class SettingsViewModel(
          * Values are expressed in milliseconds
          * transform to minutes to show a readable value on UI
          */
-        _autoPlay.value = getAutoPlayUseCase.invoke()
-        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
-        _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
-        _soundsEnable.value = areSoundsEnableUseCase.invoke()
+//        _autoPlay.value = getAutoPlayUseCase.invoke()
+//        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
+//        _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
+//        _soundsEnable.value = areSoundsEnableUseCase.invoke()
     }
 
     fun setColor(value: Int) {

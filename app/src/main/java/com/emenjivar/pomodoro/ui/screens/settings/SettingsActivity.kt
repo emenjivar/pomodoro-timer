@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.compose.rememberNavController
 import com.emenjivar.pomodoro.MainActivity
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
@@ -27,7 +28,7 @@ class SettingsActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     SettingsScreen(
-                        viewModel = viewModel,
+                        navController = rememberNavController(),
                         selectedColor = getSelectedColor()
                     )
                 }

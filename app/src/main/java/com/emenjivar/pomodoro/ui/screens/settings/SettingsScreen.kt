@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.screens.common.ColorMenu
 import com.emenjivar.pomodoro.ui.screens.settings.time.TimeSettings
@@ -37,6 +38,7 @@ import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
+import org.koin.androidx.compose.getViewModel
 
 /**
  * @param selectedColor reduce ui color delay, loading this value
@@ -44,9 +46,10 @@ import com.emenjivar.pomodoro.utils.toColor
  */
 @Composable
 fun SettingsScreen(
-    selectedColor: Int? = null,
-    viewModel: SettingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    navController: NavController,
+    selectedColor: Int? = null
 ) {
+    val viewModel = getViewModel<SettingsViewModel>()
     val viewModelSelectedColor by viewModel.selectedColor.observeAsState()
 
     val themeColor = with(viewModelSelectedColor ?: selectedColor) {
@@ -64,7 +67,7 @@ fun SettingsScreen(
         keepScreenOn = keepScreenOn,
         vibrationEnabled = vibrationEnabled,
         soundsEnable = soundsEnable,
-        backAction = { viewModel.closeSettings() },
+        backAction = { navController.navigate("counter") },
         onSelectTheme = { viewModel.setColor(it) },
         onAutoPlayChange = {
             viewModel.setAutoPlay(it)
@@ -118,11 +121,12 @@ fun SettingsScreen(
                 contentColor = colorResource(R.color.white)
             )
         }
-    ) {
+    ) { paddingValues ->
         val scrollState = rememberScrollState()
 
         Column(
             modifier = Modifier
+                .padding(paddingValues)
                 .verticalScroll(scrollState)
                 .background(MaterialTheme.colors.background)
         ) {

@@ -11,10 +11,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.compose.rememberNavController
 import com.emenjivar.pomodoro.ui.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.ui.screens.countdown.CountDownViewModel
 import com.emenjivar.pomodoro.ui.screens.settings.SettingsActivity
@@ -22,6 +24,7 @@ import com.emenjivar.pomodoro.system.CustomBroadcastReceiver
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PAUSE
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PLAY
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_STOP
+import com.emenjivar.pomodoro.ui.navigation.MainNavHost
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -36,27 +39,33 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setObservables()
-        verifyUpdateAvailability()
-
-        // Make sure to always pass a value on this parameter
-        val selectedColor = intent.extras?.getInt(EXTRA_SELECTED_COLOR)
-        selectedColor?.let { safeColor ->
-            setStatusBarColor(safeColor)
-
-            setContent {
-                PomodoroSchedulerTheme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(color = MaterialTheme.colors.background) {
-                        CountDownScreen(
-                            modifier = Modifier.fillMaxSize(),
-                            countDownViewModel = countDownViewModel,
-                            selectedColor = safeColor
-                        )
-                    }
-                }
+        setContent {
+            PomodoroSchedulerTheme {
+                val navController = rememberNavController()
+                MainNavHost(navController = navController)
             }
         }
+//        setObservables()
+//        verifyUpdateAvailability()
+
+        // Make sure to always pass a value on this parameter
+//        val selectedColor = intent.extras?.getInt(EXTRA_SELECTED_COLOR)
+//        selectedColor?.let { safeColor ->
+//            setStatusBarColor(safeColor)
+//
+//            setContent {
+//                PomodoroSchedulerTheme {
+//                    // A surface container using the 'background' color from the theme
+//                    Surface(color = MaterialTheme.colors.background) {
+//                        CountDownScreen(
+//                            modifier = Modifier.fillMaxSize(),
+//                            countDownViewModel = countDownViewModel,
+//                            selectedColor = safeColor
+//                        )
+//                    }
+//                }
+//            }
+//        }
     }
 
     private fun verifyUpdateAvailability() {
