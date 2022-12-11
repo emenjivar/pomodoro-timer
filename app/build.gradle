@@ -12,12 +12,12 @@ android {
             keyAlias findProperty('pomodoro.keyAlias') ?: ''
         }
     }
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.emenjivar.pomodoro"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 5
         versionName "1.0.3"
 
@@ -86,6 +86,7 @@ android {
             }
         }
     }
+    namespace 'com.emenjivar.pomodoro'
 }
 
 afterEvaluate {
@@ -130,6 +131,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraint_layout_compose_version"
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx"
@@ -145,6 +147,7 @@ dependencies {
 
     // Coroutine
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_viewmodel_ktx"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
     // Dependency injection - global library
     api "io.insert-koin:koin-core:$koin_version"
