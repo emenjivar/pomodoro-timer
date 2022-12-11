@@ -15,6 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emenjivar.pomodoro.R
@@ -26,14 +27,14 @@ import com.emenjivar.pomodoro.utils.toIcon
 private fun Square(
     theme: ThemeColor,
     selected: Boolean = false,
-    onSelectTheme: (Int) -> Unit
+    onSelectTheme: (Color) -> Unit
 ) {
     // val check = remember { mutableStateOf(selected) }
     Box(
         modifier = Modifier
             .width(60.dp)
             .height(60.dp)
-            .background(theme.color.toColor())
+            .background(theme.color)
             .clickable {
                 // check.value = !check.value
                 onSelectTheme(theme.color)
@@ -57,8 +58,8 @@ private fun Square(
 
 @Composable
 fun ColorMenu(
-    selectedColor: Int? = null,
-    onSelectTheme: (Int) -> Unit
+    selectedColor: Color? = null,
+    onSelectTheme: (Color) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

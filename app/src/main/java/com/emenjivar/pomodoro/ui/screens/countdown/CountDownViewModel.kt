@@ -17,6 +17,8 @@ import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
 import com.emenjivar.core.usecase.IsNightModeUseCase
 import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetNighModeUseCase
+import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
@@ -28,9 +30,12 @@ import com.emenjivar.pomodoro.utils.countDownInterval
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CountDownViewModel(
+    private val sharedSettingsRepository: SharedSettingsRepository,
     private val getColorUseCase: GetColorUseCase,
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
@@ -45,6 +50,17 @@ class CountDownViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
 ) : ViewModel() {
+
+    private val colorTheme = sharedSettingsRepository.getColorTheme()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ThemeColor.Tomato.color
+        )
+
+    val uiState = CountDownUIState(
+        colorTheme = colorTheme
+    )
 
     private var countDownTimer: CountDownTimer? = null
 
@@ -85,9 +101,9 @@ class CountDownViewModel(
     }
 
     suspend fun loadDefaultValues() {
-        with(getColorUseCase.invoke()) {
-            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
-        }
+//        with(getColorUseCase.invoke()) {
+//            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
+//        }
 //        _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
         vibrationEnabled = isVibrationEnabledUseCase.invoke()

@@ -31,7 +31,7 @@ class SplashScreenViewModel(
         with(getColorUseCase.invoke()) {
             // Set default color in case of this
             // This prevent the app from getting stuck on splash screen
-            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
+            //_selectedColor.postValue(this ?: ThemeColor.Tomato.color)
         }
     }
 }

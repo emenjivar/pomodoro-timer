@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.emenjivar.pomodoro.MainActivity
 import com.emenjivar.pomodoro.R
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import com.emenjivar.pomodoro.utils.ThemeColor
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : ComponentActivity() {
@@ -27,10 +28,10 @@ class SettingsActivity : ComponentActivity() {
             PomodoroSchedulerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    SettingsScreen(
-                        navController = rememberNavController(),
-                        selectedColor = getSelectedColor()
-                    )
+//                    SettingsScreen(
+//                        navController = rememberNavController(),
+////                        selectedColor = ThemeColor.Tomato.color, // TODO: use there the right value
+//                    )
                 }
             }
         }

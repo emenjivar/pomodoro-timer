@@ -39,6 +39,7 @@ import com.emenjivar.pomodoro.ui.theme.headline2
 import com.emenjivar.pomodoro.ui.theme.headline3
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
+import com.emenjivar.pomodoro.utils.ThemeColor
 
 /**
  * @param time expected a formatted milliseconds string, 60000 -> "1:00"
@@ -49,7 +50,7 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 @Composable
 fun CountDown(
     modifier: Modifier = Modifier,
-    progressColor: Int? = null,
+    progressColor: Color,
     time: String,
     progress: Float,
     phase: Phase? = Phase.WORK,
@@ -67,7 +68,7 @@ fun CountDown(
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val progressBackgroundColor = animateColorAsState(
-        targetValue = colorResource(id = progressColor ?: R.color.primary),
+        targetValue = progressColor,
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
@@ -171,7 +172,7 @@ fun CircularProgressIndicatorBackground(
 fun ActionButton(
     icon: Int,
     isFullScreen: Boolean = true,
-    selectedColor: Int?,
+    selectedColor: Color,
     onClick: () -> Unit
 ) {
     val itemColor = animateColorAsState(
@@ -179,7 +180,7 @@ fun ActionButton(
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
     val iconColor = animateColorAsState(
-        targetValue = colorResource(selectedColor ?: R.color.primary),
+        targetValue = selectedColor,
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
@@ -202,7 +203,8 @@ fun ActionButton(
 fun PreviewCountDown() {
     CountDown(
         time = "00:00",
-        progress = 100f
+        progress = 100f,
+        progressColor = ThemeColor.Tomato.color
     )
 }
 
@@ -211,6 +213,7 @@ fun PreviewCountDown() {
 fun PreviewCountDownLongTime() {
     CountDown(
         time = "00:00:00",
-        progress = 100f
+        progress = 100f,
+        progressColor = ThemeColor.Tomato.color
     )
 }

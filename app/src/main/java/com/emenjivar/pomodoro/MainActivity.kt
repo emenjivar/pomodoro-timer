@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -26,6 +27,7 @@ import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTE
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_STOP
 import com.emenjivar.pomodoro.ui.navigation.MainNavHost
 import com.emenjivar.pomodoro.ui.theme.PomodoroSchedulerTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
@@ -34,7 +36,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val countDownViewModel: CountDownViewModel by viewModel()
+//    private val countDownViewModel: CountDownViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             PomodoroSchedulerTheme {
                 val navController = rememberNavController()
-                MainNavHost(navController = navController)
+                val systemUiController = rememberSystemUiController()
+
+                MainNavHost(
+                    navController = navController,
+                    systemUiController = systemUiController
+                )
             }
         }
 //        setObservables()
@@ -93,22 +100,22 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "onPause")
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        with(countDownViewModel) {
-            closeNotification()
-
-            // Update time when user comes from settings
-            updateCounterTime()
-
-            // Make sure to call this properties on every onRestart
-            forceSelectedColorConfig()
-            forceFetchKeepScreenConfig()
-            forceFetchVibrationConfig()
-            forceFetchSoundsConfig()
-            forceAutoPlayConfig()
-        }
-    }
+//    override fun onRestart() {
+//        super.onRestart()
+//        with(countDownViewModel) {
+//            closeNotification()
+//
+//            // Update time when user comes from settings
+//            updateCounterTime()
+//
+//            // Make sure to call this properties on every onRestart
+//            forceSelectedColorConfig()
+//            forceFetchKeepScreenConfig()
+//            forceFetchVibrationConfig()
+//            forceFetchSoundsConfig()
+//            forceAutoPlayConfig()
+//        }
+//    }
 
     override fun onStop() {
         super.onStop()
@@ -117,37 +124,37 @@ class MainActivity : ComponentActivity() {
          * this viewModel will display the notification
          * when the countdown is updated
          */
-        countDownViewModel.displayNotification = true
+//        countDownViewModel.displayNotification = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        countDownViewModel.closeNotification()
-        unregisterReceiver(broadcastReceiver)
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        countDownViewModel.closeNotification()
+//        unregisterReceiver(broadcastReceiver)
+//    }
 
-    private fun setObservables() {
-        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
-        countDownViewModel.selectedColor.observe(this, observeSelectedColor)
-        countDownViewModel.openSettings.observe(this, observeOpenSettings)
-        countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
-    }
+//    private fun setObservables() {
+//        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
+//        countDownViewModel.selectedColor.observe(this, observeSelectedColor)
+//        countDownViewModel.openSettings.observe(this, observeOpenSettings)
+//        countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
+//    }
 
-    private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
-                INTENT_PLAY -> {
-                    countDownViewModel.resumeCounter()
-                }
-                INTENT_PAUSE -> {
-                    countDownViewModel.pauseCounter()
-                }
-                INTENT_STOP -> {
-                    countDownViewModel.stopCounter()
-                }
-            }
-        }
-    }
+//    private val broadcastReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            when (intent.extras?.getString(CustomBroadcastReceiver.ACTION_NAME)) {
+//                INTENT_PLAY -> {
+//                    countDownViewModel.resumeCounter()
+//                }
+//                INTENT_PAUSE -> {
+//                    countDownViewModel.pauseCounter()
+//                }
+//                INTENT_STOP -> {
+//                    countDownViewModel.stopCounter()
+//                }
+//            }
+//        }
+//    }
 
     private val observeSelectedColor = Observer<Int?> {
         it?.let { safeColor ->
@@ -159,14 +166,14 @@ class MainActivity : ComponentActivity() {
         window.statusBarColor = ContextCompat.getColor(this, selectedColor)
     }
 
-    private val observeOpenSettings = Observer<Boolean> { status ->
-        if (status) {
-            val intent = Intent(this, SettingsActivity::class.java).apply {
-                putExtra(EXTRA_SELECTED_COLOR, countDownViewModel.selectedColor.value)
-            }
-            startActivity(intent)
-        }
-    }
+//    private val observeOpenSettings = Observer<Boolean> { status ->
+//        if (status) {
+//            val intent = Intent(this, SettingsActivity::class.java).apply {
+//                putExtra(EXTRA_SELECTED_COLOR, countDownViewModel.selectedColor.value)
+//            }
+//            startActivity(intent)
+//        }
+//    }
 
     private val observeKeepScreenOn = Observer<Boolean?> { flag ->
         // Verify null to avoid performing an action before value is set on viewModel

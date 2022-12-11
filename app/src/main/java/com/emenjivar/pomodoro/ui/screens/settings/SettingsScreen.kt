@@ -21,10 +21,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +41,7 @@ import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
+import com.google.accompanist.systemuicontroller.SystemUiController
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -47,22 +51,22 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    selectedColor: Int? = null
+    systemUiController: SystemUiController
 ) {
     val viewModel = getViewModel<SettingsViewModel>()
-    val viewModelSelectedColor by viewModel.selectedColor.observeAsState()
-
-    val themeColor = with(viewModelSelectedColor ?: selectedColor) {
-        if (this != 0) this
-        else R.color.primary
-    }
+    val colorTheme by viewModel.uiState.colorTheme.collectAsState()
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
     val vibrationEnabled by viewModel.vibrationEnabled
     val soundsEnable by viewModel.soundsEnable
 
+    DisposableEffect(systemUiController, colorTheme) {
+        systemUiController.setStatusBarColor(color = colorTheme)
+        onDispose { }
+    }
+
     SettingsScreen(
-        selectedColor = themeColor,
+        selectedColor = colorTheme,
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
         vibrationEnabled = vibrationEnabled,
@@ -86,20 +90,20 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
-    selectedColor: Int? = null,
+    selectedColor: Color,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     vibrationEnabled: Boolean,
     soundsEnable: Boolean,
     backAction: () -> Unit,
-    onSelectTheme: (Int) -> Unit,
+    onSelectTheme: (Color) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
     onKeepScreenChange: (Boolean) -> Unit,
     onVibrationEnabledChange: (Boolean) -> Unit,
     onSoundsEnableChange: (Boolean) -> Unit
 ) {
     val topAppBarColor = animateColorAsState(
-        targetValue = selectedColor?.toColor() ?: ThemeColor.Tomato.color.toColor(),
+        targetValue = selectedColor,
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
     )
 
@@ -131,14 +135,14 @@ fun SettingsScreen(
                 .background(MaterialTheme.colors.background)
         ) {
             AppearanceSettings(
-                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
+                selectedColor = selectedColor,
                 onSelectTheme = onSelectTheme
             )
 
             TimeSettings()
 
             SoundSettings(
-                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
+                selectedColor = selectedColor,
                 isVibrationEnabled = vibrationEnabled,
                 soundsEnable = soundsEnable,
                 onVibrationEnabledChange = onVibrationEnabledChange,
@@ -146,7 +150,7 @@ fun SettingsScreen(
             )
 
             OthersSettings(
-                selectedColor = selectedColor ?: ThemeColor.Tomato.color,
+                selectedColor = selectedColor,
                 autoPlay = autoPlay,
                 keepScreenOn = keepScreenOn,
                 onAutoPlayChange = onAutoPlayChange,
@@ -181,7 +185,7 @@ fun SwitchItem(
     title: String,
     subtitle: String? = null,
     value: Boolean,
-    selectedColor: Int,
+    selectedColor: Color,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
@@ -216,7 +220,7 @@ fun SwitchItem(
                 checked = value,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = colorResource(selectedColor),
+                    checkedThumbColor = selectedColor,
                     uncheckedThumbColor = lightGray
                 )
             )
@@ -226,8 +230,8 @@ fun SwitchItem(
 
 @Composable
 private fun AppearanceSettings(
-    selectedColor: Int?,
-    onSelectTheme: (Int) -> Unit
+    selectedColor: Color?,
+    onSelectTheme: (Color) -> Unit
 ) = SettingsGroup(title = "Appearance settings") {
     Row(modifier = Modifier.padding(16.dp)) {
         ColorMenu(
@@ -239,7 +243,7 @@ private fun AppearanceSettings(
 
 @Composable
 private fun SoundSettings(
-    selectedColor: Int,
+    selectedColor: Color,
     isVibrationEnabled: Boolean,
     soundsEnable: Boolean,
     onVibrationEnabledChange: (Boolean) -> Unit,
@@ -262,7 +266,7 @@ private fun SoundSettings(
 
 @Composable
 private fun OthersSettings(
-    selectedColor: Int,
+    selectedColor: Color,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     onAutoPlayChange: (Boolean) -> Unit,
@@ -292,6 +296,7 @@ private fun OthersSettings(
 fun PreviewSettingsItem() {
     MaterialTheme {
         SettingsScreen(
+            selectedColor = ThemeColor.Tomato.color,
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,

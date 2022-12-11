@@ -1,12 +1,12 @@
 package com.emenjivar.pomodoro.utils
 
-import androidx.annotation.ColorRes
-import com.emenjivar.pomodoro.R
+import androidx.compose.ui.graphics.Color
+import com.emenjivar.pomodoro.ui.theme.*
 
-sealed class ThemeColor(@ColorRes val color: Int) {
-    object Tomato : ThemeColor(R.color.primary)
-    object Orange : ThemeColor(R.color.orange)
-    object Yellow : ThemeColor(R.color.yellow)
-    object Green : ThemeColor(R.color.green)
-    object LeafGreen : ThemeColor(R.color.leaf_green)
+sealed class ThemeColor(val color: Color) {
+    object Tomato : ThemeColor(red)
+    object Orange : ThemeColor(orange)
+    object Yellow : ThemeColor(yellow)
+    object Green : ThemeColor(green)
+    object LeafGreen : ThemeColor(leafGreen)
 }

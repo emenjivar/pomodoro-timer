@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,7 +24,9 @@ import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
+import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.formatTime
+import com.google.accompanist.systemuicontroller.SystemUiController
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -32,21 +36,25 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun CountDownScreen(
     navController: NavController,
+    systemUiController: SystemUiController,
     modifier: Modifier = Modifier,
-    selectedColor: Int? = null
 ) {
     val countDownViewModel = getViewModel<CountDownViewModel>()
-    val viewModelSelectedColor by countDownViewModel.selectedColor.observeAsState()
-    val themeColor = viewModelSelectedColor ?: selectedColor
+    val colorTheme by countDownViewModel.uiState.colorTheme.collectAsState()
 
     val counter by countDownViewModel.counter
     val action by countDownViewModel.action.observeAsState()
+
+    DisposableEffect(systemUiController, colorTheme) {
+        systemUiController.setStatusBarColor(color = colorTheme)
+        onDispose { }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { },
-                backgroundColor = getBackgroundColor(themeColor).value,
+                backgroundColor = colorTheme,
                 elevation = 0.dp,
                 actions = {
                     IconButton(onClick = {
@@ -66,7 +74,7 @@ fun CountDownScreen(
             modifier = modifier.padding(paddingValues),
             action = action,
             counter = counter,
-            selectedColor = themeColor,
+            selectedColor = colorTheme,
             playAction = { countDownViewModel.startCounter() },
             pauseAction = { countDownViewModel.pauseCounter() },
             resumeAction = { countDownViewModel.resumeCounter() },
@@ -82,7 +90,7 @@ fun CountDownScreen(
     modifier: Modifier = Modifier,
     action: Action?,
     counter: Counter?,
-    selectedColor: Int? = null,
+    selectedColor: Color,
     playAction: () -> Unit,
     pauseAction: () -> Unit,
     resumeAction: () -> Unit,
@@ -101,24 +109,9 @@ fun CountDownScreen(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .background(getBackgroundColor(selectedColor).value)
+            .background(selectedColor)
     ) {
-        val (_settingsButton, _container) = createRefs()
-
-        IconButton(
-            modifier = Modifier
-                .constrainAs(_settingsButton) {
-                    top.linkTo(anchor = parent.top, margin = 16.dp)
-                    end.linkTo(anchor = parent.end, margin = 16.dp)
-                },
-            onClick = openSettings
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_baseline_settings_24),
-                tint = getIconColor(true).value,
-                contentDescription = null
-            )
-        }
+        val (_container) = createRefs()
 
         Column(
             modifier = Modifier
@@ -187,6 +180,7 @@ fun PreviewCountDownScreen() {
         modifier = Modifier.fillMaxSize(),
         action = Action.Play,
         counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
+        selectedColor = ThemeColor.Tomato.color,
         playAction = {},
         pauseAction = {},
         resumeAction = {},
@@ -202,6 +196,7 @@ fun PreviewPausedCountDown() {
         modifier = Modifier.fillMaxSize(),
         action = Action.Pause,
         counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
+        selectedColor = ThemeColor.Tomato.color,
         playAction = {},
         pauseAction = {},
         resumeAction = {},

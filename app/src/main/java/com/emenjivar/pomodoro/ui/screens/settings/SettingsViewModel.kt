@@ -2,6 +2,7 @@ package com.emenjivar.pomodoro.ui.screens.settings
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,12 +17,17 @@ import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
 import com.emenjivar.core.usecase.SetVibrationUseCase
 import com.emenjivar.core.usecase.AreSoundsEnableUseCase
 import com.emenjivar.core.usecase.SetSoundsEnableUseCase
+import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.system.CustomVibrator
+import com.emenjivar.pomodoro.utils.ThemeColor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
+    private val sharedSettingsRepository: SharedSettingsRepository,
     private val getColorUseCase: GetColorUseCase,
     private val setColorUseCase: SetColorUseCase,
     private val getAutoPlayUseCase: GetAutoPlayUseCase,
@@ -36,6 +42,12 @@ class SettingsViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
+
+    private val colorTheme: MutableStateFlow<Color> = MutableStateFlow(ThemeColor.Tomato.color)
+
+    val uiState = SettingsUIState(
+        colorTheme = colorTheme
+    )
 
     private val _closeSettings = MutableLiveData(false)
     val closeSettings = _closeSettings
@@ -75,11 +87,14 @@ class SettingsViewModel(
 //        _soundsEnable.value = areSoundsEnableUseCase.invoke()
     }
 
-    fun setColor(value: Int) {
-        _selectedColor.value = value
+    fun setColor(value: Color) {
+//        _selectedColor.value = value
+        colorTheme.update { value }
+        sharedSettingsRepository.setColorTheme(value)
+
         viewModelScope.launch(ioDispatcher) {
             customVibrator.click()
-            setColorUseCase.invoke(value)
+//            setColorUseCase.invoke(value)
         }
     }
 
