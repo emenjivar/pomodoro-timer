@@ -20,7 +20,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.compose.rememberNavController
 import com.emenjivar.pomodoro.ui.screens.countdown.CountDownScreen
 import com.emenjivar.pomodoro.ui.screens.countdown.CountDownViewModel
-import com.emenjivar.pomodoro.ui.screens.settings.SettingsActivity
 import com.emenjivar.pomodoro.system.CustomBroadcastReceiver
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PAUSE
 import com.emenjivar.pomodoro.system.CustomNotificationManagerImp.Companion.INTENT_PLAY

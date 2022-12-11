@@ -32,12 +32,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.emenjivar.pomodoro.ui.screens.settings.SettingsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.PomodoroScheduler.NoActionBar" />
-
         <receiver
             android:name=".system.CustomBroadcastReceiver"
             android:exported="true" />
