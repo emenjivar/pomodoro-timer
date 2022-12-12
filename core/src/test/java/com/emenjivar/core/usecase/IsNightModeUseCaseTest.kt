@@ -1,6 +1,6 @@
 package com.emenjivar.core.usecase
 
-import com.emenjivar.core.repository.SettingsRepository
+import com.emenjivar.pomodoro.data.SettingsRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -9,13 +9,13 @@ import org.junit.Test
 import org.mockito.Mockito
 
 class IsNightModeUseCaseTest {
-    private lateinit var repository: SettingsRepository
-    private lateinit var useCase: IsNightModeUseCase
+    private lateinit var repository: com.emenjivar.pomodoro.data.SettingsRepository
+    private lateinit var useCase: com.emenjivar.pomodoro.usecases.IsNightModeUseCase
 
     @Before
     fun setup() {
-        repository = Mockito.mock(SettingsRepository::class.java)
-        useCase = IsNightModeUseCase(repository)
+        repository = Mockito.mock(com.emenjivar.pomodoro.data.SettingsRepository::class.java)
+        useCase = com.emenjivar.pomodoro.usecases.IsNightModeUseCase(repository)
     }
 
     @Test

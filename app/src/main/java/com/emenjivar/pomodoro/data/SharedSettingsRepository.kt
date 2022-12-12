@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface SharedSettingsRepository {
     fun setColorTheme(colorTheme: Color)
     fun getColorTheme(): Flow<Color>
+
 }

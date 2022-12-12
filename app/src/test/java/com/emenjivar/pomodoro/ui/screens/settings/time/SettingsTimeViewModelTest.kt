@@ -1,9 +1,9 @@
 package com.emenjivar.pomodoro.ui.screens.settings.time
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.emenjivar.core.usecase.GetPomodoroUseCase
-import com.emenjivar.core.usecase.SetRestTimeUseCase
-import com.emenjivar.core.usecase.SetWorkTimeUseCase
+import com.emenjivar.pomodoro.usecases.GetPomodoroUseCase
+import com.emenjivar.pomodoro.usecases.SetRestTimeUseCase
+import com.emenjivar.pomodoro.usecases.SetWorkTimeUseCase
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule

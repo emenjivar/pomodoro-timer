@@ -1,6 +1,6 @@
 package com.emenjivar.core.usecase
 
-import com.emenjivar.core.repository.SettingsRepository
+import com.emenjivar.pomodoro.data.SettingsRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
@@ -8,13 +8,13 @@ import org.junit.Test
 import org.mockito.Mockito
 
 class SetVibrationUseCaseTest {
-    private lateinit var repository: SettingsRepository
-    private lateinit var useCase: SetVibrationUseCase
+    private lateinit var repository: com.emenjivar.pomodoro.data.SettingsRepository
+    private lateinit var useCase: com.emenjivar.pomodoro.usecases.SetVibrationUseCase
 
     @Before
     fun setup() {
-        repository = Mockito.mock(SettingsRepository::class.java)
-        useCase = SetVibrationUseCase(repository)
+        repository = Mockito.mock(com.emenjivar.pomodoro.data.SettingsRepository::class.java)
+        useCase = com.emenjivar.pomodoro.usecases.SetVibrationUseCase(repository)
     }
 
     @Test

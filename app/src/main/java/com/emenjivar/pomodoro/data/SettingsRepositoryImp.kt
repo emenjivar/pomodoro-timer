@@ -1,4 +1,4 @@
-package com.emenjivar.data.repository
+package com.emenjivar.pomodoro.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -9,11 +9,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.emenjivar.core.model.Pomodoro
-import com.emenjivar.core.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
+class SettingsRepositoryImp(private val context: Context) :
+    SettingsRepository {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SETTINGS_NAME)
     private val pomodoroTime = longPreferencesKey(POMODORO_TIME)
@@ -25,13 +25,13 @@ class SettingsRepositoryImp(private val context: Context) : SettingsRepository {
     private val sounds = booleanPreferencesKey(SOUNDS)
     private val color = intPreferencesKey(COLOR)
 
-    override suspend fun getPomodoro(): Pomodoro =
+    override fun getPomodoro() =
         context.dataStore.data.map { pref ->
             Pomodoro(
                 workTime = pref[pomodoroTime] ?: DEFAULT_WORK_TIME,
                 restTime = pref[restTime] ?: DEFAULT_REST_TIME
             )
-        }.first()
+        }
 
     override suspend fun setWorkTime(value: Long) {
         context.dataStore.edit { settings ->

@@ -1,6 +1,6 @@
 package com.emenjivar.pomodoro.utils.model
 
-open class Counter(
+data class Counter(
     val workTime: Long,
     val restTime: Long,
     var phase: Phase,

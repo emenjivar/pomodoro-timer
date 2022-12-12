@@ -42,7 +42,7 @@ fun CountDownScreen(
     val countDownViewModel = getViewModel<CountDownViewModel>()
     val colorTheme by countDownViewModel.uiState.colorTheme.collectAsState()
 
-    val counter by countDownViewModel.counter
+    val counter by countDownViewModel.uiState.counter.collectAsState()
     val action by countDownViewModel.action.observeAsState()
 
     DisposableEffect(systemUiController, colorTheme) {

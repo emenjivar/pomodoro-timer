@@ -1,23 +1,21 @@
 package com.emenjivar.pomodoro.ui.screens.countdown
 
 import android.os.CountDownTimer
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emenjivar.core.usecase.AreSoundsEnableUseCase
-import com.emenjivar.core.usecase.GetAutoPlayUseCase
-import com.emenjivar.core.usecase.GetColorUseCase
-import com.emenjivar.core.usecase.GetPomodoroUseCase
-import com.emenjivar.core.usecase.IsKeepScreenOnUseCase
-import com.emenjivar.core.usecase.IsNightModeUseCase
-import com.emenjivar.core.usecase.IsVibrationEnabledUseCase
-import com.emenjivar.core.usecase.SetNighModeUseCase
-import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.data.SettingsRepository
+import com.emenjivar.pomodoro.usecases.AreSoundsEnableUseCase
+import com.emenjivar.pomodoro.usecases.GetAutoPlayUseCase
+import com.emenjivar.pomodoro.usecases.GetColorUseCase
+import com.emenjivar.pomodoro.usecases.GetPomodoroUseCase
+import com.emenjivar.pomodoro.usecases.IsKeepScreenOnUseCase
+import com.emenjivar.pomodoro.usecases.IsNightModeUseCase
+import com.emenjivar.pomodoro.usecases.IsVibrationEnabledUseCase
+import com.emenjivar.pomodoro.usecases.SetNighModeUseCase
 import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
@@ -30,12 +28,12 @@ import com.emenjivar.pomodoro.utils.countDownInterval
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class CountDownViewModel(
-    private val sharedSettingsRepository: SharedSettingsRepository,
+    sharedSettingsRepository: SharedSettingsRepository,
+    settingsRepository: SettingsRepository,
     private val getColorUseCase: GetColorUseCase,
     private val getPomodoroUseCase: GetPomodoroUseCase,
     private val setNighModeUseCase: SetNighModeUseCase,
@@ -58,19 +56,19 @@ class CountDownViewModel(
             initialValue = ThemeColor.Tomato.color
         )
 
+    private var counterMemory: Counter? = null
+    private val counter = MutableStateFlow<Counter?>(null)
+
     val uiState = CountDownUIState(
-        colorTheme = colorTheme
+        colorTheme = colorTheme,
+        counter = counter.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = null
+        )
     )
 
     private var countDownTimer: CountDownTimer? = null
-
-    /**
-     * Complex object, observed only in compose UI
-     * define neverEqualPolicy to observe nested property changes
-     */
-    private val _counter: MutableState<Counter?> =
-        mutableStateOf(value = null, policy = neverEqualPolicy())
-    val counter: State<Counter?> = _counter
 
     private val _action: MutableLiveData<Action> = MutableLiveData(Action.Stop)
     val action: LiveData<Action> = _action
@@ -93,6 +91,13 @@ class CountDownViewModel(
     var areSoundsEnable: Boolean = true
 
     init {
+        // Load set pomodoro
+        settingsRepository.getPomodoro()
+            .onEach { pomodoro ->
+                counter.update { pomodoro.toCounter() }
+                counterMemory = pomodoro.toCounter()
+            }.launchIn(viewModelScope)
+
         if (!testMode) {
             viewModelScope.launch(ioDispatcher) {
                 loadDefaultValues()
@@ -116,16 +121,16 @@ class CountDownViewModel(
     /**
      * Get pomodoro from dataStorage and convert to counter
      */
-    private suspend fun fetchCounter() = getPomodoroUseCase.invoke().toCounter()
+//    private suspend fun fetchCounter() = getPomodoroUseCase.invoke().toCounter()
 
     /**
      * In case of null, fetch local storage configurations
      */
-    suspend fun initCounter() {
-        if (_counter.value == null) {
-            _counter.value = fetchCounter()
-        }
-    }
+//    suspend fun initCounter() {
+//        if (_counter.value == null) {
+//            _counter.value = fetchCounter()
+//        }
+//    }
 
     /**
      * recursive function
@@ -134,7 +139,7 @@ class CountDownViewModel(
      */
     fun startCounter() {
         viewModelScope.launch(Dispatchers.Main) {
-            initCounter()
+//            initCounter()
             counter.value?.let { safeCounter ->
                 val milliseconds = if (safeCounter.phase == Phase.WORK)
                     safeCounter.workTime
@@ -176,7 +181,7 @@ class CountDownViewModel(
 
         // Don't include this block on tests
         if (!testMode) {
-            _counter.value?.let { safeCounter ->
+            counter.value?.let { safeCounter ->
                 countDownTimer = countDownTimer(safeCounter.countDown).start()
             }
         }
@@ -189,7 +194,7 @@ class CountDownViewModel(
     fun stopCounter() {
         viewModelScope.launch(ioDispatcher) {
             _action.postValue(Action.Stop)
-            _counter.value = fetchCounter()
+            counter.update { counterMemory }
             countDownTimer?.cancel()
             notificationManager.close()
         }
@@ -203,7 +208,7 @@ class CountDownViewModel(
     fun updateCounterTime() {
         viewModelScope.launch(ioDispatcher) {
             if (action.value == Action.Stop) {
-                _counter.value = fetchCounter()
+//                _counter.value = fetchCounter()
             }
         }
     }
@@ -212,11 +217,11 @@ class CountDownViewModel(
         var vibrationTimes = 1
         when (counter.value?.phase) {
             Phase.WORK -> {
-                _counter.value?.setRest()
+//                _counter.value?.setRest()
             }
             Phase.REST -> {
                 // This line force fetch pomodoro configurations and start from work
-                _counter.value = null
+//                _counter.value = null
                 _action.value = Action.Stop
                 vibrationTimes = 2
             }
@@ -245,7 +250,7 @@ class CountDownViewModel(
             startCounter()
         } else {
             viewModelScope.launch(Dispatchers.Main) {
-                initCounter()
+//                initCounter()
             }
         }
     }
@@ -254,30 +259,29 @@ class CountDownViewModel(
      * Set current state of pomodoro on livedata value
      */
     fun setTime(milliseconds: Long) {
-        val localCounter = counter.value?.apply {
-            countDown = milliseconds
+        counter.update {
+            it?.copy(countDown = milliseconds)
         }
-        _counter.value = localCounter
 
         /**
          * displayNotification is set during activity lifecycle
          * display during onStop action
          */
-        if (displayNotification && localCounter != null) {
-            notificationManager.updateProgress(
-                counter = localCounter,
-                action = Action.Play
-            )
+        if (displayNotification && counter.value != null) {
+//            notificationManager.updateProgress(
+//                counter = counter.value,
+//                action = Action.Play
+//            )
         }
     }
 
     private fun updateNotification(action: Action) {
-        _counter.value?.let { safeCounter ->
-            notificationManager.updateProgress(
-                counter = safeCounter,
-                action = action
-            )
-        }
+//        _counter.value?.let { safeCounter ->
+//            notificationManager.updateProgress(
+//                counter = safeCounter,
+//                action = action
+//            )
+//        }
     }
 
     fun closeNotification() {

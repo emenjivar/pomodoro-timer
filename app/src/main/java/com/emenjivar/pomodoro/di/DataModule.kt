@@ -1,7 +1,7 @@
 package com.emenjivar.pomodoro.di
 
-import com.emenjivar.core.repository.SettingsRepository
-import com.emenjivar.data.repository.SettingsRepositoryImp
+import com.emenjivar.pomodoro.data.SettingsRepository
+import com.emenjivar.pomodoro.data.SettingsRepositoryImp
 import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.data.SharedSettingsRepositoryImp
 import org.koin.dsl.module

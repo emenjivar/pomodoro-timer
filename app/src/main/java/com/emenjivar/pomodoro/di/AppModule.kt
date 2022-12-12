@@ -24,6 +24,7 @@ val appModule = module {
     viewModel {
         CountDownViewModel(
             sharedSettingsRepository = get(),
+            settingsRepository = get(),
             getColorUseCase = get(),
             getPomodoroUseCase = get(),
             setNighModeUseCase = get(),

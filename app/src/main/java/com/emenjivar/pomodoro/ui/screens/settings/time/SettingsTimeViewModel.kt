@@ -4,9 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emenjivar.core.usecase.GetPomodoroUseCase
-import com.emenjivar.core.usecase.SetRestTimeUseCase
-import com.emenjivar.core.usecase.SetWorkTimeUseCase
+import com.emenjivar.pomodoro.usecases.GetPomodoroUseCase
+import com.emenjivar.pomodoro.usecases.SetRestTimeUseCase
+import com.emenjivar.pomodoro.usecases.SetWorkTimeUseCase
 import com.emenjivar.pomodoro.utils.formatTime
 import com.emenjivar.pomodoro.utils.toSafeInt
 import kotlinx.coroutines.CoroutineDispatcher
@@ -40,8 +40,8 @@ class SettingsTimeViewModel(
 
     fun loadTimeValuesOnSettings() = viewModelScope.launch(ioDispatcher) {
         val pomodoro = getPomodoroUseCase.invoke()
-        _workTime.value = pomodoro.workTime
-        _restTime.value = pomodoro.restTime
+//        _workTime.value = pomodoro.workTime
+//        _restTime.value = pomodoro.restTime
     }
 
     fun loadTimeOnModal(isPomodoro: Boolean) = viewModelScope.launch(ioDispatcher) {

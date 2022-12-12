@@ -1,9 +1,10 @@
-package com.emenjivar.core.repository
+package com.emenjivar.pomodoro.data
 
 import com.emenjivar.core.model.Pomodoro
+import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
-    suspend fun getPomodoro(): Pomodoro
+    fun getPomodoro(): Flow<Pomodoro>
     suspend fun setWorkTime(value: Long)
     suspend fun setRestTime(value: Long)
     suspend fun isNightMode(): Boolean
