@@ -111,7 +111,7 @@ class CountDownViewModel(
 //        }
 //        _isNightMode.value = isNightModeUseCase.invoke()
         autoPlay = getAutoPlayUseCase.invoke()
-        vibrationEnabled = isVibrationEnabledUseCase.invoke()
+//        vibrationEnabled = isVibrationEnabledUseCase.invoke()
 
         // Set default pomodoro and load on livedata
 //        _counter.value = fetchCounter()
@@ -310,7 +310,7 @@ class CountDownViewModel(
     }
 
     fun forceFetchVibrationConfig() = viewModelScope.launch {
-        vibrationEnabled = isVibrationEnabledUseCase.invoke()
+//        vibrationEnabled = isVibrationEnabledUseCase.invoke()
     }
 
     fun forceFetchSoundsConfig() = viewModelScope.launch(ioDispatcher) {

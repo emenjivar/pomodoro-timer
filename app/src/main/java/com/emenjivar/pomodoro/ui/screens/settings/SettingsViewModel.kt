@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.emenjivar.pomodoro.data.SettingsRepository
 import com.emenjivar.pomodoro.usecases.SetAutoPlayUseCase
 import com.emenjivar.pomodoro.usecases.SetKeepScreenOnUseCase
-import com.emenjivar.pomodoro.usecases.SetVibrationUseCase
 import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.data.model.StructTime
 import com.emenjivar.pomodoro.system.CustomVibrator
@@ -27,7 +26,6 @@ class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val setAutoPlayUseCase: SetAutoPlayUseCase,
     private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
-    private val setVibrationUseCase: SetVibrationUseCase,
     private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
@@ -44,6 +42,12 @@ class SettingsViewModel(
             started = SharingStarted.Lazily,
             initialValue = true
         )
+    private val enableVibration = settingsRepository.isVibrationEnabled()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = true
+        )
 
     val uiState = SettingsUIState(
         colorTheme = colorTheme,
@@ -51,11 +55,13 @@ class SettingsViewModel(
         restTime = restTime,
         structTime = structTime,
         enableSound = enableSound,
+        enableVibration = enableVibration,
         loadModalTime = ::loadModalTime,
         onInputChange = ::onInputChange,
         onBackSpace = ::onBackSpace,
         onSaveTime = ::onSaveTime,
-        onEnableSound = ::onEnableSound
+        onEnableSound = ::onEnableSound,
+        onEnableVibration = ::onEnableVibration
     )
 
     private fun onBackSpace() {
@@ -110,6 +116,10 @@ class SettingsViewModel(
         settingsRepository.setSounds(enableSound)
     }
 
+    private fun onEnableVibration(enableVibration: Boolean) = viewModelScope.launch {
+        settingsRepository.setVibration(enableVibration)
+    }
+
     init {
         settingsRepository.getPomodoro().onEach { pomodoro ->
             counter.update { pomodoro.toCounter() }
@@ -124,9 +134,6 @@ class SettingsViewModel(
 
     private val _keepScreenOn = mutableStateOf(false)
     val keepScreenOn: State<Boolean> = _keepScreenOn
-
-    private val _vibrationEnabled = mutableStateOf(false)
-    val vibrationEnabled: State<Boolean> = _vibrationEnabled
 
     init {
         settingsRepository.getPomodoro().onEach { pomodoro ->
@@ -155,13 +162,6 @@ class SettingsViewModel(
         viewModelScope.launch {
             _keepScreenOn.value = value
             setKeepScreenOnUseCase.invoke(value)
-        }
-    }
-
-    fun setVibration(value: Boolean) {
-        viewModelScope.launch {
-            _vibrationEnabled.value = value
-            setVibrationUseCase.invoke(value)
         }
     }
 

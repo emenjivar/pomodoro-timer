@@ -43,7 +43,6 @@ val appModule = module {
             settingsRepository = get(),
             setAutoPlayUseCase = get(),
             setKeepScreenOnUseCase = get(),
-            setVibrationUseCase = get(),
             customVibrator = get()
         )
     }

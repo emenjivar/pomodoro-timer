@@ -78,10 +78,10 @@ class SettingsRepositoryImp(private val context: Context) :
         }
     }
 
-    override suspend fun isVibrationEnabled(): Boolean = context.dataStore.data
+    override fun isVibrationEnabled() = context.dataStore.data
         .map { pref ->
             pref[vibration] ?: false
-        }.first()
+        }
 
     override suspend fun setVibration(value: Boolean) {
         context.dataStore.edit { settings ->

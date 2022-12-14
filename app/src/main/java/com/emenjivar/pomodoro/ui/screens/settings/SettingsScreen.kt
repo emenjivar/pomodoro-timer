@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,9 +40,7 @@ import com.emenjivar.pomodoro.ui.screens.settings.time.TimeSettings
 import com.emenjivar.pomodoro.ui.theme.lightGray
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
-import com.emenjivar.pomodoro.utils.toColor
 import com.google.accompanist.systemuicontroller.SystemUiController
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.getViewModel
 
@@ -62,7 +59,6 @@ fun SettingsScreen(
     val restTime by viewModel.uiState.restTime.collectAsState()
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
-    val vibrationEnabled by viewModel.vibrationEnabled
 
     DisposableEffect(systemUiController, colorTheme) {
         systemUiController.setStatusBarColor(color = colorTheme)
@@ -76,7 +72,6 @@ fun SettingsScreen(
         restTime = restTime,
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
-        vibrationEnabled = vibrationEnabled,
         backAction = { navController.navigate("counter") },
         onSelectTheme = { viewModel.setColor(it) },
         onAutoPlayChange = {
@@ -84,9 +79,6 @@ fun SettingsScreen(
         },
         onKeepScreenChange = {
             viewModel.setKeepScreenOn(it)
-        },
-        onVibrationEnabledChange = {
-            viewModel.setVibration(it)
         }
     )
 }
@@ -99,15 +91,14 @@ fun SettingsScreen(
     restTime: Long,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
-    vibrationEnabled: Boolean,
     backAction: () -> Unit,
     onSelectTheme: (Color) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
-    onKeepScreenChange: (Boolean) -> Unit,
-    onVibrationEnabledChange: (Boolean) -> Unit
+    onKeepScreenChange: (Boolean) -> Unit
 ) {
     val structTime by uiState.structTime.collectAsState()
     val enableSound by uiState.enableSound.collectAsState()
+    val enableVibration by uiState.enableVibration.collectAsState()
 
     val topAppBarColor = animateColorAsState(
         targetValue = selectedColor,
@@ -158,9 +149,9 @@ fun SettingsScreen(
 
             SoundSettings(
                 selectedColor = selectedColor,
-                isVibrationEnabled = vibrationEnabled,
+                enableVibration = enableVibration,
                 enableSound = enableSound,
-                onVibrationEnabledChange = onVibrationEnabledChange,
+                onEnableVibration = uiState.onEnableVibration,
                 onEnableSound = uiState.onEnableSound
             )
 
@@ -259,9 +250,9 @@ private fun AppearanceSettings(
 @Composable
 private fun SoundSettings(
     selectedColor: Color,
-    isVibrationEnabled: Boolean,
+    enableVibration: Boolean,
     enableSound: Boolean,
-    onVibrationEnabledChange: (Boolean) -> Unit,
+    onEnableVibration: (Boolean) -> Unit,
     onEnableSound: (Boolean) -> Unit
 ) = SettingsGroup(title = "Sounds") {
     SwitchItem(
@@ -273,9 +264,9 @@ private fun SoundSettings(
     )
     SwitchItem(
         title = "Vibration",
-        value = isVibrationEnabled,
+        value = enableVibration,
         selectedColor = selectedColor,
-        onCheckedChange = onVibrationEnabledChange
+        onCheckedChange = onEnableVibration
     )
 }
 
@@ -308,11 +299,13 @@ val uiState = SettingsUIState(
     restTime = MutableStateFlow(0L),
     structTime = MutableStateFlow(StructTime.empty()),
     enableSound = MutableStateFlow(true),
+    enableVibration = MutableStateFlow(true),
     loadModalTime = {},
     onInputChange = {},
     onBackSpace = {},
     onSaveTime = {},
-    onEnableSound = {}
+    onEnableSound = {},
+    onEnableVibration = {}
 )
 
 @Preview(
@@ -330,12 +323,10 @@ fun PreviewSettingsItem() {
             restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
-            vibrationEnabled = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
-            onKeepScreenChange = {},
-            onVibrationEnabledChange = {}
+            onKeepScreenChange = {}
         )
     }
 }
@@ -351,12 +342,10 @@ fun PreviewSettingsItemOrange() {
             restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
-            vibrationEnabled = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
-            onKeepScreenChange = {},
-            onVibrationEnabledChange = {}
+            onKeepScreenChange = {}
         )
     }
 }
@@ -372,12 +361,10 @@ fun PreviewSettingsItemWine() {
             restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
-            vibrationEnabled = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
-            onKeepScreenChange = {},
-            onVibrationEnabledChange = {}
+            onKeepScreenChange = {}
         )
     }
 }
@@ -393,12 +380,10 @@ fun PreviewSettingsItemBasil() {
             restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
-            vibrationEnabled = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
-            onKeepScreenChange = {},
-            onVibrationEnabledChange = {}
+            onKeepScreenChange = {}
         )
     }
 }
