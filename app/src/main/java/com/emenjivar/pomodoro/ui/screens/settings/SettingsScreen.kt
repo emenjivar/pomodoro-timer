@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.emenjivar.pomodoro.R
+import com.emenjivar.pomodoro.data.model.StructTime
 import com.emenjivar.pomodoro.ui.screens.common.ColorMenu
 import com.emenjivar.pomodoro.ui.screens.settings.time.TimeSettings
 import com.emenjivar.pomodoro.ui.theme.lightGray
@@ -42,6 +43,8 @@ import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.toColor
 import com.google.accompanist.systemuicontroller.SystemUiController
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -55,6 +58,8 @@ fun SettingsScreen(
 ) {
     val viewModel = getViewModel<SettingsViewModel>()
     val colorTheme by viewModel.uiState.colorTheme.collectAsState()
+    val workTime by viewModel.uiState.workTime.collectAsState()
+    val restTime by viewModel.uiState.restTime.collectAsState()
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
     val vibrationEnabled by viewModel.vibrationEnabled
@@ -66,7 +71,10 @@ fun SettingsScreen(
     }
 
     SettingsScreen(
+        uiState = viewModel.uiState,
         selectedColor = colorTheme,
+        workTime = workTime,
+        restTime = restTime,
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
         vibrationEnabled = vibrationEnabled,
@@ -90,7 +98,10 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
+    uiState: SettingsUIState,
     selectedColor: Color,
+    workTime: Long,
+    restTime: Long,
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     vibrationEnabled: Boolean,
@@ -102,6 +113,8 @@ fun SettingsScreen(
     onVibrationEnabledChange: (Boolean) -> Unit,
     onSoundsEnableChange: (Boolean) -> Unit
 ) {
+    val structTime by uiState.structTime.collectAsState()
+
     val topAppBarColor = animateColorAsState(
         targetValue = selectedColor,
         animationSpec = tween(durationMillis = TRANSITION_DURATION)
@@ -139,7 +152,15 @@ fun SettingsScreen(
                 onSelectTheme = onSelectTheme
             )
 
-            TimeSettings()
+            TimeSettings(
+                workTime = workTime,
+                restTime = restTime,
+                structTime = structTime,
+                loadModalTime = uiState.loadModalTime,
+                onInputChange = uiState.onInputChange,
+                onBackSpace = uiState.onBackSpace,
+                onSaveTime = uiState.onSaveTime
+            )
 
             SoundSettings(
                 selectedColor = selectedColor,
@@ -287,6 +308,17 @@ private fun OthersSettings(
     )
 }
 
+val uiState = SettingsUIState(
+    colorTheme = MutableStateFlow(ThemeColor.Tomato.color),
+    workTime = MutableStateFlow(0L),
+    restTime = MutableStateFlow(0L),
+    structTime = MutableStateFlow(StructTime.empty()),
+    loadModalTime = {},
+    onInputChange = {},
+    onBackSpace = {},
+    onSaveTime = {}
+)
+
 @Preview(
     name = "Normal settings",
     showBackground = true,
@@ -296,7 +328,10 @@ private fun OthersSettings(
 fun PreviewSettingsItem() {
     MaterialTheme {
         SettingsScreen(
+            uiState = uiState,
             selectedColor = ThemeColor.Tomato.color,
+            workTime = 0L,
+            restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
@@ -316,7 +351,10 @@ fun PreviewSettingsItem() {
 fun PreviewSettingsItemOrange() {
     MaterialTheme {
         SettingsScreen(
+            uiState = uiState,
             selectedColor = ThemeColor.Orange.color,
+            workTime = 0L,
+            restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
@@ -336,7 +374,10 @@ fun PreviewSettingsItemOrange() {
 fun PreviewSettingsItemWine() {
     MaterialTheme {
         SettingsScreen(
+            uiState = uiState,
             selectedColor = ThemeColor.Green.color,
+            workTime = 0L,
+            restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
@@ -356,7 +397,10 @@ fun PreviewSettingsItemWine() {
 fun PreviewSettingsItemBasil() {
     MaterialTheme {
         SettingsScreen(
+            uiState = uiState,
             selectedColor = ThemeColor.LeafGreen.color,
+            workTime = 0L,
+            restTime = 0L,
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,

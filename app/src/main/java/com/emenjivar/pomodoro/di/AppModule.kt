@@ -1,7 +1,6 @@
 package com.emenjivar.pomodoro.di
 
 import com.emenjivar.pomodoro.ui.screens.countdown.CountDownViewModel
-import com.emenjivar.pomodoro.ui.screens.settings.time.SettingsTimeViewModel
 import com.emenjivar.pomodoro.ui.screens.settings.SettingsViewModel
 import com.emenjivar.pomodoro.ui.screens.splashscreen.SplashScreenViewModel
 import com.emenjivar.pomodoro.system.CustomNotificationManager
@@ -41,6 +40,7 @@ val appModule = module {
     viewModel {
         SettingsViewModel(
             sharedSettingsRepository = get(),
+            settingsRepository = get(),
             getColorUseCase = get(),
             setColorUseCase = get(),
             getAutoPlayUseCase = get(),
@@ -52,14 +52,6 @@ val appModule = module {
             areSoundsEnableUseCase = get(),
             setSoundsEnableUseCase = get(),
             customVibrator = get()
-        )
-    }
-
-    viewModel {
-        SettingsTimeViewModel(
-            getPomodoroUseCase = get(),
-            setWorkTimeUseCase = get(),
-            setRestTimeUseCase = get()
         )
     }
 

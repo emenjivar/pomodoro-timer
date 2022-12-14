@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.emenjivar.pomodoro.data.model.StructTime
 import com.emenjivar.pomodoro.ui.components.Item
 import com.emenjivar.pomodoro.ui.components.ItemTitle
 import com.emenjivar.pomodoro.ui.components.time.InputTime
@@ -15,23 +16,30 @@ import com.emenjivar.pomodoro.utils.toSplitTime
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun TimeSettings() {
-    val viewModel = getViewModel<SettingsTimeViewModel>()
-    LaunchedEffect(true) {
-        viewModel.loadTimeValuesOnSettings()
-    }
-
+fun TimeSettings(
+    workTime: Long,
+    restTime: Long,
+    structTime: StructTime,
+    loadModalTime: (isPomodoro: Boolean) -> Unit,
+    onInputChange: (Int) -> Unit,
+    onBackSpace: () -> Unit,
+    onSaveTime: (isPomodoro: Boolean) -> Unit
+) {
     TimeSettings(
-        hours = viewModel.hours.value,
-        minutes = viewModel.minutes.value,
-        seconds = viewModel.seconds.value,
-        workTime = viewModel.workTime.value,
-        restTime = viewModel.restTime.value,
-        openWorkTimeModal = { viewModel.loadTimeOnModal(isPomodoro = true) },
-        openRestTimeModal = { viewModel.loadTimeOnModal(isPomodoro = false) },
-        onInputChange = { viewModel.onInputChange(it) },
-        onBackSpace = { viewModel.onBackSpace() },
-        onSaveLoadedTime = { viewModel.saveTime(it) }
+        hours = structTime.hours,
+        minutes = structTime.minutes,
+        seconds = structTime.seconds,
+        workTime = workTime,
+        restTime = restTime,
+        openWorkTimeModal = {
+            loadModalTime(true)
+        },
+        openRestTimeModal = {
+            loadModalTime(false)
+        },
+        onInputChange = { onInputChange(it) },
+        onBackSpace = { onBackSpace() },
+        onSaveLoadedTime = { onSaveTime(it) }
     )
 }
 
