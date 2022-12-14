@@ -89,10 +89,10 @@ class SettingsRepositoryImp(private val context: Context) :
         }
     }
 
-    override suspend fun areSoundsEnabled(): Boolean = context.dataStore.data
+    override fun areSoundsEnabled() = context.dataStore.data
         .map { pref ->
             pref[sounds] ?: true
-        }.first()
+        }
 
     override suspend fun setSounds(value: Boolean) {
         context.dataStore.edit { settings ->

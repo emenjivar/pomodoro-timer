@@ -41,16 +41,9 @@ val appModule = module {
         SettingsViewModel(
             sharedSettingsRepository = get(),
             settingsRepository = get(),
-            getColorUseCase = get(),
-            setColorUseCase = get(),
-            getAutoPlayUseCase = get(),
             setAutoPlayUseCase = get(),
-            isKeepScreenOnUseCase = get(),
             setKeepScreenOnUseCase = get(),
-            isVibrationEnabledUseCase = get(),
             setVibrationUseCase = get(),
-            areSoundsEnableUseCase = get(),
-            setSoundsEnableUseCase = get(),
             customVibrator = get()
         )
     }

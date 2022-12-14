@@ -8,9 +8,11 @@ class SettingsUIState(
     val colorTheme: StateFlow<Color>,
     val workTime: StateFlow<Long>,
     val restTime: StateFlow<Long>,
+    val enableSound: StateFlow<Boolean>,
     val structTime: StateFlow<StructTime>,
     val loadModalTime: (isPomodoro: Boolean) -> Unit,
     val onInputChange: (digit: Int) -> Unit,
     val onBackSpace: () -> Unit,
-    val onSaveTime: (isPomodoro: Boolean) -> Unit
+    val onSaveTime: (isPomodoro: Boolean) -> Unit,
+    val onEnableSound: (Boolean) -> Unit
 )

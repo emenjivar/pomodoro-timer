@@ -15,7 +15,7 @@ interface SettingsRepository {
     suspend fun setKeepScreenOn(value: Boolean)
     suspend fun isVibrationEnabled(): Boolean
     suspend fun setVibration(value: Boolean)
-    suspend fun areSoundsEnabled(): Boolean
+    fun areSoundsEnabled(): Flow<Boolean>
     suspend fun setSounds(value: Boolean)
     suspend fun getColor(): Int?
     suspend fun setColor(value: Int)

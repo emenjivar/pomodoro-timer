@@ -314,7 +314,8 @@ class CountDownViewModel(
     }
 
     fun forceFetchSoundsConfig() = viewModelScope.launch(ioDispatcher) {
-        areSoundsEnable = areSoundsEnableUseCase.invoke()
+    // TODO: put here sound configuration
+    //        areSoundsEnable = areSoundsEnableUseCase.invoke()
     }
 
     fun forceAutoPlayConfig() = viewModelScope.launch(ioDispatcher) {

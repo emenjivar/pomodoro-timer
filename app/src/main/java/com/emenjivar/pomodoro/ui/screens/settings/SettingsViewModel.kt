@@ -3,21 +3,13 @@ package com.emenjivar.pomodoro.ui.screens.settings
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.pomodoro.data.SettingsRepository
-import com.emenjivar.pomodoro.usecases.GetColorUseCase
-import com.emenjivar.pomodoro.usecases.SetColorUseCase
-import com.emenjivar.pomodoro.usecases.GetAutoPlayUseCase
 import com.emenjivar.pomodoro.usecases.SetAutoPlayUseCase
-import com.emenjivar.pomodoro.usecases.IsKeepScreenOnUseCase
 import com.emenjivar.pomodoro.usecases.SetKeepScreenOnUseCase
-import com.emenjivar.pomodoro.usecases.IsVibrationEnabledUseCase
 import com.emenjivar.pomodoro.usecases.SetVibrationUseCase
-import com.emenjivar.pomodoro.usecases.AreSoundsEnableUseCase
-import com.emenjivar.pomodoro.usecases.SetSoundsEnableUseCase
 import com.emenjivar.pomodoro.data.SharedSettingsRepository
 import com.emenjivar.pomodoro.data.model.StructTime
 import com.emenjivar.pomodoro.system.CustomVibrator
@@ -27,52 +19,49 @@ import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val sharedSettingsRepository: SharedSettingsRepository,
     private val settingsRepository: SettingsRepository,
-    private val getColorUseCase: GetColorUseCase,
-    private val setColorUseCase: SetColorUseCase,
-    private val getAutoPlayUseCase: GetAutoPlayUseCase,
     private val setAutoPlayUseCase: SetAutoPlayUseCase,
-    private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
     private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
-    private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
     private val setVibrationUseCase: SetVibrationUseCase,
-    private val areSoundsEnableUseCase: AreSoundsEnableUseCase,
-    private val setSoundsEnableUseCase: SetSoundsEnableUseCase,
     private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     testMode: Boolean = false
 ) : ViewModel() {
 
     private val colorTheme: MutableStateFlow<Color> = MutableStateFlow(ThemeColor.Tomato.color)
-
     private val workTime = MutableStateFlow(0L)
     private val restTime = MutableStateFlow(0L)
     private val structTime = MutableStateFlow(StructTime.empty())
-
     private val counter = MutableStateFlow<Counter?>(null)
+    private val enableSound = settingsRepository.areSoundsEnabled()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = true
+        )
 
     val uiState = SettingsUIState(
         colorTheme = colorTheme,
         workTime = workTime,
         restTime = restTime,
         structTime = structTime,
+        enableSound = enableSound,
         loadModalTime = ::loadModalTime,
         onInputChange = ::onInputChange,
         onBackSpace = ::onBackSpace,
-        onSaveTime = ::onSaveTime
+        onSaveTime = ::onSaveTime,
+        onEnableSound = ::onEnableSound
     )
 
     private fun onBackSpace() {
         if (structTime.value.timeString.isNotEmpty()) {
-            val updatedTimeString = structTime.value.timeString.substring(0, structTime.value.timeString.length - 1)
+            val updatedTimeString =
+                structTime.value.timeString.substring(0, structTime.value.timeString.length - 1)
             setTimeValues(updatedTimeString)
         }
     }
@@ -117,6 +106,10 @@ class SettingsViewModel(
         }
     }
 
+    private fun onEnableSound(enableSound: Boolean) = viewModelScope.launch {
+        settingsRepository.setSounds(enableSound)
+    }
+
     init {
         settingsRepository.getPomodoro().onEach { pomodoro ->
             counter.update { pomodoro.toCounter() }
@@ -135,45 +128,19 @@ class SettingsViewModel(
     private val _vibrationEnabled = mutableStateOf(false)
     val vibrationEnabled: State<Boolean> = _vibrationEnabled
 
-    private val _soundsEnable = mutableStateOf(true)
-    val soundsEnable: State<Boolean> = _soundsEnable
-
-    private val _selectedColor = MutableLiveData<Int?>(null)
-    val selectedColor: LiveData<Int?> = _selectedColor
-
     init {
         settingsRepository.getPomodoro().onEach { pomodoro ->
             workTime.update { pomodoro.workTime }
             restTime.update { pomodoro.restTime }
         }.launchIn(viewModelScope)
-
-        if (!testMode) {
-            viewModelScope.launch(ioDispatcher) {
-                loadSettings()
-            }
-        }
-    }
-
-    suspend fun loadSettings() {
-        _selectedColor.postValue(getColorUseCase.invoke())
-        /**
-         * Values are expressed in milliseconds
-         * transform to minutes to show a readable value on UI
-         */
-//        _autoPlay.value = getAutoPlayUseCase.invoke()
-//        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
-//        _vibrationEnabled.value = isVibrationEnabledUseCase.invoke()
-//        _soundsEnable.value = areSoundsEnableUseCase.invoke()
     }
 
     fun setColor(value: Color) {
-//        _selectedColor.value = value
         colorTheme.update { value }
         sharedSettingsRepository.setColorTheme(value)
 
         viewModelScope.launch(ioDispatcher) {
             customVibrator.click()
-//            setColorUseCase.invoke(value)
         }
     }
 
@@ -195,14 +162,6 @@ class SettingsViewModel(
         viewModelScope.launch {
             _vibrationEnabled.value = value
             setVibrationUseCase.invoke(value)
-        }
-    }
-
-    fun setSoundsEnable(value: Boolean) {
-        _soundsEnable.value = value
-
-        viewModelScope.launch(ioDispatcher) {
-            setSoundsEnableUseCase.invoke(value)
         }
     }
 

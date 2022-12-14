@@ -63,7 +63,6 @@ fun SettingsScreen(
     val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
     val vibrationEnabled by viewModel.vibrationEnabled
-    val soundsEnable by viewModel.soundsEnable
 
     DisposableEffect(systemUiController, colorTheme) {
         systemUiController.setStatusBarColor(color = colorTheme)
@@ -78,7 +77,6 @@ fun SettingsScreen(
         autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
         vibrationEnabled = vibrationEnabled,
-        soundsEnable = soundsEnable,
         backAction = { navController.navigate("counter") },
         onSelectTheme = { viewModel.setColor(it) },
         onAutoPlayChange = {
@@ -89,9 +87,6 @@ fun SettingsScreen(
         },
         onVibrationEnabledChange = {
             viewModel.setVibration(it)
-        },
-        onSoundsEnableChange = {
-            viewModel.setSoundsEnable(it)
         }
     )
 }
@@ -105,15 +100,14 @@ fun SettingsScreen(
     autoPlay: Boolean,
     keepScreenOn: Boolean,
     vibrationEnabled: Boolean,
-    soundsEnable: Boolean,
     backAction: () -> Unit,
     onSelectTheme: (Color) -> Unit,
     onAutoPlayChange: (Boolean) -> Unit,
     onKeepScreenChange: (Boolean) -> Unit,
-    onVibrationEnabledChange: (Boolean) -> Unit,
-    onSoundsEnableChange: (Boolean) -> Unit
+    onVibrationEnabledChange: (Boolean) -> Unit
 ) {
     val structTime by uiState.structTime.collectAsState()
+    val enableSound by uiState.enableSound.collectAsState()
 
     val topAppBarColor = animateColorAsState(
         targetValue = selectedColor,
@@ -165,9 +159,9 @@ fun SettingsScreen(
             SoundSettings(
                 selectedColor = selectedColor,
                 isVibrationEnabled = vibrationEnabled,
-                soundsEnable = soundsEnable,
+                enableSound = enableSound,
                 onVibrationEnabledChange = onVibrationEnabledChange,
-                onSoundsEnableChange = onSoundsEnableChange
+                onEnableSound = uiState.onEnableSound
             )
 
             OthersSettings(
@@ -266,16 +260,16 @@ private fun AppearanceSettings(
 private fun SoundSettings(
     selectedColor: Color,
     isVibrationEnabled: Boolean,
-    soundsEnable: Boolean,
+    enableSound: Boolean,
     onVibrationEnabledChange: (Boolean) -> Unit,
-    onSoundsEnableChange: (Boolean) -> Unit
+    onEnableSound: (Boolean) -> Unit
 ) = SettingsGroup(title = "Sounds") {
     SwitchItem(
         title = "Tune",
         subtitle = "Play a small sound when after every interval on time",
-        value = soundsEnable,
+        value = enableSound,
         selectedColor = selectedColor,
-        onCheckedChange = onSoundsEnableChange
+        onCheckedChange = onEnableSound
     )
     SwitchItem(
         title = "Vibration",
@@ -313,10 +307,12 @@ val uiState = SettingsUIState(
     workTime = MutableStateFlow(0L),
     restTime = MutableStateFlow(0L),
     structTime = MutableStateFlow(StructTime.empty()),
+    enableSound = MutableStateFlow(true),
     loadModalTime = {},
     onInputChange = {},
     onBackSpace = {},
-    onSaveTime = {}
+    onSaveTime = {},
+    onEnableSound = {}
 )
 
 @Preview(
@@ -335,13 +331,11 @@ fun PreviewSettingsItem() {
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
-            soundsEnable = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
             onKeepScreenChange = {},
-            onVibrationEnabledChange = {},
-            onSoundsEnableChange = {}
+            onVibrationEnabledChange = {}
         )
     }
 }
@@ -358,13 +352,11 @@ fun PreviewSettingsItemOrange() {
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
-            soundsEnable = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
             onKeepScreenChange = {},
-            onVibrationEnabledChange = {},
-            onSoundsEnableChange = {}
+            onVibrationEnabledChange = {}
         )
     }
 }
@@ -381,13 +373,11 @@ fun PreviewSettingsItemWine() {
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
-            soundsEnable = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
             onKeepScreenChange = {},
-            onVibrationEnabledChange = {},
-            onSoundsEnableChange = {}
+            onVibrationEnabledChange = {}
         )
     }
 }
@@ -404,13 +394,11 @@ fun PreviewSettingsItemBasil() {
             autoPlay = true,
             keepScreenOn = true,
             vibrationEnabled = true,
-            soundsEnable = true,
             backAction = {},
             onSelectTheme = {},
             onAutoPlayChange = {},
             onKeepScreenChange = {},
-            onVibrationEnabledChange = {},
-            onSoundsEnableChange = {}
+            onVibrationEnabledChange = {}
         )
     }
 }
