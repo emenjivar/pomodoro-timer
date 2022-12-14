@@ -67,10 +67,10 @@ class SettingsRepositoryImp(private val context: Context) :
         }
     }
 
-    override suspend fun isKeepScreenOn(): Boolean = context.dataStore.data
+    override fun isKeepScreenOn() = context.dataStore.data
         .map { preferences ->
             preferences[keepScreen] ?: false
-        }.first()
+        }
 
     override suspend fun setKeepScreenOn(value: Boolean) {
         context.dataStore.edit { settings ->

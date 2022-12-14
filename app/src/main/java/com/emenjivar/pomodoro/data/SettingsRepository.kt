@@ -11,7 +11,7 @@ interface SettingsRepository {
     suspend fun setAutoPlay(value: Boolean)
     fun getAutoPlay(): Flow<Boolean>
     suspend fun setNightMode(value: Boolean)
-    suspend fun isKeepScreenOn(): Boolean
+    fun isKeepScreenOn(): Flow<Boolean>
     suspend fun setKeepScreenOn(value: Boolean)
     fun isVibrationEnabled(): Flow<Boolean>
     suspend fun setVibration(value: Boolean)

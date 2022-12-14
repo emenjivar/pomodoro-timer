@@ -115,7 +115,7 @@ class CountDownViewModel(
 
         // Set default pomodoro and load on livedata
 //        _counter.value = fetchCounter()
-        _keepScreenOn.postValue(isKeepScreenOnUseCase.invoke())
+//        _keepScreenOn.postValue(isKeepScreenOnUseCase.invoke())
     }
 
     /**
@@ -306,7 +306,7 @@ class CountDownViewModel(
     }
 
     fun forceFetchKeepScreenConfig() = viewModelScope.launch {
-        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
+//        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
     }
 
     fun forceFetchVibrationConfig() = viewModelScope.launch {

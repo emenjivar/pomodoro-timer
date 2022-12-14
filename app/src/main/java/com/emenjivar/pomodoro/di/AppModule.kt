@@ -41,7 +41,6 @@ val appModule = module {
         SettingsViewModel(
             sharedSettingsRepository = get(),
             settingsRepository = get(),
-            setKeepScreenOnUseCase = get(),
             customVibrator = get()
         )
     }
