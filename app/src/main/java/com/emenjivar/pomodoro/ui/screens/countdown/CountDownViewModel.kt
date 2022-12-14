@@ -110,7 +110,7 @@ class CountDownViewModel(
 //            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
 //        }
 //        _isNightMode.value = isNightModeUseCase.invoke()
-        autoPlay = getAutoPlayUseCase.invoke()
+//        autoPlay = getAutoPlayUseCase.invoke()
 //        vibrationEnabled = isVibrationEnabledUseCase.invoke()
 
         // Set default pomodoro and load on livedata
@@ -319,7 +319,7 @@ class CountDownViewModel(
     }
 
     fun forceAutoPlayConfig() = viewModelScope.launch(ioDispatcher) {
-        autoPlay = getAutoPlayUseCase.invoke()
+//        autoPlay = getAutoPlayUseCase.invoke()
     }
 
     fun openSettings() {

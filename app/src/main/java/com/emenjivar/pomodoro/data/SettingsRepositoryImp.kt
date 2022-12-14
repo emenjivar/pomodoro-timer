@@ -56,10 +56,10 @@ class SettingsRepositoryImp(private val context: Context) :
         }
     }
 
-    override suspend fun getAutoPlay(): Boolean = context.dataStore.data
+    override fun getAutoPlay() = context.dataStore.data
         .map { pref ->
             pref[autoPlay] ?: false
-        }.first()
+        }
 
     override suspend fun setNightMode(value: Boolean) {
         context.dataStore.edit { settings ->

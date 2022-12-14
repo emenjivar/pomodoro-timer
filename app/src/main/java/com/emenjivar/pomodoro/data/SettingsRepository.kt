@@ -9,7 +9,7 @@ interface SettingsRepository {
     suspend fun setRestTime(value: Long)
     suspend fun isNightMode(): Boolean
     suspend fun setAutoPlay(value: Boolean)
-    suspend fun getAutoPlay(): Boolean
+    fun getAutoPlay(): Flow<Boolean>
     suspend fun setNightMode(value: Boolean)
     suspend fun isKeepScreenOn(): Boolean
     suspend fun setKeepScreenOn(value: Boolean)

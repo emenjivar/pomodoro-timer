@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val sharedSettingsRepository: SharedSettingsRepository,
     private val settingsRepository: SettingsRepository,
-    private val setAutoPlayUseCase: SetAutoPlayUseCase,
     private val setKeepScreenOnUseCase: SetKeepScreenOnUseCase,
     private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -42,7 +41,15 @@ class SettingsViewModel(
             started = SharingStarted.Lazily,
             initialValue = true
         )
+
     private val enableVibration = settingsRepository.isVibrationEnabled()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = true
+        )
+
+    private val enableAutoPlay = settingsRepository.getAutoPlay()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
@@ -56,12 +63,14 @@ class SettingsViewModel(
         structTime = structTime,
         enableSound = enableSound,
         enableVibration = enableVibration,
+        enableAutoPlay = enableAutoPlay,
         loadModalTime = ::loadModalTime,
         onInputChange = ::onInputChange,
         onBackSpace = ::onBackSpace,
         onSaveTime = ::onSaveTime,
         onEnableSound = ::onEnableSound,
-        onEnableVibration = ::onEnableVibration
+        onEnableVibration = ::onEnableVibration,
+        onEnableAutoPlay = ::onEnableAutoPlay
     )
 
     private fun onBackSpace() {
@@ -120,6 +129,10 @@ class SettingsViewModel(
         settingsRepository.setVibration(enableVibration)
     }
 
+    private fun onEnableAutoPlay(enableAutoPlay: Boolean) = viewModelScope.launch {
+        settingsRepository.setAutoPlay(enableAutoPlay)
+    }
+
     init {
         settingsRepository.getPomodoro().onEach { pomodoro ->
             counter.update { pomodoro.toCounter() }
@@ -128,9 +141,6 @@ class SettingsViewModel(
 
     private val _closeSettings = MutableLiveData(false)
     val closeSettings = _closeSettings
-
-    private val _autoPlay = mutableStateOf(false)
-    val autoPlay: State<Boolean> = _autoPlay
 
     private val _keepScreenOn = mutableStateOf(false)
     val keepScreenOn: State<Boolean> = _keepScreenOn
@@ -148,13 +158,6 @@ class SettingsViewModel(
 
         viewModelScope.launch(ioDispatcher) {
             customVibrator.click()
-        }
-    }
-
-    fun setAutoPlay(autoPlay: Boolean) {
-        viewModelScope.launch {
-            _autoPlay.value = autoPlay
-            setAutoPlayUseCase.invoke(autoPlay)
         }
     }
 

@@ -11,10 +11,12 @@ class SettingsUIState(
     val structTime: StateFlow<StructTime>,
     val enableSound: StateFlow<Boolean>,
     val enableVibration: StateFlow<Boolean>,
+    val enableAutoPlay: StateFlow<Boolean>,
     val loadModalTime: (isPomodoro: Boolean) -> Unit,
     val onInputChange: (digit: Int) -> Unit,
     val onBackSpace: () -> Unit,
     val onSaveTime: (isPomodoro: Boolean) -> Unit,
     val onEnableSound: (Boolean) -> Unit,
-    val onEnableVibration: (Boolean) -> Unit
+    val onEnableVibration: (Boolean) -> Unit,
+    val onEnableAutoPlay: (Boolean) -> Unit
 )

@@ -44,10 +44,6 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.getViewModel
 
-/**
- * @param selectedColor reduce ui color delay, loading this value
- *  while viewModel finish to fetch the color
- */
 @Composable
 fun SettingsScreen(
     navController: NavController,
@@ -57,7 +53,6 @@ fun SettingsScreen(
     val colorTheme by viewModel.uiState.colorTheme.collectAsState()
     val workTime by viewModel.uiState.workTime.collectAsState()
     val restTime by viewModel.uiState.restTime.collectAsState()
-    val autoPlay by viewModel.autoPlay
     val keepScreenOn by viewModel.keepScreenOn
 
     DisposableEffect(systemUiController, colorTheme) {
@@ -70,13 +65,9 @@ fun SettingsScreen(
         selectedColor = colorTheme,
         workTime = workTime,
         restTime = restTime,
-        autoPlay = autoPlay,
         keepScreenOn = keepScreenOn,
         backAction = { navController.navigate("counter") },
         onSelectTheme = { viewModel.setColor(it) },
-        onAutoPlayChange = {
-            viewModel.setAutoPlay(it)
-        },
         onKeepScreenChange = {
             viewModel.setKeepScreenOn(it)
         }
@@ -89,16 +80,15 @@ fun SettingsScreen(
     selectedColor: Color,
     workTime: Long,
     restTime: Long,
-    autoPlay: Boolean,
     keepScreenOn: Boolean,
     backAction: () -> Unit,
     onSelectTheme: (Color) -> Unit,
-    onAutoPlayChange: (Boolean) -> Unit,
     onKeepScreenChange: (Boolean) -> Unit
 ) {
     val structTime by uiState.structTime.collectAsState()
     val enableSound by uiState.enableSound.collectAsState()
     val enableVibration by uiState.enableVibration.collectAsState()
+    val enableAutoPlay by uiState.enableAutoPlay.collectAsState()
 
     val topAppBarColor = animateColorAsState(
         targetValue = selectedColor,
@@ -157,9 +147,9 @@ fun SettingsScreen(
 
             OthersSettings(
                 selectedColor = selectedColor,
-                autoPlay = autoPlay,
+                enableAutoPlay = enableAutoPlay,
                 keepScreenOn = keepScreenOn,
-                onAutoPlayChange = onAutoPlayChange,
+                onEnableAutoPlay = uiState.onEnableAutoPlay,
                 onKeepScreenChange = onKeepScreenChange
             )
         }
@@ -273,17 +263,17 @@ private fun SoundSettings(
 @Composable
 private fun OthersSettings(
     selectedColor: Color,
-    autoPlay: Boolean,
+    enableAutoPlay: Boolean,
     keepScreenOn: Boolean,
-    onAutoPlayChange: (Boolean) -> Unit,
+    onEnableAutoPlay: (Boolean) -> Unit,
     onKeepScreenChange: (Boolean) -> Unit,
 ) = SettingsGroup(title = "Others") {
     SwitchItem(
         title = "Autoplay",
         subtitle = "At the end of a pomodoro, the next one start automatically",
-        value = autoPlay,
+        value = enableAutoPlay,
         selectedColor = selectedColor,
-        onCheckedChange = onAutoPlayChange
+        onCheckedChange = onEnableAutoPlay
     )
     SwitchItem(
         title = "Keep screen on",
@@ -300,12 +290,14 @@ val uiState = SettingsUIState(
     structTime = MutableStateFlow(StructTime.empty()),
     enableSound = MutableStateFlow(true),
     enableVibration = MutableStateFlow(true),
+    enableAutoPlay = MutableStateFlow(true),
     loadModalTime = {},
     onInputChange = {},
     onBackSpace = {},
     onSaveTime = {},
     onEnableSound = {},
-    onEnableVibration = {}
+    onEnableVibration = {},
+    onEnableAutoPlay = {}
 )
 
 @Preview(
@@ -321,11 +313,9 @@ fun PreviewSettingsItem() {
             selectedColor = ThemeColor.Tomato.color,
             workTime = 0L,
             restTime = 0L,
-            autoPlay = true,
             keepScreenOn = true,
             backAction = {},
             onSelectTheme = {},
-            onAutoPlayChange = {},
             onKeepScreenChange = {}
         )
     }
@@ -340,11 +330,9 @@ fun PreviewSettingsItemOrange() {
             selectedColor = ThemeColor.Orange.color,
             workTime = 0L,
             restTime = 0L,
-            autoPlay = true,
             keepScreenOn = true,
             backAction = {},
             onSelectTheme = {},
-            onAutoPlayChange = {},
             onKeepScreenChange = {}
         )
     }
@@ -359,11 +347,9 @@ fun PreviewSettingsItemWine() {
             selectedColor = ThemeColor.Green.color,
             workTime = 0L,
             restTime = 0L,
-            autoPlay = true,
             keepScreenOn = true,
             backAction = {},
             onSelectTheme = {},
-            onAutoPlayChange = {},
             onKeepScreenChange = {}
         )
     }
@@ -378,11 +364,9 @@ fun PreviewSettingsItemBasil() {
             selectedColor = ThemeColor.LeafGreen.color,
             workTime = 0L,
             restTime = 0L,
-            autoPlay = true,
             keepScreenOn = true,
             backAction = {},
             onSelectTheme = {},
-            onAutoPlayChange = {},
             onKeepScreenChange = {}
         )
     }
