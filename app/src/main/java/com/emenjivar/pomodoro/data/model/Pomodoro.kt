@@ -1,4 +1,4 @@
-package com.emenjivar.core.model
+package com.emenjivar.pomodoro.data.model
 
 class Pomodoro(
     val workTime: Long,

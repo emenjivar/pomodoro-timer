@@ -22,10 +22,20 @@ class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val customVibrator: CustomVibrator,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    testMode: Boolean = false
 ) : ViewModel() {
 
-    private val colorTheme: MutableStateFlow<Color> = MutableStateFlow(ThemeColor.Tomato.color)
+    private val colorTheme = settingsRepository.getColor()
+        .map { colorValue ->
+            if (colorValue != null)
+                Color(colorValue)
+            else null
+        }.filterNotNull()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ThemeColor.Tomato.color
+        )
+
     private val workTime = MutableStateFlow(0L)
     private val restTime = MutableStateFlow(0L)
     private val structTime = MutableStateFlow(StructTime.empty())
@@ -158,11 +168,12 @@ class SettingsViewModel(
     }
 
     fun setColor(value: Color) {
-        colorTheme.update { value }
+        // TODO: save the color theme here
         sharedSettingsRepository.setColorTheme(value)
 
         viewModelScope.launch(ioDispatcher) {
             customVibrator.click()
+            settingsRepository.setColor(value.value.toLong())
         }
     }
 

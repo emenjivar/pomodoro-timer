@@ -8,7 +8,6 @@ import com.emenjivar.pomodoro.usecases.IsKeepScreenOnUseCase
 import com.emenjivar.pomodoro.usecases.IsNightModeUseCase
 import com.emenjivar.pomodoro.usecases.IsVibrationEnabledUseCase
 import com.emenjivar.pomodoro.usecases.SetAutoPlayUseCase
-import com.emenjivar.pomodoro.usecases.SetColorUseCase
 import com.emenjivar.pomodoro.usecases.SetKeepScreenOnUseCase
 import com.emenjivar.pomodoro.usecases.SetNighModeUseCase
 import com.emenjivar.pomodoro.usecases.SetRestTimeUseCase
@@ -32,5 +31,4 @@ val coreModule = module {
     single { AreSoundsEnableUseCase(get()) }
     single { SetSoundsEnableUseCase(get()) }
     single { GetColorUseCase(get()) }
-    single { SetColorUseCase(get()) }
 }

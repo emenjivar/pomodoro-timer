@@ -1,6 +1,6 @@
 package com.emenjivar.pomodoro.utils
 
-import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.pomodoro.data.model.Pomodoro
 import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.model.SplitTime

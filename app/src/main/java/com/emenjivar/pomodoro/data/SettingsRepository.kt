@@ -1,6 +1,6 @@
 package com.emenjivar.pomodoro.data
 
-import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.pomodoro.data.model.Pomodoro
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -17,6 +17,6 @@ interface SettingsRepository {
     suspend fun setVibration(value: Boolean)
     fun areSoundsEnabled(): Flow<Boolean>
     suspend fun setSounds(value: Boolean)
-    suspend fun getColor(): Int?
-    suspend fun setColor(value: Int)
+    fun getColor(): Flow<Long?>
+    suspend fun setColor(value: Long)
 }

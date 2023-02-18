@@ -302,7 +302,7 @@ class CountDownViewModel(
      * Fetch local storage configurations
      */
     fun forceSelectedColorConfig() = viewModelScope.launch(ioDispatcher) {
-        _selectedColor.postValue(getColorUseCase.invoke())
+//        _selectedColor.postValue(getColorUseCase.invoke())
     }
 
     fun forceFetchKeepScreenConfig() = viewModelScope.launch {

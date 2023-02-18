@@ -5,10 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.pomodoro.data.model.Pomodoro
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -23,7 +22,7 @@ class SettingsRepositoryImp(private val context: Context) :
     private val nightMode = booleanPreferencesKey(NIGHT_MODE)
     private val vibration = booleanPreferencesKey(VIBRATION)
     private val sounds = booleanPreferencesKey(SOUNDS)
-    private val color = intPreferencesKey(COLOR)
+    private val color = longPreferencesKey(COLOR)
 
     override fun getPomodoro() =
         context.dataStore.data.map { pref ->
@@ -100,12 +99,12 @@ class SettingsRepositoryImp(private val context: Context) :
         }
     }
 
-    override suspend fun getColor(): Int? = context.dataStore.data
+    override fun getColor() = context.dataStore.data
         .map { pref ->
             pref[color]
-        }.first()
+        }
 
-    override suspend fun setColor(value: Int) {
+    override suspend fun setColor(value: Long) {
         context.dataStore.edit { pref ->
             pref[color] = value
         }

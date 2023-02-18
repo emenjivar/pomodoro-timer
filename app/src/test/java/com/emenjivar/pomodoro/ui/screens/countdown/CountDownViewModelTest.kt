@@ -1,7 +1,7 @@
 package com.emenjivar.pomodoro.ui.screens.countdown
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.emenjivar.core.model.Pomodoro
+import com.emenjivar.pomodoro.data.model.Pomodoro
 import com.emenjivar.pomodoro.usecases.AreSoundsEnableUseCase
 import com.emenjivar.pomodoro.usecases.GetAutoPlayUseCase
 import com.emenjivar.pomodoro.usecases.GetColorUseCase
