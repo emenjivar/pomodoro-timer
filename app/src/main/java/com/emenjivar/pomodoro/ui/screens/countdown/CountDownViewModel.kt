@@ -8,23 +8,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.pomodoro.data.SettingsRepository
-import com.emenjivar.pomodoro.usecases.AreSoundsEnableUseCase
-import com.emenjivar.pomodoro.usecases.GetAutoPlayUseCase
-import com.emenjivar.pomodoro.usecases.GetColorUseCase
-import com.emenjivar.pomodoro.usecases.GetPomodoroUseCase
-import com.emenjivar.pomodoro.usecases.IsKeepScreenOnUseCase
-import com.emenjivar.pomodoro.usecases.IsNightModeUseCase
-import com.emenjivar.pomodoro.usecases.IsVibrationEnabledUseCase
-import com.emenjivar.pomodoro.usecases.SetNighModeUseCase
 import com.emenjivar.pomodoro.data.SharedSettingsRepository
-import com.emenjivar.pomodoro.utils.model.Counter
-import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.system.CustomNotificationManager
 import com.emenjivar.pomodoro.system.CustomVibrator
 import com.emenjivar.pomodoro.system.SoundsManager
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.countDownInterval
+import com.emenjivar.pomodoro.utils.model.Counter
+import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.toCounter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -34,14 +26,6 @@ import kotlinx.coroutines.launch
 class CountDownViewModel(
     sharedSettingsRepository: SharedSettingsRepository,
     settingsRepository: SettingsRepository,
-    private val getColorUseCase: GetColorUseCase,
-    private val getPomodoroUseCase: GetPomodoroUseCase,
-    private val setNighModeUseCase: SetNighModeUseCase,
-    private val getAutoPlayUseCase: GetAutoPlayUseCase,
-    private val isNightModeUseCase: IsNightModeUseCase,
-    private val isKeepScreenOnUseCase: IsKeepScreenOnUseCase,
-    private val isVibrationEnabledUseCase: IsVibrationEnabledUseCase,
-    private val areSoundsEnableUseCase: AreSoundsEnableUseCase,
     private val notificationManager: CustomNotificationManager,
     private val customVibrator: CustomVibrator,
     private val soundsManager: SoundsManager,
@@ -294,7 +278,7 @@ class CountDownViewModel(
         _isNightMode.value = nightMode
 
         viewModelScope.launch(ioDispatcher) {
-            setNighModeUseCase.invoke(nightMode)
+//            setNighModeUseCase.invoke(nightMode)
         }
     }
 
@@ -314,8 +298,8 @@ class CountDownViewModel(
     }
 
     fun forceFetchSoundsConfig() = viewModelScope.launch(ioDispatcher) {
-    // TODO: put here sound configuration
-    //        areSoundsEnable = areSoundsEnableUseCase.invoke()
+        // TODO: put here sound configuration
+        //        areSoundsEnable = areSoundsEnableUseCase.invoke()
     }
 
     fun forceAutoPlayConfig() = viewModelScope.launch(ioDispatcher) {

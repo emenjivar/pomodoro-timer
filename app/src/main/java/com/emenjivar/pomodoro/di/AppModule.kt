@@ -15,23 +15,13 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        SplashScreenViewModel(
-            getColorUseCase = get()
-        )
+        SplashScreenViewModel()
     }
 
     viewModel {
         CountDownViewModel(
             sharedSettingsRepository = get(),
             settingsRepository = get(),
-            getColorUseCase = get(),
-            getPomodoroUseCase = get(),
-            setNighModeUseCase = get(),
-            getAutoPlayUseCase = get(),
-            isNightModeUseCase = get(),
-            isKeepScreenOnUseCase = get(),
-            isVibrationEnabledUseCase = get(),
-            areSoundsEnableUseCase = get(),
             notificationManager = get(),
             customVibrator = get(),
             soundsManager = get()

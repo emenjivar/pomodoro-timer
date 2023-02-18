@@ -169,11 +169,11 @@ class SettingsViewModel(
 
     fun setColor(value: Color) {
         // TODO: save the color theme here
-        sharedSettingsRepository.setColorTheme(value)
+//        sharedSettingsRepository.setColorTheme(value)
 
         viewModelScope.launch(ioDispatcher) {
             customVibrator.click()
-            settingsRepository.setColor(value.value.toLong())
+//            settingsRepository.setColor(value.value.toLong())
         }
     }
 

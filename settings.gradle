@@ -7,5 +7,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Pomodoro scheduler"
 include ':app'
-include ':data'
-include ':core'

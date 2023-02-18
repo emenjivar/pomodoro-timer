@@ -78,10 +78,8 @@ fun CountDownScreen(
             playAction = { countDownViewModel.startCounter() },
             pauseAction = { countDownViewModel.pauseCounter() },
             resumeAction = { countDownViewModel.resumeCounter() },
-            stopAction = { countDownViewModel.stopCounter() },
-            openSettings = { countDownViewModel.openSettings() }
+            stopAction = { countDownViewModel.stopCounter() }
         )
-
     }
 }
 
@@ -95,8 +93,7 @@ fun CountDownScreen(
     pauseAction: () -> Unit,
     resumeAction: () -> Unit,
     stopAction: () -> Unit,
-    isNightMode: Boolean = true,
-    openSettings: () -> Unit,
+    isNightMode: Boolean = true
 ) {
     val nextAction = when (action) {
         Action.Play -> pauseAction
@@ -184,8 +181,7 @@ fun PreviewCountDownScreen() {
         playAction = {},
         pauseAction = {},
         resumeAction = {},
-        stopAction = {},
-        openSettings = {}
+        stopAction = {}
     )
 }
 
@@ -200,8 +196,7 @@ fun PreviewPausedCountDown() {
         playAction = {},
         pauseAction = {},
         resumeAction = {},
-        stopAction = {},
-        openSettings = {}
+        stopAction = {}
     )
 }
 
