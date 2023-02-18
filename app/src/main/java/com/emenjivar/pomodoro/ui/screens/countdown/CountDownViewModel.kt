@@ -1,10 +1,6 @@
 package com.emenjivar.pomodoro.ui.screens.countdown
 
 import android.os.CountDownTimer
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emenjivar.pomodoro.data.SettingsRepository
@@ -18,7 +14,6 @@ import com.emenjivar.pomodoro.utils.countDownInterval
 import com.emenjivar.pomodoro.utils.model.Counter
 import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.toCounter
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -29,7 +24,6 @@ class CountDownViewModel(
     private val notificationManager: CustomNotificationManager,
     private val customVibrator: CustomVibrator,
     private val soundsManager: SoundsManager,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val testMode: Boolean = false
 ) : ViewModel() {
 
@@ -43,31 +37,9 @@ class CountDownViewModel(
     private var counterMemory: Counter? = null
     private val counter = MutableStateFlow<Counter?>(null)
 
-    val uiState = CountDownUIState(
-        colorTheme = colorTheme,
-        counter = counter.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = null
-        )
-    )
-
     private var countDownTimer: CountDownTimer? = null
 
-    private val _action: MutableLiveData<Action> = MutableLiveData(Action.Stop)
-    val action: LiveData<Action> = _action
-
-    private val _isNightMode = mutableStateOf(true)
-    val isNightMode: State<Boolean> = _isNightMode
-
-    private val _openSettings = MutableLiveData(false)
-    val openSettings = _openSettings
-
-    private val _keepScreenOn: MutableLiveData<Boolean?> = MutableLiveData()
-    val keepScreenOn: LiveData<Boolean?> = _keepScreenOn
-
-    private val _selectedColor = MutableLiveData<Int?>(null)
-    val selectedColor: LiveData<Int?> = _selectedColor
+    private val action = MutableStateFlow<Action>(Action.Stop)
 
     var autoPlay: Boolean = false
     var vibrationEnabled: Boolean = false
@@ -75,67 +47,32 @@ class CountDownViewModel(
     var areSoundsEnable: Boolean = true
 
     init {
-        // Load set pomodoro
         settingsRepository.getPomodoro()
             .onEach { pomodoro ->
                 counter.update { pomodoro.toCounter() }
                 counterMemory = pomodoro.toCounter()
-            }.launchIn(viewModelScope)
-
-        if (!testMode) {
-            viewModelScope.launch(ioDispatcher) {
-                loadDefaultValues()
-            }
-        }
+            }.launchIn(
+                scope = viewModelScope
+            )
     }
-
-    suspend fun loadDefaultValues() {
-//        with(getColorUseCase.invoke()) {
-//            _selectedColor.postValue(this ?: ThemeColor.Tomato.color)
-//        }
-//        _isNightMode.value = isNightModeUseCase.invoke()
-//        autoPlay = getAutoPlayUseCase.invoke()
-//        vibrationEnabled = isVibrationEnabledUseCase.invoke()
-
-        // Set default pomodoro and load on livedata
-//        _counter.value = fetchCounter()
-//        _keepScreenOn.postValue(isKeepScreenOnUseCase.invoke())
-    }
-
-    /**
-     * Get pomodoro from dataStorage and convert to counter
-     */
-//    private suspend fun fetchCounter() = getPomodoroUseCase.invoke().toCounter()
-
-    /**
-     * In case of null, fetch local storage configurations
-     */
-//    suspend fun initCounter() {
-//        if (_counter.value == null) {
-//            _counter.value = fetchCounter()
-//        }
-//    }
 
     /**
      * recursive function
      * if _counter is null, fetch saved configuration and start the counter using workTime
      * if _counter is not null, stat the counter using restTime
      */
-    fun startCounter() {
-        viewModelScope.launch(Dispatchers.Main) {
-//            initCounter()
-            counter.value?.let { safeCounter ->
-                val milliseconds = if (safeCounter.phase == Phase.WORK)
-                    safeCounter.workTime
-                else
-                    safeCounter.restTime
+    private fun onPlay() {
+        counter.value?.let { safeCounter ->
+            val milliseconds = if (safeCounter.phase == Phase.WORK)
+                safeCounter.workTime
+            else
+                safeCounter.restTime
 
-                _action.value = Action.Play
+            action.update { Action.Play }
 
-                if (!testMode) {
-                    // Don't include this block on testing
-                    countDownTimer = countDownTimer(milliseconds).start()
-                }
+            if (!testMode) {
+                // Don't include this block on testing
+                countDownTimer = countDownTimer(milliseconds).start()
             }
         }
     }
@@ -151,8 +88,8 @@ class CountDownViewModel(
             }
         }
 
-    fun pauseCounter() {
-        _action.value = Action.Pause
+    private fun onPause() {
+        action.update { Action.Pause }
         countDownTimer?.cancel()
 
         if (displayNotification) {
@@ -160,8 +97,8 @@ class CountDownViewModel(
         }
     }
 
-    fun resumeCounter() {
-        _action.value = Action.Resume
+    private fun onResume() {
+        action.update { Action.Resume }
 
         // Don't include this block on tests
         if (!testMode) {
@@ -175,38 +112,24 @@ class CountDownViewModel(
         }
     }
 
-    fun stopCounter() {
-        viewModelScope.launch(ioDispatcher) {
-            _action.postValue(Action.Stop)
-            counter.update { counterMemory }
-            countDownTimer?.cancel()
-            notificationManager.close()
-        }
+    private fun onStop() {
+        action.update { Action.Stop }
+        counter.update { counterMemory }
+        countDownTimer?.cancel()
+        notificationManager.close()
     }
 
-    /**
-     * Update time only when counter is stopped
-     * This is an easier way to update the value
-     * instead on press stop button
-     */
-    fun updateCounterTime() {
-        viewModelScope.launch(ioDispatcher) {
-            if (action.value == Action.Stop) {
-//                _counter.value = fetchCounter()
-            }
-        }
-    }
-
-    fun finishCounter() {
+    private fun finishCounter() {
         var vibrationTimes = 1
         when (counter.value?.phase) {
             Phase.WORK -> {
 //                _counter.value?.setRest()
+                counter.value?.setRest()
             }
             Phase.REST -> {
                 // This line force fetch pomodoro configurations and start from work
-//                _counter.value = null
-                _action.value = Action.Stop
+                counter.update { null }
+                action.update { Action.Stop }
                 vibrationTimes = 2
             }
             else -> {
@@ -224,14 +147,14 @@ class CountDownViewModel(
      * Restart countdown and start the counter when autoPlay flag is true
      * else, just init the counter on Stop using default values
      */
-    fun restartCounter() {
+    private fun restartCounter() {
         finishCounter()
 
         if (counter.value != null || autoPlay) {
             if (areSoundsEnable) {
                 soundsManager.play()
             }
-            startCounter()
+            onPlay()
         } else {
             viewModelScope.launch(Dispatchers.Main) {
 //                initCounter()
@@ -242,7 +165,7 @@ class CountDownViewModel(
     /**
      * Set current state of pomodoro on livedata value
      */
-    fun setTime(milliseconds: Long) {
+    private fun setTime(milliseconds: Long) {
         counter.update {
             it?.copy(countDown = milliseconds)
         }
@@ -268,45 +191,22 @@ class CountDownViewModel(
 //        }
     }
 
-    fun closeNotification() {
+    private fun closeNotification() {
         displayNotification = false
         notificationManager.close()
     }
 
-    fun toggleNightMode() {
-        val nightMode = isNightMode.value.not()
-        _isNightMode.value = nightMode
-
-        viewModelScope.launch(ioDispatcher) {
-//            setNighModeUseCase.invoke(nightMode)
-        }
-    }
-
-    /**
-     * Fetch local storage configurations
-     */
-    fun forceSelectedColorConfig() = viewModelScope.launch(ioDispatcher) {
-//        _selectedColor.postValue(getColorUseCase.invoke())
-    }
-
-    fun forceFetchKeepScreenConfig() = viewModelScope.launch {
-//        _keepScreenOn.value = isKeepScreenOnUseCase.invoke()
-    }
-
-    fun forceFetchVibrationConfig() = viewModelScope.launch {
-//        vibrationEnabled = isVibrationEnabledUseCase.invoke()
-    }
-
-    fun forceFetchSoundsConfig() = viewModelScope.launch(ioDispatcher) {
-        // TODO: put here sound configuration
-        //        areSoundsEnable = areSoundsEnableUseCase.invoke()
-    }
-
-    fun forceAutoPlayConfig() = viewModelScope.launch(ioDispatcher) {
-//        autoPlay = getAutoPlayUseCase.invoke()
-    }
-
-    fun openSettings() {
-        _openSettings.value = true
-    }
+    val uiState = CountDownUIState(
+        colorTheme = colorTheme,
+        counter = counter.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = null
+        ),
+        action = action,
+        onPlay = ::onPlay,
+        onPause = ::onPause,
+        onResume = ::onResume,
+        onStop = ::onStop
+    )
 }

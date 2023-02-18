@@ -9,10 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,34 +18,40 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.emenjivar.pomodoro.R
-import com.emenjivar.pomodoro.utils.model.Counter
-import com.emenjivar.pomodoro.utils.model.Phase
 import com.emenjivar.pomodoro.utils.Action
 import com.emenjivar.pomodoro.utils.TRANSITION_DURATION
-import com.emenjivar.pomodoro.utils.ThemeColor
 import com.emenjivar.pomodoro.utils.formatTime
 import com.google.accompanist.systemuicontroller.SystemUiController
 import org.koin.androidx.compose.getViewModel
 
-/**
- * @param selectedColor value from mainActivity, it would be probably
- *  this value reduce fetch delay when color is selected different to primary
- */
 @Composable
 fun CountDownScreen(
     navController: NavController,
     systemUiController: SystemUiController,
-    modifier: Modifier = Modifier,
+    viewModel: CountDownViewModel = getViewModel()
 ) {
-    val countDownViewModel = getViewModel<CountDownViewModel>()
-    val colorTheme by countDownViewModel.uiState.colorTheme.collectAsState()
+    CountDownScreen(
+        navController = navController,
+        systemUiController = systemUiController,
+        uiState = viewModel.uiState
+    )
+}
 
-    val counter by countDownViewModel.uiState.counter.collectAsState()
-    val action by countDownViewModel.action.observeAsState()
+@Composable
+private fun CountDownScreen(
+    navController: NavController,
+    systemUiController: SystemUiController,
+    uiState: CountDownUIState
+) {
+    val colorTheme by uiState.colorTheme.collectAsState()
+    val counter by uiState.counter.collectAsState()
+    val action by uiState.action.collectAsState()
+    val isNightMode = true // TODO: this value are extract from sharedPreferences
 
     DisposableEffect(systemUiController, colorTheme) {
-        systemUiController.setStatusBarColor(color = colorTheme)
-        onDispose { }
+        onDispose {
+            systemUiController.setStatusBarColor(color = colorTheme)
+        }
     }
 
     Scaffold(
@@ -70,84 +74,61 @@ fun CountDownScreen(
             )
         }
     ) { paddingValues ->
-        CountDownScreen(
-            modifier = modifier.padding(paddingValues),
-            action = action,
-            counter = counter,
-            selectedColor = colorTheme,
-            playAction = { countDownViewModel.startCounter() },
-            pauseAction = { countDownViewModel.pauseCounter() },
-            resumeAction = { countDownViewModel.resumeCounter() },
-            stopAction = { countDownViewModel.stopCounter() }
-        )
-    }
-}
+        val nextAction = when (action) {
+            Action.Play -> uiState.onPause
+            Action.Pause -> uiState.onResume
+            Action.Resume -> uiState.onPause
+            Action.Stop -> uiState.onPlay
+            else -> uiState.onPlay
+        }
 
-@Composable
-fun CountDownScreen(
-    modifier: Modifier = Modifier,
-    action: Action?,
-    counter: Counter?,
-    selectedColor: Color,
-    playAction: () -> Unit,
-    pauseAction: () -> Unit,
-    resumeAction: () -> Unit,
-    stopAction: () -> Unit,
-    isNightMode: Boolean = true
-) {
-    val nextAction = when (action) {
-        Action.Play -> pauseAction
-        Action.Pause -> resumeAction
-        Action.Resume -> pauseAction
-        Action.Stop -> playAction
-        else -> playAction
-    }
-
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize()
-            .background(selectedColor)
-    ) {
-        val (_container) = createRefs()
-
-        Column(
+        ConstraintLayout(
             modifier = Modifier
-                .constrainAs(_container) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(colorTheme)
         ) {
-            CountDown(
-                modifier = Modifier
-                    .padding(top = 50.dp),
-                progressColor = selectedColor,
-                time = counter?.countDown.formatTime(),
-                progress = counter?.getScaleProgress() ?: 1f,
-                phase = counter?.phase,
-                action = action,
-                isFullScreen = isNightMode
-            )
+            val (_container) = createRefs()
 
-            Row(
+            Column(
                 modifier = Modifier
-                    .padding(vertical = 25.dp)
+                    .constrainAs(_container) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ActionButton(
-                    icon = getPlayPauseIcon(action),
-                    isFullScreen = isNightMode,
-                    selectedColor = selectedColor,
-                    onClick = nextAction
+                CountDown(
+                    modifier = Modifier
+                        .padding(top = 50.dp),
+                    progressColor = colorTheme,
+                    time = counter?.countDown.formatTime(),
+                    progress = counter?.getScaleProgress() ?: 1f,
+                    phase = counter?.phase,
+                    action = action,
+                    isFullScreen = isNightMode
                 )
-                Spacer(modifier = Modifier.width(50.dp))
-                ActionButton(
-                    icon = R.drawable.ic_baseline_stop_24,
-                    isFullScreen = isNightMode,
-                    selectedColor = selectedColor,
-                    onClick = stopAction
-                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 25.dp)
+                ) {
+                    ActionButton(
+                        icon = getPlayPauseIcon(action),
+                        isFullScreen = isNightMode,
+                        selectedColor = colorTheme,
+                        onClick = nextAction
+                    )
+                    Spacer(modifier = Modifier.width(50.dp))
+                    ActionButton(
+                        icon = R.drawable.ic_baseline_stop_24,
+                        isFullScreen = isNightMode,
+                        selectedColor = colorTheme,
+                        onClick = uiState.onStop
+                    )
+                }
             }
         }
     }
@@ -173,31 +154,33 @@ private fun getIconColor(isNightMode: Boolean) = animateColorAsState(
 @Preview(name = "Normal counter")
 @Composable
 fun PreviewCountDownScreen() {
-    CountDownScreen(
-        modifier = Modifier.fillMaxSize(),
-        action = Action.Play,
-        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
-        selectedColor = ThemeColor.Tomato.color,
-        playAction = {},
-        pauseAction = {},
-        resumeAction = {},
-        stopAction = {}
-    )
+    // TODO: use the correct constructor
+//    CountDownScreen(
+//        modifier = Modifier.fillMaxSize(),
+//        action = Action.Play,
+//        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
+//        selectedColor = ThemeColor.Tomato.color,
+//        playAction = {},
+//        pauseAction = {},
+//        resumeAction = {},
+//        stopAction = {}
+//    )
 }
 
 @Preview(name = "Paused counter")
 @Composable
 fun PreviewPausedCountDown() {
-    CountDownScreen(
-        modifier = Modifier.fillMaxSize(),
-        action = Action.Pause,
-        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
-        selectedColor = ThemeColor.Tomato.color,
-        playAction = {},
-        pauseAction = {},
-        resumeAction = {},
-        stopAction = {}
-    )
+    // TODO: use the correct constructor
+//    CountDownScreen(
+//        modifier = Modifier.fillMaxSize(),
+//        action = Action.Pause,
+//        counter = Counter(WORK_TIME, REST_TIME, Phase.WORK, WORK_TIME),
+//        selectedColor = ThemeColor.Tomato.color,
+//        playAction = {},
+//        pauseAction = {},
+//        resumeAction = {},
+//        stopAction = {}
+//    )
 }
 
 private const val WORK_TIME: Long = 1000 * 60 * 25
