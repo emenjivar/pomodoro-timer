@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 android {
@@ -12,12 +13,12 @@ android {
             keyAlias findProperty('pomodoro.keyAlias') ?: ''
         }
     }
-    compileSdk 31
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.emenjivar.pomodoro"
         minSdk 23
-        targetSdk 31
+        targetSdk 35
         versionCode 5
         versionName "1.0.3"
 
@@ -59,13 +60,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        useIR = true
     }
     buildFeatures {
         compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_version
     }
     packagingOptions {
         resources {
@@ -87,6 +84,12 @@ android {
             }
         }
     }
+    namespace 'com.emenjivar.pomodoro'
+}
+
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
 }
 
 afterEvaluate {
@@ -102,22 +105,23 @@ afterEvaluate {
 
 def core_version = "1.7.0"
 def koin_version= "3.2.0-beta-1"
-def mockito_version = "4.3.1"
+def mockito_version = "5.2.0"
+def compose_material = "1.7.6"
 
 dependencies {
     implementation project(':core')
     implementation project(':data')
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 
-    // UI
-    implementation 'com.google.android.material:material:1.5.0'
+    // UI`
+    implementation 'com.google.android.material:material:1.12.0'
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.material:material:$compose_material"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.4.0'
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0"
     implementation "androidx.core:core-ktx:$core_version"
 
 
@@ -126,12 +130,13 @@ dependencies {
 
     // LiveData
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "androidx.compose.runtime:runtime:$compose_version"
 
     // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-beta01"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
 
     // DataStore
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation 'androidx.datastore:datastore-preferences:1.1.1'
 
     // Coroutine
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
@@ -142,20 +147,20 @@ dependencies {
     api "io.insert-koin:koin-androidx-compose:$koin_version"
 
     // Google
-    implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-core:20.1.2'
+    implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.android.play:core:1.10.3'
 
     // Testing
     testImplementation 'junit:junit:'
-    testImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
     testImplementation "org.mockito:mockito-core:$mockito_version"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.7.6"
     androidTestImplementation "org.mockito:mockito-android:$mockito_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
