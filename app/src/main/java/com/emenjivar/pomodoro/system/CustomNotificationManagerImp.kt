@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.emenjivar.pomodoro.R
@@ -27,6 +28,8 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
         val totalTime = 100
         val progress = counter.getProgress().toInt()
         val formatTime = counter.countDown.formatTime()
+
+        Log.wtf("CustomNotificationManager", "progress: $progress")
 
         when (action) {
             Action.Play -> {
@@ -75,7 +78,10 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
 
     private fun playIntent(): PendingIntent {
         val intent = Intent(context, CustomBroadcastReceiver::class.java)
-            .setAction(INTENT_PLAY)
+            .apply {
+                action = INTENT_PLAY
+                `package` = context.packageName
+            }
         return PendingIntent.getBroadcast(
             context,
             REQUEST_CODE_PLAY,
@@ -86,7 +92,10 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
 
     private fun pauseIntent(): PendingIntent {
         val intent = Intent(context, CustomBroadcastReceiver::class.java)
-            .setAction(INTENT_PAUSE)
+            .apply {
+                action = INTENT_PLAY
+                `package` = context.packageName
+            }
         return PendingIntent.getBroadcast(
             context,
             REQUEST_CODE_PAUSE,
@@ -97,7 +106,10 @@ class CustomNotificationManagerImp(private val context: Context) : CustomNotific
 
     private fun stopIntent(): PendingIntent {
         val intent = Intent(context, CustomBroadcastReceiver::class.java)
-            .setAction(INTENT_STOP)
+            .apply {
+                action = INTENT_PLAY
+                `package` = context.packageName
+            }
         return PendingIntent.getBroadcast(
             context,
             REQUEST_CODE_STOP,

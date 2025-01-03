@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -118,7 +120,20 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setObservables() {
-        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                broadcastReceiver,
+                IntentFilter(CustomBroadcastReceiver.INTENT_NAME),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(
+                broadcastReceiver,
+                IntentFilter(CustomBroadcastReceiver.INTENT_NAME)
+            )
+        }
+
         countDownViewModel.selectedColor.observe(this, observeSelectedColor)
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
         countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
