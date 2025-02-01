@@ -2,7 +2,7 @@ name: Publish a release
 on:
   push:
     tags:
-      - 'v*' # example: v0.0.1
+      - '**' # example: v0.0.1
 
 jobs:
   build:
