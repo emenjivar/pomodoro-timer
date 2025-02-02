@@ -28,6 +28,10 @@ jobs:
       - name: Build with gradle
         run: ./gradlew assembleDebug
 
+      - name: Verify the apk was generated
+        run: |
+          ls app/build/outputs/apk/debug
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -35,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
 
