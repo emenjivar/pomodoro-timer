@@ -1,0 +1,47 @@
+name: CodeQL Analysis
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['kotlin']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Setup java 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: '7.3.3'
+
+      - name: Set up CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'kotlin'
+          queries: security-extended, security-and-quality
+
+      - name: Build the project
+        run: ./gradlew assembleDebug
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v2
+      
