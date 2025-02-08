@@ -30,6 +30,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          cache: 'gradle'
 
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v4
@@ -41,7 +42,7 @@ jobs:
       #  uses: github/codeql-action/autobuild@v2
 
       - name: Build the project
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2
