@@ -35,12 +35,12 @@ jobs:
           distribution: 'adopt'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '7.3.3'
 
       - name: Set up CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: 'kotlin'
           queries: security-extended, security-and-quality
