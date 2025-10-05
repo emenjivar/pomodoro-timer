@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setObservables() {
-        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME))
+        registerReceiver(broadcastReceiver, IntentFilter(CustomBroadcastReceiver.INTENT_NAME), RECEIVER_NOT_EXPORTED)
         countDownViewModel.selectedColor.observe(this, observeSelectedColor)
         countDownViewModel.openSettings.observe(this, observeOpenSettings)
         countDownViewModel.keepScreenOn.observe(this, observeKeepScreenOn)
